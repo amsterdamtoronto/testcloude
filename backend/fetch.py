@@ -99,10 +99,47 @@ NEGATIVE_PHRASES = (
 
 NEGATIVE_EMOJI = "💩👎🤮😡🤡🥱😒"
 
-COMMENT_MIN_LEN = 20
-COMMENT_MAX_LEN = 280
-COMMENT_MIN_LIKES = 2
+BRAND_TOKENS = {
+    "kugoo", "куго", "кугу", "kuga", "куга",
+}
+PRODUCT_TOKENS = {
+    "самокат", "самокаты", "самокатик", "самокате", "самокаты",
+    "электросамокат", "электросамокаты",
+    "мотоцикл", "мотоциклы", "электромотоцикл", "электромотоциклы",
+    "мопед", "мопеды", "электромопед", "электромопеды",
+    "велосипед", "велосипеды", "электровелосипед", "велик",
+    "аппарат", "аппараты", "транспорт", "обзор", "обзоры", "обзорчик",
+    "тест", "тесты", "тест-драйв",
+}
+
+SPAM_PHRASES = (
+    "подпишись", "подписывайтесь", "подпишитесь", "канал у меня",
+    "мой канал", "заходи ко мне", "посмотри мои", "посмотрите мои",
+    "промокод", "телеграм", "telegram", "тг канал", "тг-канал",
+    "пишите в лс", "пишите в личку", "в директ", "напиши в директ",
+    "бонус по промокоду", "по промокоду",
+)
+
+REPEAT_CHAR_RE = re.compile(r"(.)\1{3,}", re.UNICODE)
+EMOJI_HINT_RE = re.compile(
+    r"[\U0001F300-\U0001FAFF\U00002600-\U000027BF\U0001F000-\U0001F2FF]"
+)
+NEG_BIGRAM_RE = re.compile(
+    r"\bне\s+(?:" + "|".join(sorted({
+        "круто","классно","советую","рекомендую","нравится","нравиться",
+        "понравилось","понравился","понравилась","полезно","полезный",
+        "огонь","шикарно","супер","топ","годно","качественно","качественный",
+    }, key=len, reverse=True)) + r")\b",
+    re.IGNORECASE | re.UNICODE,
+)
+
+COMMENT_MIN_LEN = 25
+COMMENT_MAX_LEN = 240
+COMMENT_MIN_LIKES = 3
+COMMENT_MIN_SCORE = 2
+COMMENT_MAX_EMOJI = 5
 QUOTES_LIMIT = 8
+RECENCY_HALFLIFE_DAYS = 90
 
 
 def setup_logging() -> logging.Logger:
@@ -332,6 +369,7 @@ def fetch_comments(youtube, videos: list[dict]) -> list[dict]:
                     "publishedAt": top.get("publishedAt", ""),
                     "videoId": v["videoId"],
                     "videoTitle": v["title"],
+                    "videoPublishedAt": v["publishedAt"],
                 }
             )
     log.info("Fetched %d raw comments across %d videos", len(out), len(videos))
@@ -343,34 +381,80 @@ def _has_phrase(text_lower: str, phrases) -> bool:
 
 
 def classify_comment(text: str) -> tuple[bool, int]:
-    """Return (is_positive, score). Score is positive-marker count minus penalties."""
+    """Return (is_positive, score). Strict filter: must be brand/product-relevant,
+    free of spam/negation/sarcasm markers, and score above threshold."""
     if not text:
         return False, 0
     lower = text.lower()
     words = set(WORD_RE.findall(lower))
 
-    neg_hits = len(words & NEGATIVE_WORDS)
-    if neg_hits:
+    # Hard rejects
+    if words & NEGATIVE_WORDS:
         return False, 0
     if _has_phrase(lower, NEGATIVE_PHRASES):
         return False, 0
     if any(ch in text for ch in NEGATIVE_EMOJI):
         return False, 0
+    if _has_phrase(lower, SPAM_PHRASES):
+        return False, 0
+    if NEG_BIGRAM_RE.search(lower):
+        return False, 0
+    if REPEAT_CHAR_RE.search(text):
+        return False, 0
+    if lower.startswith("не "):
+        return False, 0
 
+    # Reject emoji floods
+    emoji_count = len(EMOJI_HINT_RE.findall(text))
+    if emoji_count > COMMENT_MAX_EMOJI:
+        return False, 0
+    text_without_emoji = EMOJI_HINT_RE.sub("", text).strip()
+    if len(text_without_emoji) < COMMENT_MIN_LEN:
+        return False, 0
+
+    # Reject shouting (>50% uppercase letters among cyrillic/latin)
+    letters = [c for c in text if c.isalpha()]
+    if len(letters) >= 12:
+        upper_ratio = sum(1 for c in letters if c.isupper()) / len(letters)
+        if upper_ratio > 0.5:
+            return False, 0
+
+    # Require brand/product relevance
+    has_brand = any(b in lower for b in BRAND_TOKENS)
+    has_product = bool(words & PRODUCT_TOKENS)
+    if not (has_brand or has_product):
+        return False, 0
+
+    # Score
     pos_hits = len(words & POSITIVE_WORDS)
     phrase_hits = sum(1 for p in POSITIVE_PHRASES if p in lower)
-    emoji_hits = sum(1 for ch in text if ch in POSITIVE_EMOJI)
-    score = pos_hits + phrase_hits + min(emoji_hits, 3)
-
-    if score <= 0:
-        return False, 0
-    # Reject likely sarcasm: starts with "не " before any positive marker
-    if lower.startswith("не "):
+    pos_emoji_hits = sum(1 for ch in text if ch in POSITIVE_EMOJI)
+    score = pos_hits + phrase_hits + min(pos_emoji_hits, 2)
+    if has_brand:
+        score += 1
+    if score < COMMENT_MIN_SCORE:
         return False, 0
     return True, score
 
 
-def pick_quotes(comments: list[dict], channel_id: str) -> list[dict]:
+def _recency_weight(video_published_iso: str, now_utc: datetime) -> float:
+    """Returns a multiplier in [0.3, 2.0]: newer video → higher weight.
+    Half-life of RECENCY_HALFLIFE_DAYS keeps relevance gradual.
+    """
+    if not video_published_iso:
+        return 1.0
+    try:
+        pub = datetime.fromisoformat(video_published_iso.replace("Z", "+00:00"))
+    except ValueError:
+        return 1.0
+    age_days = max(0, (now_utc - pub).days)
+    weight = 2.0 * (0.5 ** (age_days / RECENCY_HALFLIFE_DAYS))
+    return max(0.3, weight)
+
+
+def pick_quotes(
+    comments: list[dict], channel_id: str, now_utc: datetime
+) -> list[dict]:
     seen_authors: set[str] = set()
     candidates: list[dict] = []
     for c in comments:
@@ -389,9 +473,11 @@ def pick_quotes(comments: list[dict], channel_id: str) -> list[dict]:
         ok, score = classify_comment(text)
         if not ok:
             continue
-        candidates.append({**c, "score": score})
+        rec = _recency_weight(c.get("videoPublishedAt", ""), now_utc)
+        effective = c["likeCount"] * rec + score * 0.5
+        candidates.append({**c, "score": score, "effective": effective})
 
-    candidates.sort(key=lambda c: (c["likeCount"], c["score"]), reverse=True)
+    candidates.sort(key=lambda c: c["effective"], reverse=True)
     picked: list[dict] = []
     for c in candidates:
         if c["author"] in seen_authors:
@@ -410,7 +496,10 @@ def pick_quotes(comments: list[dict], channel_id: str) -> list[dict]:
         )
         if len(picked) >= QUOTES_LIMIT:
             break
-    log.info("Picked %d positive quotes from %d candidates", len(picked), len(candidates))
+    log.info(
+        "Picked %d positive quotes from %d candidates (of %d raw)",
+        len(picked), len(candidates), len(comments),
+    )
     return picked
 
 
@@ -521,7 +610,7 @@ def main() -> int:
 
     try:
         raw_comments = fetch_comments(youtube, videos)
-        quotes = pick_quotes(raw_comments, CHANNEL_ID)
+        quotes = pick_quotes(raw_comments, CHANNEL_ID, taken_at)
     except Exception as e:
         log.warning("Comment fetch failed (continuing without quotes): %s", e)
         quotes = []
