@@ -34,12 +34,12 @@ jobs:
 
       - name: Commit and push data.json
         run: |
-          if git diff --quiet -- frontend/data.json; then
+          if git diff --quiet -- docs/data.json; then
             echo "No changes in data.json — skipping commit."
             exit 0
           fi
           git config user.email "fastmotion-bot@users.noreply.github.com"
           git config user.name  "fastmotion-bot"
-          git add frontend/data.json
+          git add docs/data.json
           git commit -m "data: hourly snapshot $(date -u +%FT%TZ)"
           git push origin HEAD:${{ github.ref_name }}

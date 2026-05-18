@@ -30,7 +30,7 @@ MIN_PUBLISHED_AT = os.environ.get("COLLAB_SINCE", "2025-04-14T00:00:00Z")
 
 ROOT = Path(__file__).resolve().parent.parent
 BACKEND_DIR = ROOT / "backend"
-FRONTEND_DIR = ROOT / "frontend"
+FRONTEND_DIR = ROOT / "docs"
 LOG_DIR = BACKEND_DIR / "logs"
 DB_PATH = BACKEND_DIR / "data.db"
 JSON_PATH = FRONTEND_DIR / "data.json"
