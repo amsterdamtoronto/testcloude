@@ -41,6 +41,69 @@ ISO_DUR_RE = re.compile(
     r"^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$"
 )
 
+URL_RE = re.compile(r"https?://|www\.|\.ru\b|\.com\b|t\.me", re.IGNORECASE)
+WORD_RE = re.compile(r"[\wёЁ]+", re.UNICODE)
+
+POSITIVE_WORDS = {
+    "топ", "огонь", "круто", "крутой", "крутое", "классно", "класс",
+    "отлично", "отличный", "отличное", "отличная", "спасибо", "благодарю",
+    "респект", "красава", "красавчик", "красавчики", "советую", "рекомендую",
+    "лучший", "лучшее", "лучшая", "лучшие", "супер", "шикарно", "шикарный",
+    "годно", "годный", "кайф", "кайфово", "обожаю", "нравится", "нравиться",
+    "понравилось", "понравился", "понравилась", "полезно", "полезный",
+    "полезная", "информативно", "информативный", "мощно", "мощный",
+    "мощная", "толково", "толковый", "молодец", "молодцы", "молодца",
+    "браво", "ждем", "ждём", "поддержка", "качество", "качественно",
+    "качественный", "доволен", "довольна", "довольны", "топчик", "годнота",
+    "топово", "имба", "имбовый", "огнище", "великолепно", "великолепный",
+    "обзорчик", "контент",
+}
+
+POSITIVE_PHRASES = (
+    "лайк подписка",
+    "лайк за",
+    "спасибо за",
+    "благодарю за",
+    "уважаю",
+    "красавчик",
+    "очень круто",
+    "очень полезно",
+    "очень нравится",
+    "топ контент",
+)
+
+POSITIVE_EMOJI = "🔥👍❤️🧡💛💚💙💜🤍💯💪🤩😍👌✊🙌⚡✨🥰😎😻⭐"
+
+NEGATIVE_WORDS = {
+    "говно", "отстой", "развод", "обман", "обманули", "хуже", "плохо",
+    "плохой", "плохая", "мусор", "барахло", "дерьмо", "фигня", "херня",
+    "развели", "кинули", "бесит", "ненавижу", "разочарован", "разочарование",
+    "тухло", "тухлый", "посредственно", "ужасно", "ужас", "фу", "галимый",
+    "галимое", "сломалось", "сломался", "сломалась", "жалею", "пожалел",
+    "ломается", "хлам", "выкинул", "выкинула", "беда", "беда", "печаль",
+    "халтура", "халтурный", "брак", "бракованный",
+}
+
+NEGATIVE_PHRASES = (
+    "не советую",
+    "не рекомендую",
+    "не покупайте",
+    "не стоит",
+    "лучше не",
+    "не работает",
+    "не качество",
+    "не понравил",
+    "пустая трата",
+    "выброшенные деньги",
+)
+
+NEGATIVE_EMOJI = "💩👎🤮😡🤡🥱😒"
+
+COMMENT_MIN_LEN = 20
+COMMENT_MAX_LEN = 280
+COMMENT_MIN_LIKES = 2
+QUOTES_LIMIT = 8
+
 
 def setup_logging() -> logging.Logger:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -228,7 +291,130 @@ def save_snapshot(conn: sqlite3.Connection, taken_at: str, videos: list[dict]) -
     conn.commit()
 
 
-def build_payload(videos: list[dict], taken_at_utc: datetime) -> dict:
+def fetch_comments(youtube, videos: list[dict]) -> list[dict]:
+    out: list[dict] = []
+    for v in videos:
+        try:
+            resp = (
+                youtube.commentThreads()
+                .list(
+                    part="snippet",
+                    videoId=v["videoId"],
+                    order="relevance",
+                    maxResults=100,
+                    textFormat="plainText",
+                )
+                .execute()
+            )
+        except HttpError as e:
+            status = getattr(getattr(e, "resp", None), "status", None)
+            if status in (403, 404):
+                log.info("Comments unavailable for %s (HTTP %s)", v["videoId"], status)
+                continue
+            log.warning("commentThreads error for %s: %s", v["videoId"], e)
+            continue
+        for item in resp.get("items", []):
+            top = (
+                item.get("snippet", {})
+                .get("topLevelComment", {})
+                .get("snippet", {})
+            )
+            if not top:
+                continue
+            cid = item.get("snippet", {}).get("topLevelComment", {}).get("id", "")
+            out.append(
+                {
+                    "commentId": cid,
+                    "text": (top.get("textDisplay") or "").strip(),
+                    "author": top.get("authorDisplayName", ""),
+                    "authorChannelId": (top.get("authorChannelId") or {}).get("value", ""),
+                    "likeCount": int(top.get("likeCount", 0)),
+                    "publishedAt": top.get("publishedAt", ""),
+                    "videoId": v["videoId"],
+                    "videoTitle": v["title"],
+                }
+            )
+    log.info("Fetched %d raw comments across %d videos", len(out), len(videos))
+    return out
+
+
+def _has_phrase(text_lower: str, phrases) -> bool:
+    return any(p in text_lower for p in phrases)
+
+
+def classify_comment(text: str) -> tuple[bool, int]:
+    """Return (is_positive, score). Score is positive-marker count minus penalties."""
+    if not text:
+        return False, 0
+    lower = text.lower()
+    words = set(WORD_RE.findall(lower))
+
+    neg_hits = len(words & NEGATIVE_WORDS)
+    if neg_hits:
+        return False, 0
+    if _has_phrase(lower, NEGATIVE_PHRASES):
+        return False, 0
+    if any(ch in text for ch in NEGATIVE_EMOJI):
+        return False, 0
+
+    pos_hits = len(words & POSITIVE_WORDS)
+    phrase_hits = sum(1 for p in POSITIVE_PHRASES if p in lower)
+    emoji_hits = sum(1 for ch in text if ch in POSITIVE_EMOJI)
+    score = pos_hits + phrase_hits + min(emoji_hits, 3)
+
+    if score <= 0:
+        return False, 0
+    # Reject likely sarcasm: starts with "не " before any positive marker
+    if lower.startswith("не "):
+        return False, 0
+    return True, score
+
+
+def pick_quotes(comments: list[dict], channel_id: str) -> list[dict]:
+    seen_authors: set[str] = set()
+    candidates: list[dict] = []
+    for c in comments:
+        text = c["text"]
+        if not text:
+            continue
+        if c.get("authorChannelId") == channel_id:
+            continue
+        if URL_RE.search(text):
+            continue
+        n = len(text)
+        if n < COMMENT_MIN_LEN or n > COMMENT_MAX_LEN:
+            continue
+        if c["likeCount"] < COMMENT_MIN_LIKES:
+            continue
+        ok, score = classify_comment(text)
+        if not ok:
+            continue
+        candidates.append({**c, "score": score})
+
+    candidates.sort(key=lambda c: (c["likeCount"], c["score"]), reverse=True)
+    picked: list[dict] = []
+    for c in candidates:
+        if c["author"] in seen_authors:
+            continue
+        seen_authors.add(c["author"])
+        picked.append(
+            {
+                "text": c["text"],
+                "author": c["author"],
+                "likeCount": c["likeCount"],
+                "publishedAt": c["publishedAt"],
+                "videoId": c["videoId"],
+                "videoTitle": c["videoTitle"],
+                "url": f"https://www.youtube.com/watch?v={c['videoId']}&lc={c['commentId']}",
+            }
+        )
+        if len(picked) >= QUOTES_LIMIT:
+            break
+    log.info("Picked %d positive quotes from %d candidates", len(picked), len(candidates))
+    return picked
+
+
+def build_payload(videos: list[dict], taken_at_utc: datetime, quotes: list[dict]) -> dict:
     total_videos = len(videos)
     total_views = sum(v["viewCount"] for v in videos)
     total_likes = sum(v["likeCount"] for v in videos)
@@ -281,6 +467,7 @@ def build_payload(videos: list[dict], taken_at_utc: datetime) -> dict:
             for v in top
         ],
         "videos": sorted(videos, key=lambda v: v["publishedAt"], reverse=True),
+        "quotes": quotes,
     }
 
 
@@ -332,14 +519,22 @@ def main() -> int:
     finally:
         conn.close()
 
-    payload = build_payload(videos, taken_at)
+    try:
+        raw_comments = fetch_comments(youtube, videos)
+        quotes = pick_quotes(raw_comments, CHANNEL_ID)
+    except Exception as e:
+        log.warning("Comment fetch failed (continuing without quotes): %s", e)
+        quotes = []
+
+    payload = build_payload(videos, taken_at, quotes)
     write_json_atomic(payload)
     log.info(
-        "Wrote %s — videos=%d views=%d ER=%.2f%%",
+        "Wrote %s — videos=%d views=%d ER=%.2f%% quotes=%d",
         JSON_PATH,
         payload["totals"]["videos"],
         payload["totals"]["views"],
         payload["totals"]["engagementRate"],
+        len(payload["quotes"]),
     )
     return 0
 
