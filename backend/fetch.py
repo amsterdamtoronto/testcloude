@@ -123,6 +123,26 @@ SPAM_PHRASES = (
     "бонус по промокоду", "по промокоду",
 )
 
+# Meta-commentary about the brand deal itself rather than genuine consumer
+# feedback. We never want these in either Kugoo or DNS quote block.
+META_PHRASES = (
+    "реклам",          # реклама, рекламу, рекламируешь, ...
+    "проплат",         # проплатили, проплачено, ...
+    "проспонсир",      # проспонсировали
+    "спонсор",         # спонсор, спонсорство, спонсирует
+    "интеграц",        # интеграция, интеграцию
+    "коллаб",          # коллаба, коллабы
+    "занесл",          # занесли, занесла
+    "сколько заплат",
+    "сколько отвал",
+    "сколько занесл",
+    "за рекламу",
+    "не бесплатно",
+    "купи рекламу",
+    "купили рекламу",
+    "купил рекламу",
+)
+
 REPEAT_CHAR_RE = re.compile(r"(.)\1{3,}", re.UNICODE)
 EMOJI_HINT_RE = re.compile(
     r"[\U0001F300-\U0001FAFF\U00002600-\U000027BF\U0001F000-\U0001F2FF]"
@@ -410,6 +430,8 @@ def classify_comment(
     if any(ch in text for ch in NEGATIVE_EMOJI):
         return False, 0
     if _has_phrase(lower, SPAM_PHRASES):
+        return False, 0
+    if _has_phrase(lower, META_PHRASES):
         return False, 0
     if NEG_BIGRAM_RE.search(lower):
         return False, 0
