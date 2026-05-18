@@ -1,0 +1,45 @@
+name: fetch
+
+on:
+  schedule:
+    - cron: "5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Fetch YouTube data
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python backend/fetch.py
+
+      - name: Commit and push data.json
+        run: |
+          if git diff --quiet -- frontend/data.json; then
+            echo "No changes in data.json — skipping commit."
+            exit 0
+          fi
+          git config user.email "fastmotion-bot@users.noreply.github.com"
+          git config user.name  "fastmotion-bot"
+          git add frontend/data.json
+          git commit -m "data: hourly snapshot $(date -u +%FT%TZ)"
+          git push origin HEAD:${{ github.ref_name }}
