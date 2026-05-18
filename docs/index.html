@@ -231,13 +231,18 @@
   </section>
 
   <section>
-    <h2>Что говорят зрители</h2>
-    <div class="quotes" id="quotes"></div>
+    <h2>Зрители говорят про Kugoo</h2>
+    <div class="quotes" id="quotes-kugoo"></div>
+  </section>
+
+  <section>
+    <h2>Зрители говорят про DNS</h2>
+    <div class="quotes" id="quotes-dns"></div>
   </section>
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.03</span>
+    <span>Источник: YouTube Data API v3 · v0.04</span>
   </footer>
 </div>
 
@@ -275,8 +280,8 @@
     `).join("");
   }
 
-  function renderQuotes(quotes) {
-    const el = $("quotes");
+  function renderQuotes(quotes, elId) {
+    const el = $(elId);
     if (!quotes || !quotes.length) {
       el.innerHTML = '<div class="empty">Положительных комментариев пока нет. Подождите следующего обновления.</div>';
       return;
@@ -326,13 +331,18 @@
     $("sub").textContent = `${data.channelHandle || ""} — ${t.videos || 0} роликов с меткой "${data.marker || "kugoo.ru"}"`;
     renderKpis(t);
     renderTop(data.top || []);
-    renderQuotes(data.quotes || []);
+    const q = data.quotes || {};
+    const kugooQuotes = Array.isArray(q) ? q : (q.kugoo || []);
+    const dnsQuotes = Array.isArray(q) ? [] : (q.dns || []);
+    renderQuotes(kugooQuotes, "quotes-kugoo");
+    renderQuotes(dnsQuotes, "quotes-dns");
     $("updated").textContent = "Последнее обновление: " + (data.updatedAtMsk || "—");
   } catch (e) {
     $("sub").textContent = "Не удалось загрузить data.json";
     $("kpis").innerHTML = `<div class="empty">Ошибка: ${escapeHtml(e.message)}</div>`;
     renderTop([]);
-    renderQuotes([]);
+    renderQuotes([], "quotes-kugoo");
+    renderQuotes([], "quotes-dns");
   }
 })();
 </script>

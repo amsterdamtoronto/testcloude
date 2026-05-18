@@ -99,8 +99,11 @@ NEGATIVE_PHRASES = (
 
 NEGATIVE_EMOJI = "💩👎🤮😡🤡🥱😒"
 
-BRAND_TOKENS = {
+KUGOO_TOKENS = {
     "kugoo", "куго", "кугу", "kuga", "куга",
+}
+DNS_TOKENS = {
+    "dns", "днс", "dns-shop", "днс-шоп",
 }
 PRODUCT_TOKENS = {
     "самокат", "самокаты", "самокатик", "самокате", "самокаты",
@@ -380,9 +383,12 @@ def _has_phrase(text_lower: str, phrases) -> bool:
     return any(p in text_lower for p in phrases)
 
 
-def classify_comment(text: str) -> tuple[bool, int]:
-    """Return (is_positive, score). Strict filter: must be brand/product-relevant,
-    free of spam/negation/sarcasm markers, and score above threshold."""
+def classify_comment(
+    text: str, brand_tokens: set[str], require_brand: bool = False
+) -> tuple[bool, int]:
+    """Return (is_positive, score). Strict filter: must be brand-relevant
+    (and optionally product-related), free of spam/negation/sarcasm markers,
+    and score above threshold."""
     if not text:
         return False, 0
     lower = text.lower()
@@ -412,18 +418,22 @@ def classify_comment(text: str) -> tuple[bool, int]:
     if len(text_without_emoji) < COMMENT_MIN_LEN:
         return False, 0
 
-    # Reject shouting (>50% uppercase letters among cyrillic/latin)
+    # Reject shouting (>50% uppercase letters)
     letters = [c for c in text if c.isalpha()]
     if len(letters) >= 12:
         upper_ratio = sum(1 for c in letters if c.isupper()) / len(letters)
         if upper_ratio > 0.5:
             return False, 0
 
-    # Require brand/product relevance
-    has_brand = any(b in lower for b in BRAND_TOKENS)
+    # Brand / product relevance
+    has_brand = any(b in lower for b in brand_tokens)
     has_product = bool(words & PRODUCT_TOKENS)
-    if not (has_brand or has_product):
-        return False, 0
+    if require_brand:
+        if not has_brand:
+            return False, 0
+    else:
+        if not (has_brand or has_product):
+            return False, 0
 
     # Score
     pos_hits = len(words & POSITIVE_WORDS)
@@ -453,7 +463,12 @@ def _recency_weight(video_published_iso: str, now_utc: datetime) -> float:
 
 
 def pick_quotes(
-    comments: list[dict], channel_id: str, now_utc: datetime
+    comments: list[dict],
+    channel_id: str,
+    now_utc: datetime,
+    brand_tokens: set[str],
+    require_brand: bool = False,
+    label: str = "",
 ) -> list[dict]:
     seen_authors: set[str] = set()
     candidates: list[dict] = []
@@ -470,7 +485,7 @@ def pick_quotes(
             continue
         if c["likeCount"] < COMMENT_MIN_LIKES:
             continue
-        ok, score = classify_comment(text)
+        ok, score = classify_comment(text, brand_tokens, require_brand=require_brand)
         if not ok:
             continue
         rec = _recency_weight(c.get("videoPublishedAt", ""), now_utc)
@@ -497,13 +512,18 @@ def pick_quotes(
         if len(picked) >= QUOTES_LIMIT:
             break
     log.info(
-        "Picked %d positive quotes from %d candidates (of %d raw)",
-        len(picked), len(candidates), len(comments),
+        "Picked %d %s quotes from %d candidates (of %d raw)",
+        len(picked), label or "brand", len(candidates), len(comments),
     )
     return picked
 
 
-def build_payload(videos: list[dict], taken_at_utc: datetime, quotes: list[dict]) -> dict:
+def build_payload(
+    videos: list[dict],
+    taken_at_utc: datetime,
+    kugoo_quotes: list[dict],
+    dns_quotes: list[dict],
+) -> dict:
     total_videos = len(videos)
     total_views = sum(v["viewCount"] for v in videos)
     total_likes = sum(v["likeCount"] for v in videos)
@@ -556,7 +576,10 @@ def build_payload(videos: list[dict], taken_at_utc: datetime, quotes: list[dict]
             for v in top
         ],
         "videos": sorted(videos, key=lambda v: v["publishedAt"], reverse=True),
-        "quotes": quotes,
+        "quotes": {
+            "kugoo": kugoo_quotes,
+            "dns": dns_quotes,
+        },
     }
 
 
@@ -610,20 +633,28 @@ def main() -> int:
 
     try:
         raw_comments = fetch_comments(youtube, videos)
-        quotes = pick_quotes(raw_comments, CHANNEL_ID, taken_at)
+        kugoo_quotes = pick_quotes(
+            raw_comments, CHANNEL_ID, taken_at, KUGOO_TOKENS,
+            require_brand=False, label="kugoo",
+        )
+        dns_quotes = pick_quotes(
+            raw_comments, CHANNEL_ID, taken_at, DNS_TOKENS,
+            require_brand=True, label="dns",
+        )
     except Exception as e:
         log.warning("Comment fetch failed (continuing without quotes): %s", e)
-        quotes = []
+        kugoo_quotes, dns_quotes = [], []
 
-    payload = build_payload(videos, taken_at, quotes)
+    payload = build_payload(videos, taken_at, kugoo_quotes, dns_quotes)
     write_json_atomic(payload)
     log.info(
-        "Wrote %s — videos=%d views=%d ER=%.2f%% quotes=%d",
+        "Wrote %s — videos=%d views=%d ER=%.2f%% kugoo=%d dns=%d",
         JSON_PATH,
         payload["totals"]["videos"],
         payload["totals"]["views"],
         payload["totals"]["engagementRate"],
-        len(payload["quotes"]),
+        len(payload["quotes"]["kugoo"]),
+        len(payload["quotes"]["dns"]),
     )
     return 0
 
