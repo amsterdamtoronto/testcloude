@@ -138,11 +138,17 @@ NEG_BIGRAM_RE = re.compile(
 
 COMMENT_MIN_LEN = 25
 COMMENT_MAX_LEN = 240
-COMMENT_MIN_LIKES = 3
-COMMENT_MIN_SCORE = 2
 COMMENT_MAX_EMOJI = 5
 QUOTES_LIMIT = 8
 RECENCY_HALFLIFE_DAYS = 90
+
+# Per-brand thresholds. DNS is rarer in this collab's comment pool so we
+# accept lower-liked / lower-scored quotes; the require_brand filter still
+# keeps quality up.
+KUGOO_MIN_LIKES = 3
+KUGOO_MIN_SCORE = 2
+DNS_MIN_LIKES = 1
+DNS_MIN_SCORE = 1
 
 
 def setup_logging() -> logging.Logger:
@@ -384,7 +390,9 @@ def _has_phrase(text_lower: str, phrases) -> bool:
 
 
 def classify_comment(
-    text: str, brand_tokens: set[str], require_brand: bool = False
+    text: str, brand_tokens: set[str],
+    require_brand: bool = False,
+    min_score: int = 2,
 ) -> tuple[bool, int]:
     """Return (is_positive, score). Strict filter: must be brand-relevant
     (and optionally product-related), free of spam/negation/sarcasm markers,
@@ -442,7 +450,7 @@ def classify_comment(
     score = pos_hits + phrase_hits + min(pos_emoji_hits, 2)
     if has_brand:
         score += 1
-    if score < COMMENT_MIN_SCORE:
+    if score < min_score:
         return False, 0
     return True, score
 
@@ -469,29 +477,40 @@ def pick_quotes(
     brand_tokens: set[str],
     require_brand: bool = False,
     label: str = "",
+    min_likes: int = 3,
+    min_score: int = 2,
 ) -> list[dict]:
     seen_authors: set[str] = set()
     candidates: list[dict] = []
+    raw_brand_mentions = 0
     for c in comments:
         text = c["text"]
         if not text:
             continue
         if c.get("authorChannelId") == channel_id:
             continue
+        if any(b in text.lower() for b in brand_tokens):
+            raw_brand_mentions += 1
         if URL_RE.search(text):
             continue
         n = len(text)
         if n < COMMENT_MIN_LEN or n > COMMENT_MAX_LEN:
             continue
-        if c["likeCount"] < COMMENT_MIN_LIKES:
+        if c["likeCount"] < min_likes:
             continue
-        ok, score = classify_comment(text, brand_tokens, require_brand=require_brand)
+        ok, score = classify_comment(
+            text, brand_tokens, require_brand=require_brand, min_score=min_score
+        )
         if not ok:
             continue
         rec = _recency_weight(c.get("videoPublishedAt", ""), now_utc)
         effective = c["likeCount"] * rec + score * 0.5
         candidates.append({**c, "score": score, "effective": effective})
 
+    log.info(
+        "  %s: %d raw mentions found in %d total comments",
+        label or "brand", raw_brand_mentions, len(comments),
+    )
     candidates.sort(key=lambda c: c["effective"], reverse=True)
     picked: list[dict] = []
     for c in candidates:
@@ -636,10 +655,12 @@ def main() -> int:
         kugoo_quotes = pick_quotes(
             raw_comments, CHANNEL_ID, taken_at, KUGOO_TOKENS,
             require_brand=False, label="kugoo",
+            min_likes=KUGOO_MIN_LIKES, min_score=KUGOO_MIN_SCORE,
         )
         dns_quotes = pick_quotes(
             raw_comments, CHANNEL_ID, taken_at, DNS_TOKENS,
             require_brand=True, label="dns",
+            min_likes=DNS_MIN_LIKES, min_score=DNS_MIN_SCORE,
         )
     except Exception as e:
         log.warning("Comment fetch failed (continuing without quotes): %s", e)

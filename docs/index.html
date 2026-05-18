@@ -242,7 +242,7 @@
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.04</span>
+    <span>Источник: YouTube Data API v3 · v0.05</span>
   </footer>
 </div>
 
@@ -280,10 +280,10 @@
     `).join("");
   }
 
-  function renderQuotes(quotes, elId) {
+  function renderQuotes(quotes, elId, emptyText) {
     const el = $(elId);
     if (!quotes || !quotes.length) {
-      el.innerHTML = '<div class="empty">Положительных комментариев пока нет. Подождите следующего обновления.</div>';
+      el.innerHTML = `<div class="empty">${escapeHtml(emptyText)}</div>`;
       return;
     }
     el.innerHTML = quotes.map((q) => `
@@ -334,15 +334,15 @@
     const q = data.quotes || {};
     const kugooQuotes = Array.isArray(q) ? q : (q.kugoo || []);
     const dnsQuotes = Array.isArray(q) ? [] : (q.dns || []);
-    renderQuotes(kugooQuotes, "quotes-kugoo");
-    renderQuotes(dnsQuotes, "quotes-dns");
+    renderQuotes(kugooQuotes, "quotes-kugoo", "Положительных комментариев пока нет.");
+    renderQuotes(dnsQuotes, "quotes-dns", "В комментариях к этим роликам пока нет положительных упоминаний DNS.");
     $("updated").textContent = "Последнее обновление: " + (data.updatedAtMsk || "—");
   } catch (e) {
     $("sub").textContent = "Не удалось загрузить data.json";
     $("kpis").innerHTML = `<div class="empty">Ошибка: ${escapeHtml(e.message)}</div>`;
     renderTop([]);
-    renderQuotes([], "quotes-kugoo");
-    renderQuotes([], "quotes-dns");
+    renderQuotes([], "quotes-kugoo", "Ошибка загрузки.");
+    renderQuotes([], "quotes-dns", "Ошибка загрузки.");
   }
 })();
 </script>
