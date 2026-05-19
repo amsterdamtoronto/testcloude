@@ -32,14 +32,14 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: python backend/fetch.py
 
-      - name: Commit and push data.json
+      - name: Commit and push data.json + data.db
         run: |
-          if git diff --quiet -- docs/data.json; then
-            echo "No changes in data.json — skipping commit."
+          git add docs/data.json backend/data.db
+          if git diff --cached --quiet; then
+            echo "No changes — skipping commit."
             exit 0
           fi
           git config user.email "fastmotion-bot@users.noreply.github.com"
           git config user.name  "fastmotion-bot"
-          git add docs/data.json
           git commit -m "data: hourly snapshot $(date -u +%FT%TZ)"
           git push origin HEAD:${{ github.ref_name }}

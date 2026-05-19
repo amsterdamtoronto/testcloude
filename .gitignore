@@ -6,6 +6,5 @@ venv/
 env/
 .env
 backend/logs/*.log
-backend/data.db
 backend/data.db-journal
 .DS_Store

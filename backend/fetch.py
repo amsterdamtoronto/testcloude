@@ -173,6 +173,7 @@ DNS_MIN_SCORE = 1
 HISTORY_DAYS = 30
 HISTORY_POINTS = 100
 TOP_ER_LIMIT = 3
+SNAPSHOT_RETENTION_DAYS = 90
 
 
 def setup_logging() -> logging.Logger:
@@ -802,6 +803,12 @@ def main() -> int:
     conn = init_db()
     try:
         save_snapshot(conn, taken_at.isoformat(), videos)
+        cutoff = (taken_at - timedelta(days=SNAPSHOT_RETENTION_DAYS)).isoformat()
+        cur = conn.execute("DELETE FROM snapshots WHERE taken_at < ?", (cutoff,))
+        if cur.rowcount:
+            log.info("Pruned %d snapshots older than %d days",
+                     cur.rowcount, SNAPSHOT_RETENTION_DAYS)
+        conn.commit()
         current_totals = {
             "views":    sum(v["viewCount"] for v in videos),
             "likes":    sum(v["likeCount"] for v in videos),
