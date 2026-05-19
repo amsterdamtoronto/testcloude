@@ -751,9 +751,18 @@ def fetch_telegram_subscribers(channel: str) -> tuple[int | None, str]:
                 n = _parse_subscriber_count(mnum.group(1))
                 if n is not None and n > 0:
                     return n, f"ok via fallback near 'subscriber' on {url}"
-        log.warning("Could not parse subscribers from %s (HTTP %s, %d bytes)",
-                    url, code, len(html))
-    return None, "parse failed on both t.me/s/<ch> and t.me/<ch>"
+        title_m = re.search(r"<title[^>]*>([^<]+)</title>", html, re.IGNORECASE)
+        title = (title_m.group(1).strip() if title_m else "")[:80]
+        has_subscriber_word = "subscriber" in html.lower()
+        has_join_btn = "join channel" in html.lower() or "tgme_action_button" in html.lower()
+        last_diag = (
+            f"parse fail | title={title!r} | "
+            f"bytes={len(html)} | has_subscriber_word={has_subscriber_word} | "
+            f"has_join_btn={has_join_btn}"
+        )
+        log.warning("Could not parse subscribers from %s (HTTP %s, %d bytes, title=%r)",
+                    url, code, len(html), title)
+    return None, locals().get("last_diag", "parse failed")
 
 
 def save_tg_snapshot(conn: sqlite3.Connection, taken_at: str, channel: str, subs: int) -> None:
