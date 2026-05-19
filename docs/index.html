@@ -170,6 +170,19 @@
     letter-spacing: 0.04em;
     background: var(--surface-2);
   }
+  .videos-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+  }
+  .videos-table th.sortable:hover { color: var(--text); }
+  .videos-table th .arrow {
+    margin-left: 4px;
+    opacity: 0.4;
+    font-size: 9px;
+    display: inline-block;
+  }
+  .videos-table th.active { color: var(--text); }
+  .videos-table th.active .arrow { opacity: 1; }
   .videos-table tr:last-child td { border-bottom: none; }
   .videos-table td.num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
   .videos-table td.idx { color: var(--muted); text-align: right; width: 32px; }
@@ -375,7 +388,7 @@
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.09</span>
+    <span>Источник: YouTube Data API v3 · v0.10</span>
   </footer>
 </div>
 
@@ -535,16 +548,54 @@
     `).join("");
   }
 
+  const SORT_COLS = [
+    { key: "publishedAt",     label: "Дата",     type: "date",   defaultDir: -1, cls: "" },
+    { key: "title",           label: "Название", type: "string", defaultDir:  1, cls: "" },
+    { key: "durationSeconds", label: "Длит.",    type: "num",    defaultDir: -1, cls: "hide-sm" },
+    { key: "viewCount",       label: "Просмотры", type: "num",   defaultDir: -1, cls: "num" },
+    { key: "likeCount",       label: "Лайки",    type: "num",    defaultDir: -1, cls: "num hide-sm" },
+    { key: "commentCount",    label: "Комменты", type: "num",    defaultDir: -1, cls: "num hide-sm" },
+    { key: "engagementRate",  label: "ER",       type: "num",    defaultDir: -1, cls: "num" },
+  ];
+  const sortState = { key: "publishedAt", dir: -1 };
+  let allVideosCache = [];
+
+  function compareBy(key, type, dir) {
+    return (a, b) => {
+      let av = a[key], bv = b[key];
+      if (type === "num") {
+        av = Number(av) || 0; bv = Number(bv) || 0;
+        return (av - bv) * dir;
+      }
+      av = String(av || ""); bv = String(bv || "");
+      if (type === "date") {
+        return (Date.parse(av) - Date.parse(bv)) * dir;
+      }
+      return av.localeCompare(bv, "ru") * dir;
+    };
+  }
+
   function renderAllVideos(videos) {
-    const el = $("all-videos");
     const cnt = $("all-videos-count");
-    if (!videos || !videos.length) {
+    if (videos) allVideosCache = videos;
+    const list = allVideosCache;
+    if (!list.length) {
       cnt.textContent = "";
-      el.innerHTML = '<div class="empty">Нет данных.</div>';
+      $("all-videos").innerHTML = '<div class="empty">Нет данных.</div>';
       return;
     }
-    cnt.textContent = "(" + videos.length + ")";
-    const rows = videos.map((v, i) => {
+    cnt.textContent = "(" + list.length + ")";
+    const col = SORT_COLS.find(c => c.key === sortState.key);
+    const sorted = [...list].sort(compareBy(col.key, col.type, sortState.dir));
+
+    const arrow = (k) =>
+      k === sortState.key ? `<span class="arrow">${sortState.dir === 1 ? "▲" : "▼"}</span>` : "";
+    const headCells = `<th class="idx">#</th>` + SORT_COLS.map(c => {
+      const active = c.key === sortState.key ? " active" : "";
+      return `<th class="sortable ${c.cls}${active}" data-key="${c.key}">${escapeHtml(c.label)}${arrow(c.key)}</th>`;
+    }).join("");
+
+    const rows = sorted.map((v, i) => {
       const er = (v.engagementRate ?? ((v.viewCount > 0
         ? (v.likeCount + v.commentCount) / v.viewCount * 100 : 0))).toFixed(2);
       return `
@@ -562,23 +613,28 @@
         </tr>
       `;
     }).join("");
-    el.innerHTML = `
+
+    $("all-videos").innerHTML = `
       <table class="videos-table">
-        <thead>
-          <tr>
-            <th class="idx">#</th>
-            <th>Дата</th>
-            <th>Название</th>
-            <th class="hide-sm">Длит.</th>
-            <th class="num">Просмотры</th>
-            <th class="num hide-sm">Лайки</th>
-            <th class="num hide-sm">Комменты</th>
-            <th class="num">ER</th>
-          </tr>
-        </thead>
+        <thead><tr>${headCells}</tr></thead>
         <tbody>${rows}</tbody>
       </table>
     `;
+
+    $("all-videos").querySelectorAll("th.sortable").forEach(th => {
+      th.addEventListener("click", () => {
+        const key = th.getAttribute("data-key");
+        const col = SORT_COLS.find(c => c.key === key);
+        if (!col) return;
+        if (sortState.key === key) {
+          sortState.dir = -sortState.dir;
+        } else {
+          sortState.key = key;
+          sortState.dir = col.defaultDir;
+        }
+        renderAllVideos();
+      });
+    });
   }
 
   function renderTop(top, elId, mode) {
