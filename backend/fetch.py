@@ -588,22 +588,19 @@ def pick_quotes(
     return picked
 
 
-def _aggregate_snapshots(conn: sqlite3.Connection, since_iso: str) -> list[dict]:
-    """Sum per-snapshot totals across long-form videos only.
-
-    Filtering by duration_seconds > SHORTS_MAX_DURATION makes history and
-    delta calculations consistent even for snapshots that were written
-    back when our Shorts threshold was 60 seconds and 60-180s clips were
-    mistakenly classified as long-form.
-    """
+def _aggregate_snapshots(
+    conn: sqlite3.Connection, since_iso: str, kind: str = "long"
+) -> list[dict]:
+    """Sum per-snapshot totals for one kind ("long" or "short")."""
+    op = ">" if kind == "long" else "<="
     cur = conn.execute(
-        """
+        f"""
         SELECT taken_at,
                SUM(view_count)    AS views,
                SUM(like_count)    AS likes,
                SUM(comment_count) AS comments
         FROM snapshots
-        WHERE taken_at >= ? AND duration_seconds > ?
+        WHERE taken_at >= ? AND duration_seconds {op} ?
         GROUP BY taken_at
         ORDER BY taken_at
         """,
@@ -634,9 +631,9 @@ def _parse_iso(value: str) -> datetime | None:
         return None
 
 
-def compute_history(conn: sqlite3.Connection, now_utc: datetime) -> dict:
+def compute_history(conn: sqlite3.Connection, now_utc: datetime, kind: str = "long") -> dict:
     since = (now_utc - timedelta(days=HISTORY_DAYS)).isoformat()
-    points = _aggregate_snapshots(conn, since)
+    points = _aggregate_snapshots(conn, since, kind=kind)
     return {
         "rangeDays": HISTORY_DAYS,
         "points": _resample(points, HISTORY_POINTS),
@@ -645,19 +642,20 @@ def compute_history(conn: sqlite3.Connection, now_utc: datetime) -> dict:
 
 
 def compute_deltas(
-    conn: sqlite3.Connection, current: dict, now_utc: datetime
+    conn: sqlite3.Connection, current: dict, now_utc: datetime, kind: str = "long"
 ) -> dict:
-    """Compare current totals against snapshots ~24h and ~7d ago."""
+    """Compare current totals against snapshots ~24h and ~7d ago for one kind."""
+    op = ">" if kind == "long" else "<="
     def find_at(hours: int) -> dict | None:
         target = (now_utc - timedelta(hours=hours)).isoformat()
         cur = conn.execute(
-            """
+            f"""
             SELECT taken_at,
                    SUM(view_count)    AS views,
                    SUM(like_count)    AS likes,
                    SUM(comment_count) AS comments
             FROM snapshots
-            WHERE taken_at <= ? AND duration_seconds > ?
+            WHERE taken_at <= ? AND duration_seconds {op} ?
             GROUP BY taken_at
             ORDER BY taken_at DESC
             LIMIT 1
@@ -842,6 +840,7 @@ def build_payload(
     deltas: dict,
     telegram: dict | None = None,
     shorts: list[dict] | None = None,
+    shorts_deltas: dict | None = None,
 ) -> dict:
     total_videos = len(videos)
     total_views = sum(v["viewCount"] for v in videos)
@@ -928,11 +927,11 @@ def build_payload(
             "dns": dns_quotes,
         },
         "telegram": telegram or {},
-        "shorts": _shorts_block(shorts or []),
+        "shorts": _shorts_block(shorts or [], shorts_deltas or {}),
     }
 
 
-def _shorts_block(shorts: list[dict]) -> dict:
+def _shorts_block(shorts: list[dict], shorts_deltas: dict) -> dict:
     for v in shorts:
         v["engagementRate"] = round(
             (v["likeCount"] + v["commentCount"]) / v["viewCount"] * 100, 2
@@ -941,6 +940,28 @@ def _shorts_block(shorts: list[dict]) -> dict:
     total_likes = sum(v["likeCount"] for v in shorts)
     total_comments = sum(v["commentCount"] for v in shorts)
     er = (total_likes + total_comments) / total_views * 100 if total_views else 0.0
+
+    def card(v: dict) -> dict:
+        return {
+            "videoId": v["videoId"],
+            "title": v["title"],
+            "publishedAt": v["publishedAt"],
+            "viewCount": v["viewCount"],
+            "viewCountCompact": fmt_compact(v["viewCount"]),
+            "engagementRate": v["engagementRate"],
+            "thumbnail": v["thumbnail"],
+            "url": f"https://www.youtube.com/shorts/{v['videoId']}",
+        }
+
+    top_views = sorted(shorts, key=lambda x: x["viewCount"], reverse=True)[:3]
+    top_er = sorted(shorts, key=lambda x: x["engagementRate"], reverse=True)[:3]
+
+    def fmt_delta(d: dict | None, key: str) -> dict | None:
+        if not d:
+            return None
+        val = d[key]
+        return {"abs": val, "signed": fmt_signed(val), "since": d["since"]}
+
     return {
         "since": SHORTS_SINCE,
         "totals": {
@@ -953,6 +974,20 @@ def _shorts_block(shorts: list[dict]) -> dict:
             "commentsCompact": fmt_compact(total_comments),
             "engagementRate": round(er, 2),
         },
+        "deltas": {
+            "h24": {
+                "views":    fmt_delta(shorts_deltas.get("h24"), "views"),
+                "likes":    fmt_delta(shorts_deltas.get("h24"), "likes"),
+                "comments": fmt_delta(shorts_deltas.get("h24"), "comments"),
+            },
+            "d7": {
+                "views":    fmt_delta(shorts_deltas.get("d7"), "views"),
+                "likes":    fmt_delta(shorts_deltas.get("d7"), "likes"),
+                "comments": fmt_delta(shorts_deltas.get("d7"), "comments"),
+            },
+        },
+        "top": [card(v) for v in top_views],
+        "topByEr": [card(v) for v in top_er],
         "videos": [
             {
                 "videoId": v["videoId"],
@@ -1028,7 +1063,7 @@ def main() -> int:
 
     conn = init_db()
     try:
-        save_snapshot(conn, taken_at.isoformat(), videos)
+        save_snapshot(conn, taken_at.isoformat(), videos + shorts)
         cutoff = (taken_at - timedelta(days=SNAPSHOT_RETENTION_DAYS)).isoformat()
         cur = conn.execute("DELETE FROM snapshots WHERE taken_at < ?", (cutoff,))
         if cur.rowcount:
@@ -1040,13 +1075,22 @@ def main() -> int:
             "likes":    sum(v["likeCount"] for v in videos),
             "comments": sum(v["commentCount"] for v in videos),
         }
-        history = compute_history(conn, taken_at)
-        deltas = compute_deltas(conn, current_totals, taken_at)
+        history = compute_history(conn, taken_at, kind="long")
+        deltas = compute_deltas(conn, current_totals, taken_at, kind="long")
+        shorts_current_totals = {
+            "views":    sum(v["viewCount"] for v in shorts),
+            "likes":    sum(v["likeCount"] for v in shorts),
+            "comments": sum(v["commentCount"] for v in shorts),
+        }
+        shorts_deltas = compute_deltas(conn, shorts_current_totals, taken_at, kind="short")
         log.info(
-            "History: %d points (over %d days); deltas: h24=%s d7=%s",
+            "History: %d points (over %d days); long deltas: h24=%s d7=%s; "
+            "shorts deltas: h24=%s d7=%s",
             len(history["points"]), history["rangeDays"],
             "yes" if deltas.get("h24") else "no",
             "yes" if deltas.get("d7") else "no",
+            "yes" if shorts_deltas.get("h24") else "no",
+            "yes" if shorts_deltas.get("d7") else "no",
         )
 
         telegram_payload: dict = {
@@ -1098,7 +1142,7 @@ def main() -> int:
 
     payload = build_payload(
         videos, taken_at, kugoo_quotes, dns_quotes, history, deltas,
-        telegram=telegram_payload, shorts=shorts,
+        telegram=telegram_payload, shorts=shorts, shorts_deltas=shorts_deltas,
     )
     write_json_atomic(payload)
     log.info(
