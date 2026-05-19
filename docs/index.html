@@ -297,7 +297,7 @@
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.07</span>
+    <span>Источник: YouTube Data API v3 · v0.08</span>
   </footer>
 </div>
 
@@ -319,31 +319,32 @@
   }
 
   function deltaText(d) {
-    if (!d || d.signed == null) return null;
+    if (!d || d.signed == null) return "—";
     return d.signed;
   }
 
   function renderKpis(t, deltas) {
     const d24 = (deltas && deltas.h24) || {};
     const d7  = (deltas && deltas.d7)  || {};
+    const hasDeltas = !!deltas;
     const items = [
       { label: "Роликов", value: t.videos ?? 0 },
       { label: "Просмотров", value: t.viewsCompact ?? "0",
-        d24: deltaText(d24.views), d7: deltaText(d7.views) },
+        showDelta: hasDeltas, d24: deltaText(d24.views), d7: deltaText(d7.views) },
       { label: "Средние просмотры", value: t.avgViewsCompact ?? "0" },
       { label: "Engagement Rate", value: (t.engagementRate ?? 0).toFixed(2) + "%" },
       { label: "Лайков", value: t.likesCompact ?? "0",
-        d24: deltaText(d24.likes), d7: deltaText(d7.likes) },
+        showDelta: hasDeltas, d24: deltaText(d24.likes), d7: deltaText(d7.likes) },
       { label: "Комментариев", value: t.commentsCompact ?? "0",
-        d24: deltaText(d24.comments), d7: deltaText(d7.comments) },
+        showDelta: hasDeltas, d24: deltaText(d24.comments), d7: deltaText(d7.comments) },
     ];
     $("kpis").innerHTML = items.map((i) => {
       let delta = "";
-      if (i.d24 != null || i.d7 != null) {
-        const parts = [];
-        if (i.d24 != null) parts.push(`<span class="kpi-delta-row"><b>${escapeHtml(i.d24)}</b> за 24ч</span>`);
-        if (i.d7  != null) parts.push(`<span class="kpi-delta-row"><b>${escapeHtml(i.d7)}</b> за 7д</span>`);
-        delta = `<div class="kpi-delta">${parts.join("")}</div>`;
+      if (i.showDelta) {
+        delta = `<div class="kpi-delta">
+          <span class="kpi-delta-row"><b>${escapeHtml(i.d24)}</b> за 24ч</span>
+          <span class="kpi-delta-row"><b>${escapeHtml(i.d7)}</b> за 7д</span>
+        </div>`;
       }
       return `
         <div class="kpi">
