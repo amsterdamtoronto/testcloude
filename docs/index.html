@@ -100,6 +100,20 @@
     border-bottom-color: var(--text);
     font-weight: 500;
   }
+  .tabs button[data-view="pipeline"]::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    margin-right: 6px;
+    vertical-align: 1px;
+  }
+  .tabs button[data-view="pipeline"].active {
+    border-bottom-color: #10b981;
+    color: #10b981;
+  }
   .tab-stats, .tab-pipeline, .tab-telegram, .tab-shorts { display: none; }
   body[data-view="stats"] .tab-stats { display: block; }
   body[data-view="pipeline"] .tab-pipeline { display: block; }
@@ -515,7 +529,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.25</span></h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.26</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
