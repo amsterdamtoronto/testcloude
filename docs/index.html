@@ -68,50 +68,58 @@
   }
   body.view-pipeline .tab-stats { display: none; }
   body:not(.view-pipeline) .tab-pipeline { display: none; }
-  .pipeline-board {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 8px;
+  .pipeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
-  .pipeline-col {
+  .pipeline-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 16px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 12px;
-    min-height: 80px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    padding: 12px 16px;
   }
-  .pipeline-col-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+  .pipeline-row .title {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+    margin: 0;
+  }
+  .pipeline-badge {
     font-size: 11px;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--muted);
-    font-weight: 500;
-  }
-  .pipeline-col-head .col-count {
-    font-variant-numeric: tabular-nums;
-    color: var(--muted);
-  }
-  .pipeline-card {
-    background: var(--bg);
+    padding: 4px 10px;
+    border-radius: 999px;
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 10px 12px;
-    font-size: 13px;
-    line-height: 1.35;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
     color: var(--text);
+    background: var(--surface-2);
   }
-  .pipeline-empty-col {
-    font-size: 11px;
+  /* progression shading: idea = lightest, report = darkest */
+  .pipeline-badge[data-s="0"] { background: var(--bg); color: var(--muted); }
+  .pipeline-badge[data-s="1"] { background: var(--surface-2); color: var(--muted); }
+  .pipeline-badge[data-s="2"] { background: var(--surface-2); color: var(--text); }
+  .pipeline-badge[data-s="3"] { background: var(--border); color: var(--text); }
+  @media (prefers-color-scheme: light) {
+    .pipeline-badge[data-s="4"] { background: #333; color: #fff; border-color: #333; }
+    .pipeline-badge[data-s="5"] { background: #000; color: #fff; border-color: #000; }
+  }
+  @media (prefers-color-scheme: dark) {
+    .pipeline-badge[data-s="4"] { background: #d4d4d8; color: #0a0a0a; border-color: #d4d4d8; }
+    .pipeline-badge[data-s="5"] { background: #fff; color: #0a0a0a; border-color: #fff; }
+  }
+  .pipeline-empty-state {
     color: var(--muted);
-    font-style: italic;
+    font-size: 14px;
+    padding: 32px 0;
     text-align: center;
-    padding: 8px 0;
   }
   .pipeline-edit-hint {
     margin-top: 24px;
@@ -128,14 +136,9 @@
     border-radius: 3px;
     font-size: 11px;
   }
-  @media (max-width: 1000px) {
-    .pipeline-board { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  }
-  @media (max-width: 600px) {
-    .pipeline-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  @media (max-width: 420px) {
-    .pipeline-board { grid-template-columns: 1fr; }
+  @media (max-width: 560px) {
+    .pipeline-row { grid-template-columns: 1fr; gap: 8px; padding: 10px 12px; }
+    .pipeline-badge { justify-self: start; }
   }
   h1 {
     font-size: 22px;
@@ -436,8 +439,8 @@
   </header>
 
   <nav class="tabs">
-    <button id="tab-stats" class="active" data-view="stats">Статистика</button>
-    <button id="tab-pipeline" data-view="pipeline">Ролики в работе</button>
+    <button id="tab-stats" class="active" data-view="stats">Статистика вертикальные</button>
+    <button id="tab-pipeline" data-view="pipeline">В производстве</button>
   </nav>
 
   <div class="tab-stats">
@@ -491,8 +494,8 @@
 
   <div class="tab-pipeline">
     <section>
-      <h2>Ролики в работе</h2>
-      <div class="pipeline-board" id="pipeline-board"></div>
+      <h2>В производстве</h2>
+      <div class="pipeline-list" id="pipeline-board"></div>
       <div class="pipeline-edit-hint">
         Список ведётся вручную в файле <code>docs/pipeline.json</code>. Чтобы добавить новый ролик — отредактируй этот файл и закоммить. Статусы: Идея → Сценарий → Подготовка → Съёмка → Публикация → Отчёт.
       </div>
@@ -501,7 +504,7 @@
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.11</span>
+    <span>Источник: YouTube Data API v3 · v0.12</span>
   </footer>
 </div>
 
@@ -693,23 +696,25 @@
   function renderPipeline(items) {
     const el = $("pipeline-board");
     const list = Array.isArray(items) ? items : [];
-    const byStatus = Object.fromEntries(PIPELINE_STATUSES.map(s => [s, []]));
-    for (const it of list) {
-      const s = (it.status || "").trim();
-      if (s in byStatus) byStatus[s].push(it);
+    if (!list.length) {
+      el.innerHTML = '<div class="pipeline-empty-state">Пока ничего в производстве.</div>';
+      return;
     }
-    el.innerHTML = PIPELINE_STATUSES.map(status => {
-      const cards = byStatus[status];
-      const body = cards.length
-        ? cards.map(c => `<div class="pipeline-card">${escapeHtml(c.title || "—")}</div>`).join("")
-        : `<div class="pipeline-empty-col">пусто</div>`;
+    // Sort by pipeline order: idea first, report last; unknown statuses at the end.
+    const order = (s) => {
+      const i = PIPELINE_STATUSES.indexOf((s || "").trim());
+      return i === -1 ? 99 : i;
+    };
+    const sorted = [...list].sort((a, b) => order(a.status) - order(b.status));
+    el.innerHTML = sorted.map(it => {
+      const s = (it.status || "").trim();
+      const idx = PIPELINE_STATUSES.indexOf(s);
+      const dataS = idx === -1 ? "0" : String(idx);
+      const statusLabel = s || "—";
       return `
-        <div class="pipeline-col">
-          <div class="pipeline-col-head">
-            <span>${escapeHtml(status)}</span>
-            <span class="col-count">${cards.length}</span>
-          </div>
-          ${body}
+        <div class="pipeline-row">
+          <div class="title">${escapeHtml(it.title || "—")}</div>
+          <span class="pipeline-badge" data-s="${dataS}">${escapeHtml(statusLabel)}</span>
         </div>
       `;
     }).join("");
