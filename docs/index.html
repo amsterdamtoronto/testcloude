@@ -466,7 +466,6 @@
   <header>
     <div>
       <h1>Kugoo × FastMotion</h1>
-      <div class="sub" id="sub">Дашборд коллабы — загрузка…</div>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -545,7 +544,7 @@
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.14</span>
+    <span>Источник: YouTube Data API v3 · v0.15</span>
   </footer>
 </div>
 
@@ -889,7 +888,6 @@
     if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
     const t = data.totals || {};
-    $("sub").textContent = `${data.channelHandle || ""} — ${t.videos || 0} роликов с меткой "${data.marker || "kugoo.ru"}"`;
     renderKpis(t, data.deltas);
     renderChart(data.history, data.videoDrops);
     renderTop(data.top || [], "top", "views");
@@ -902,7 +900,6 @@
     renderAllVideos(data.videos || []);
     $("updated").textContent = "Последнее обновление: " + (data.updatedAtMsk || "—");
   } catch (e) {
-    $("sub").textContent = "Не удалось загрузить data.json";
     $("kpis").innerHTML = `<div class="empty">Ошибка: ${escapeHtml(e.message)}</div>`;
     renderTop([], "top", "views");
     renderTop([], "top-er", "er");
