@@ -715,30 +715,45 @@ def _parse_subscriber_count(raw: str) -> int | None:
     return int(digits) if digits else None
 
 
-def fetch_telegram_subscribers(channel: str) -> int | None:
-    url = f"https://t.me/s/{channel}"
-    req = urllib.request.Request(url, headers={
-        "User-Agent": TELEGRAM_UA,
-        "Accept-Language": "en-US,en;q=0.9",
-    })
-    try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            html = resp.read().decode("utf-8", errors="ignore")
-    except urllib.error.HTTPError as e:
-        log.warning("Telegram HTTP %s for %s", e.code, channel)
-        return None
-    except Exception as e:
-        log.warning("Telegram fetch error: %s", e)
-        return None
+def fetch_telegram_subscribers(channel: str) -> tuple[int | None, str]:
+    """Returns (count_or_none, diagnostic_string).
+    The diagnostic is short and safe to surface in data.json."""
+    for url in (f"https://t.me/s/{channel}", f"https://t.me/{channel}"):
+        req = urllib.request.Request(url, headers={
+            "User-Agent": TELEGRAM_UA,
+            "Accept-Language": "en-US,en;q=0.9",
+        })
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                code = resp.status
+                html = resp.read().decode("utf-8", errors="ignore")
+        except urllib.error.HTTPError as e:
+            log.warning("Telegram HTTP %s for %s", e.code, url)
+            if e.code in (429, 503):
+                return None, f"HTTP {e.code} (rate-limited)"
+            continue
+        except Exception as e:
+            log.warning("Telegram fetch error %s: %s", url, e)
+            return None, f"network: {type(e).__name__}"
 
-    for p in TG_PATTERNS:
-        m = p.search(html)
-        if m:
-            n = _parse_subscriber_count(m.group(1))
-            if n is not None and n > 0:
-                return n
-    log.warning("Could not parse subscribers from t.me/s/%s page", channel)
-    return None
+        for p in TG_PATTERNS:
+            m = p.search(html)
+            if m:
+                n = _parse_subscriber_count(m.group(1))
+                if n is not None and n > 0:
+                    return n, f"ok via {url}"
+        # As a last resort, scan around any "subscriber" occurrence.
+        idx = html.lower().find("subscriber")
+        if idx > 0:
+            window = html[max(0, idx - 80):idx]
+            mnum = re.search(r'([\d][\d\s .,KkКк]{0,10})\s*$', window)
+            if mnum:
+                n = _parse_subscriber_count(mnum.group(1))
+                if n is not None and n > 0:
+                    return n, f"ok via fallback near 'subscriber' on {url}"
+        log.warning("Could not parse subscribers from %s (HTTP %s, %d bytes)",
+                    url, code, len(html))
+    return None, "parse failed on both t.me/s/<ch> and t.me/<ch>"
 
 
 def save_tg_snapshot(conn: sqlite3.Connection, taken_at: str, channel: str, subs: int) -> None:
@@ -970,7 +985,8 @@ def main() -> int:
             "deltas": {"h24": None, "d7": None},
             "history": {"rangeDays": HISTORY_DAYS, "points": [], "rawCount": 0},
         }
-        subs = fetch_telegram_subscribers(TELEGRAM_CHANNEL)
+        subs, tg_diag = fetch_telegram_subscribers(TELEGRAM_CHANNEL)
+        telegram_payload["debug"] = tg_diag
         if subs is not None:
             save_tg_snapshot(conn, taken_at.isoformat(), TELEGRAM_CHANNEL, subs)
             tg_cutoff = (taken_at - timedelta(days=SNAPSHOT_RETENTION_DAYS)).isoformat()
@@ -984,9 +1000,11 @@ def main() -> int:
                 "deltas": compute_tg_deltas(conn, TELEGRAM_CHANNEL, subs, taken_at),
                 "history": compute_tg_history(conn, TELEGRAM_CHANNEL, taken_at),
             })
-            log.info("Telegram @%s: %d subscribers", TELEGRAM_CHANNEL, subs)
+            log.info("Telegram @%s: %d subscribers (%s)",
+                     TELEGRAM_CHANNEL, subs, tg_diag)
         else:
-            log.warning("Telegram @%s: subscribers unavailable", TELEGRAM_CHANNEL)
+            log.warning("Telegram @%s: subscribers unavailable (%s)",
+                        TELEGRAM_CHANNEL, tg_diag)
     finally:
         conn.close()
 
