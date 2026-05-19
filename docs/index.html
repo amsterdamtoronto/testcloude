@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Kugoo × FastMotion — Brand Dashboard</title>
 <meta name="robots" content="noindex,nofollow">
+<script>
+  (function () {
+    try {
+      var stored = localStorage.getItem("theme");
+      var theme = (stored === "light" || stored === "dark")
+        ? stored
+        : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    } catch (e) {}
+  })();
+</script>
 <style>
   :root {
     --bg: #ffffff;
@@ -16,17 +27,15 @@
     --rank-bg: #18181b;
     --rank-fg: #ffffff;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0a0a0a;
-      --surface: #161618;
-      --surface-2: #1f1f23;
-      --border: #2a2a2e;
-      --text: #f4f4f5;
-      --muted: #9ca3af;
-      --rank-bg: #f4f4f5;
-      --rank-fg: #0a0a0a;
-    }
+  :root[data-theme="dark"] {
+    --bg: #0a0a0a;
+    --surface: #161618;
+    --surface-2: #1f1f23;
+    --border: #2a2a2e;
+    --text: #f4f4f5;
+    --muted: #9ca3af;
+    --rank-bg: #f4f4f5;
+    --rank-fg: #0a0a0a;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
@@ -42,7 +51,31 @@
     margin: 0 auto;
     padding: 48px 24px 64px;
   }
-  header { margin-bottom: 24px; }
+  header {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .theme-toggle {
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .theme-toggle:hover { color: var(--text); background: var(--surface-2); }
+  .theme-toggle svg { width: 18px; height: 18px; display: block; }
+  :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+  :root:not([data-theme="dark"]) .theme-toggle .icon-sun { display: none; }
   .tabs {
     display: flex;
     gap: 4px;
@@ -107,16 +140,11 @@
   .pipeline-badge[data-s="1"] { background: var(--surface-2); color: var(--muted); }
   .pipeline-badge[data-s="2"] { background: var(--surface-2); color: var(--text); }
   .pipeline-badge[data-s="3"] { background: var(--border); color: var(--text); }
-  @media (prefers-color-scheme: light) {
-    .pipeline-badge[data-s="4"] { background: #6b7280; color: #fff; border-color: #6b7280; }
-    .pipeline-badge[data-s="5"] { background: #333; color: #fff; border-color: #333; }
-    .pipeline-badge[data-s="6"] { background: #000; color: #fff; border-color: #000; }
-  }
-  @media (prefers-color-scheme: dark) {
-    .pipeline-badge[data-s="4"] { background: #6b7280; color: #fff; border-color: #6b7280; }
-    .pipeline-badge[data-s="5"] { background: #d4d4d8; color: #0a0a0a; border-color: #d4d4d8; }
-    .pipeline-badge[data-s="6"] { background: #fff; color: #0a0a0a; border-color: #fff; }
-  }
+  .pipeline-badge[data-s="4"] { background: #6b7280; color: #fff; border-color: #6b7280; }
+  .pipeline-badge[data-s="5"] { background: #333; color: #fff; border-color: #333; }
+  .pipeline-badge[data-s="6"] { background: #000; color: #fff; border-color: #000; }
+  :root[data-theme="dark"] .pipeline-badge[data-s="5"] { background: #d4d4d8; color: #0a0a0a; border-color: #d4d4d8; }
+  :root[data-theme="dark"] .pipeline-badge[data-s="6"] { background: #fff; color: #0a0a0a; border-color: #fff; }
   .pipeline-empty-state {
     color: var(--muted);
     font-size: 14px;
@@ -436,8 +464,19 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Kugoo × FastMotion</h1>
-    <div class="sub" id="sub">Дашборд коллабы — загрузка…</div>
+    <div>
+      <h1>Kugoo × FastMotion</h1>
+      <div class="sub" id="sub">Дашборд коллабы — загрузка…</div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
   </header>
 
   <nav class="tabs">
@@ -506,7 +545,7 @@
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.13</span>
+    <span>Источник: YouTube Data API v3 · v0.14</span>
   </footer>
 </div>
 
@@ -742,6 +781,12 @@
   }
   document.querySelectorAll(".tabs button").forEach(b => {
     b.addEventListener("click", () => activateTab(b.dataset.view));
+  });
+
+  $("theme-toggle").addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("theme", next); } catch (e) {}
   });
 
   function renderAllVideos(videos) {
