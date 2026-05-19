@@ -15,7 +15,7 @@ import re
 import sqlite3
 import sys
 import tempfile
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -169,6 +169,10 @@ KUGOO_MIN_LIKES = 3
 KUGOO_MIN_SCORE = 2
 DNS_MIN_LIKES = 1
 DNS_MIN_SCORE = 1
+
+HISTORY_DAYS = 30
+HISTORY_POINTS = 100
+TOP_ER_LIMIT = 3
 
 
 def setup_logging() -> logging.Logger:
@@ -559,11 +563,112 @@ def pick_quotes(
     return picked
 
 
+def _aggregate_snapshots(conn: sqlite3.Connection, since_iso: str) -> list[dict]:
+    """Sum per-snapshot totals across videos, ordered by time."""
+    cur = conn.execute(
+        """
+        SELECT taken_at,
+               SUM(view_count)    AS views,
+               SUM(like_count)    AS likes,
+               SUM(comment_count) AS comments
+        FROM snapshots
+        WHERE taken_at >= ?
+        GROUP BY taken_at
+        ORDER BY taken_at
+        """,
+        (since_iso,),
+    )
+    return [
+        {"ts": r[0], "views": int(r[1] or 0),
+         "likes": int(r[2] or 0), "comments": int(r[3] or 0)}
+        for r in cur.fetchall()
+    ]
+
+
+def _resample(points: list[dict], target: int) -> list[dict]:
+    """Reduce points to ~target count by uniform stride, keeping first and last."""
+    if len(points) <= target:
+        return points
+    step = len(points) / target
+    picked = [points[int(i * step)] for i in range(target)]
+    if picked[-1] is not points[-1]:
+        picked.append(points[-1])
+    return picked
+
+
+def _parse_iso(value: str) -> datetime | None:
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (ValueError, AttributeError):
+        return None
+
+
+def compute_history(conn: sqlite3.Connection, now_utc: datetime) -> dict:
+    since = (now_utc - timedelta(days=HISTORY_DAYS)).isoformat()
+    points = _aggregate_snapshots(conn, since)
+    return {
+        "rangeDays": HISTORY_DAYS,
+        "points": _resample(points, HISTORY_POINTS),
+        "rawCount": len(points),
+    }
+
+
+def compute_deltas(
+    conn: sqlite3.Connection, current: dict, now_utc: datetime
+) -> dict:
+    """Compare current totals against snapshots ~24h and ~7d ago."""
+    def find_at(hours: int) -> dict | None:
+        target = (now_utc - timedelta(hours=hours)).isoformat()
+        cur = conn.execute(
+            """
+            SELECT taken_at,
+                   SUM(view_count)    AS views,
+                   SUM(like_count)    AS likes,
+                   SUM(comment_count) AS comments
+            FROM snapshots
+            WHERE taken_at <= ?
+            GROUP BY taken_at
+            ORDER BY taken_at DESC
+            LIMIT 1
+            """,
+            (target,),
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        return {"ts": row[0], "views": int(row[1] or 0),
+                "likes": int(row[2] or 0), "comments": int(row[3] or 0)}
+
+    def delta_for(prev: dict | None) -> dict | None:
+        if not prev:
+            return None
+        return {
+            "views": current["views"] - prev["views"],
+            "likes": current["likes"] - prev["likes"],
+            "comments": current["comments"] - prev["comments"],
+            "since": prev["ts"],
+        }
+
+    return {
+        "h24": delta_for(find_at(24)),
+        "d7": delta_for(find_at(168)),
+    }
+
+
+def fmt_signed(n: int | None) -> str | None:
+    if n is None:
+        return None
+    sign = "+" if n >= 0 else "−"
+    return f"{sign}{fmt_compact(abs(n))}"
+
+
 def build_payload(
     videos: list[dict],
     taken_at_utc: datetime,
     kugoo_quotes: list[dict],
     dns_quotes: list[dict],
+    history: dict,
+    deltas: dict,
 ) -> dict:
     total_videos = len(videos)
     total_views = sum(v["viewCount"] for v in videos)
@@ -575,14 +680,39 @@ def build_payload(
         if total_views
         else 0.0
     )
-    top = sorted(videos, key=lambda v: v["viewCount"], reverse=True)[:3]
-    for v in top:
+    for v in videos:
         v_er = (
             (v["likeCount"] + v["commentCount"]) / v["viewCount"] * 100
             if v["viewCount"]
             else 0.0
         )
         v["engagementRate"] = round(v_er, 2)
+
+    top = sorted(videos, key=lambda v: v["viewCount"], reverse=True)[:3]
+    top_er = sorted(videos, key=lambda v: v["engagementRate"], reverse=True)[:TOP_ER_LIMIT]
+
+    def card(v: dict) -> dict:
+        return {
+            "videoId": v["videoId"],
+            "title": v["title"],
+            "publishedAt": v["publishedAt"],
+            "viewCount": v["viewCount"],
+            "viewCountCompact": fmt_compact(v["viewCount"]),
+            "engagementRate": v["engagementRate"],
+            "thumbnail": v["thumbnail"],
+            "url": v["url"],
+        }
+
+    video_drops = sorted(
+        [{"ts": v["publishedAt"], "videoId": v["videoId"], "title": v["title"]} for v in videos],
+        key=lambda d: d["ts"],
+    )
+
+    def fmt_delta(d: dict | None, key: str) -> dict | None:
+        if not d:
+            return None
+        val = d[key]
+        return {"abs": val, "signed": fmt_signed(val), "since": d["since"]}
 
     taken_at_msk = taken_at_utc.astimezone(MSK)
     return {
@@ -603,19 +733,22 @@ def build_payload(
             "avgViewsCompact": fmt_compact(avg_views),
             "engagementRate": round(er, 2),
         },
-        "top": [
-            {
-                "videoId": v["videoId"],
-                "title": v["title"],
-                "publishedAt": v["publishedAt"],
-                "viewCount": v["viewCount"],
-                "viewCountCompact": fmt_compact(v["viewCount"]),
-                "engagementRate": v["engagementRate"],
-                "thumbnail": v["thumbnail"],
-                "url": v["url"],
-            }
-            for v in top
-        ],
+        "deltas": {
+            "h24": {
+                "views":    fmt_delta(deltas.get("h24"), "views"),
+                "likes":    fmt_delta(deltas.get("h24"), "likes"),
+                "comments": fmt_delta(deltas.get("h24"), "comments"),
+            },
+            "d7": {
+                "views":    fmt_delta(deltas.get("d7"), "views"),
+                "likes":    fmt_delta(deltas.get("d7"), "likes"),
+                "comments": fmt_delta(deltas.get("d7"), "comments"),
+            },
+        },
+        "top": [card(v) for v in top],
+        "topByEr": [card(v) for v in top_er],
+        "videoDrops": video_drops,
+        "history": history,
         "videos": sorted(videos, key=lambda v: v["publishedAt"], reverse=True),
         "quotes": {
             "kugoo": kugoo_quotes,
@@ -669,6 +802,19 @@ def main() -> int:
     conn = init_db()
     try:
         save_snapshot(conn, taken_at.isoformat(), videos)
+        current_totals = {
+            "views":    sum(v["viewCount"] for v in videos),
+            "likes":    sum(v["likeCount"] for v in videos),
+            "comments": sum(v["commentCount"] for v in videos),
+        }
+        history = compute_history(conn, taken_at)
+        deltas = compute_deltas(conn, current_totals, taken_at)
+        log.info(
+            "History: %d points (over %d days); deltas: h24=%s d7=%s",
+            len(history["points"]), history["rangeDays"],
+            "yes" if deltas.get("h24") else "no",
+            "yes" if deltas.get("d7") else "no",
+        )
     finally:
         conn.close()
 
@@ -688,7 +834,9 @@ def main() -> int:
         log.warning("Comment fetch failed (continuing without quotes): %s", e)
         kugoo_quotes, dns_quotes = [], []
 
-    payload = build_payload(videos, taken_at, kugoo_quotes, dns_quotes)
+    payload = build_payload(
+        videos, taken_at, kugoo_quotes, dns_quotes, history, deltas
+    )
     write_json_atomic(payload)
     log.info(
         "Wrote %s — videos=%d views=%d ER=%.2f%% kugoo=%d dns=%d",

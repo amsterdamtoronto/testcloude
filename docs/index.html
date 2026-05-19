@@ -81,6 +81,45 @@
     letter-spacing: -0.01em;
     font-variant-numeric: tabular-nums;
   }
+  .kpi-delta {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .kpi-delta-row { white-space: nowrap; }
+  .kpi-delta b { color: var(--text); font-weight: 500; }
+  .chart-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .chart-head b {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .grid line { stroke: var(--border); stroke-width: 1; }
+  .chart .axis text { fill: var(--muted); font-size: 10px; font-family: inherit; }
+  .chart .line { stroke: var(--text); stroke-width: 1.5; fill: none; }
+  .chart .area { fill: var(--text); opacity: 0.06; }
+  .chart .dot { fill: var(--text); }
+  .chart .drop { fill: var(--muted); opacity: 0.5; }
+  .chart .empty-msg { fill: var(--muted); font-size: 12px; font-family: inherit; }
   .top {
     display: flex;
     flex-direction: column;
@@ -226,8 +265,24 @@
   </section>
 
   <section>
+    <h2>Динамика просмотров</h2>
+    <div class="chart-wrap">
+      <div class="chart-head">
+        <span id="chart-range">за 30 дней</span>
+        <b id="chart-current">—</b>
+      </div>
+      <div class="chart" id="chart"></div>
+    </div>
+  </section>
+
+  <section>
     <h2>Топ-3 по просмотрам</h2>
     <div class="top" id="top"></div>
+  </section>
+
+  <section>
+    <h2>Топ-3 по вовлечённости (ER)</h2>
+    <div class="top" id="top-er"></div>
   </section>
 
   <section>
@@ -242,7 +297,7 @@
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.06</span>
+    <span>Источник: YouTube Data API v3 · v0.07</span>
   </footer>
 </div>
 
@@ -263,21 +318,124 @@
     return d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
   }
 
-  function renderKpis(t) {
+  function deltaText(d) {
+    if (!d || d.signed == null) return null;
+    return d.signed;
+  }
+
+  function renderKpis(t, deltas) {
+    const d24 = (deltas && deltas.h24) || {};
+    const d7  = (deltas && deltas.d7)  || {};
     const items = [
       { label: "Роликов", value: t.videos ?? 0 },
-      { label: "Просмотров", value: t.viewsCompact ?? "0" },
+      { label: "Просмотров", value: t.viewsCompact ?? "0",
+        d24: deltaText(d24.views), d7: deltaText(d7.views) },
       { label: "Средние просмотры", value: t.avgViewsCompact ?? "0" },
       { label: "Engagement Rate", value: (t.engagementRate ?? 0).toFixed(2) + "%" },
-      { label: "Лайков", value: t.likesCompact ?? "0" },
-      { label: "Комментариев", value: t.commentsCompact ?? "0" },
+      { label: "Лайков", value: t.likesCompact ?? "0",
+        d24: deltaText(d24.likes), d7: deltaText(d7.likes) },
+      { label: "Комментариев", value: t.commentsCompact ?? "0",
+        d24: deltaText(d24.comments), d7: deltaText(d7.comments) },
     ];
-    $("kpis").innerHTML = items.map((i) => `
-      <div class="kpi">
-        <div class="kpi-label">${escapeHtml(i.label)}</div>
-        <div class="kpi-value">${escapeHtml(String(i.value))}</div>
-      </div>
-    `).join("");
+    $("kpis").innerHTML = items.map((i) => {
+      let delta = "";
+      if (i.d24 != null || i.d7 != null) {
+        const parts = [];
+        if (i.d24 != null) parts.push(`<span class="kpi-delta-row"><b>${escapeHtml(i.d24)}</b> за 24ч</span>`);
+        if (i.d7  != null) parts.push(`<span class="kpi-delta-row"><b>${escapeHtml(i.d7)}</b> за 7д</span>`);
+        delta = `<div class="kpi-delta">${parts.join("")}</div>`;
+      }
+      return `
+        <div class="kpi">
+          <div class="kpi-label">${escapeHtml(i.label)}</div>
+          <div class="kpi-value">${escapeHtml(String(i.value))}</div>
+          ${delta}
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderChart(history, drops) {
+    const el = $("chart");
+    const points = (history && history.points) || [];
+    const cur = $("chart-current");
+    if (points.length >= 1) {
+      cur.textContent = (points[points.length - 1].views || 0).toLocaleString("ru-RU") + " просмотров";
+    }
+    if (history && history.rangeDays) {
+      $("chart-range").textContent = "за " + history.rangeDays + " дн.";
+    }
+    if (points.length < 2) {
+      el.innerHTML = `<svg viewBox="0 0 800 220" preserveAspectRatio="none">
+        <text class="empty-msg" x="400" y="115" text-anchor="middle">Накапливаем данные… (нужно минимум 2 снапшота)</text>
+      </svg>`;
+      return;
+    }
+
+    const W = 800, H = 220, ML = 56, MR = 16, MT = 12, MB = 28;
+    const plotW = W - ML - MR;
+    const plotH = H - MT - MB;
+
+    const ts = points.map(p => new Date(p.ts).getTime());
+    const vs = points.map(p => p.views || 0);
+    const tMin = ts[0], tMax = ts[ts.length - 1];
+    const vMin = Math.min(...vs), vMax = Math.max(...vs);
+    const vRange = Math.max(1, vMax - vMin);
+    const xs = (t) => ML + ((t - tMin) / Math.max(1, tMax - tMin)) * plotW;
+    const ys = (v) => MT + (1 - (v - vMin) / vRange) * plotH;
+
+    let path = "M " + xs(ts[0]) + " " + ys(vs[0]);
+    for (let i = 1; i < points.length; i++) {
+      path += " L " + xs(ts[i]) + " " + ys(vs[i]);
+    }
+    const area = path + ` L ${xs(tMax)} ${MT + plotH} L ${xs(tMin)} ${MT + plotH} Z`;
+
+    // Y axis (3 ticks)
+    const yTicks = [vMin, vMin + vRange / 2, vMax].map(v => ({
+      v, y: ys(v),
+      label: v >= 1e6 ? (v / 1e6).toFixed(2) + "M" :
+             v >= 1e3 ? (v / 1e3).toFixed(0) + "K" : String(Math.round(v)),
+    }));
+    const grid = yTicks.map(t =>
+      `<line x1="${ML}" x2="${ML + plotW}" y1="${t.y}" y2="${t.y}"/>`
+    ).join("");
+    const yLabels = yTicks.map(t =>
+      `<text x="${ML - 8}" y="${t.y + 3}" text-anchor="end">${t.label}</text>`
+    ).join("");
+
+    // X axis (3 dates)
+    const fmtDay = (ms) => {
+      const d = new Date(ms);
+      return d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
+    };
+    const xTicks = [tMin, (tMin + tMax) / 2, tMax];
+    const xLabels = xTicks.map(t =>
+      `<text x="${xs(t)}" y="${H - 10}" text-anchor="middle">${fmtDay(t)}</text>`
+    ).join("");
+
+    // Video drop triangles (in plot range only)
+    let dropsMarkup = "";
+    if (Array.isArray(drops)) {
+      for (const d of drops) {
+        const t = new Date(d.ts).getTime();
+        if (isNaN(t) || t < tMin || t > tMax) continue;
+        const x = xs(t);
+        const y = MT + plotH;
+        dropsMarkup += `<polygon class="drop" points="${x - 3},${y + 4} ${x + 3},${y + 4} ${x},${y}"><title>${escapeHtml(d.title)}</title></polygon>`;
+      }
+    }
+
+    const lastX = xs(ts[ts.length - 1]);
+    const lastY = ys(vs[vs.length - 1]);
+
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <g class="grid">${grid}</g>
+      <path class="area" d="${area}"/>
+      <path class="line" d="${path}"/>
+      <circle class="dot" cx="${lastX}" cy="${lastY}" r="3"/>
+      <g class="axis">${yLabels}${xLabels}</g>
+      <g class="drops">${dropsMarkup}</g>
+    </svg>`;
   }
 
   function renderQuotes(quotes, elId, emptyText) {
@@ -298,29 +456,37 @@
     `).join("");
   }
 
-  function renderTop(top) {
-    const el = $("top");
+  function renderTop(top, elId, mode) {
+    const el = $(elId);
     if (!top || !top.length) {
       el.innerHTML = '<div class="empty">Нет данных. Жду первого запуска backend.</div>';
       return;
     }
-    el.innerHTML = top.map((v, idx) => `
-      <a class="top-row" href="${escapeHtml(v.url)}" target="_blank" rel="noopener">
-        <div class="rank">${idx + 1}</div>
-        <img class="thumb" src="${escapeHtml(v.thumbnail)}" alt="" loading="lazy">
-        <div class="meta">
-          <div class="title">${escapeHtml(v.title)}</div>
-          <div class="meta-row">
-            <span>${escapeHtml(formatDate(v.publishedAt))}</span>
-            <span>ER ${(v.engagementRate ?? 0).toFixed(2)}%</span>
+    el.innerHTML = top.map((v, idx) => {
+      const er = (v.engagementRate ?? 0).toFixed(2);
+      const views = escapeHtml(v.viewCountCompact ?? "0");
+      const isEr = mode === "er";
+      const rightMain = isEr ? `${er}%` : views;
+      const rightSub  = isEr ? "ER" : "просмотров";
+      const metaRight = isEr ? `${views} просмотров` : `ER ${er}%`;
+      return `
+        <a class="top-row" href="${escapeHtml(v.url)}" target="_blank" rel="noopener">
+          <div class="rank">${idx + 1}</div>
+          <img class="thumb" src="${escapeHtml(v.thumbnail)}" alt="" loading="lazy">
+          <div class="meta">
+            <div class="title">${escapeHtml(v.title)}</div>
+            <div class="meta-row">
+              <span>${escapeHtml(formatDate(v.publishedAt))}</span>
+              <span>${escapeHtml(metaRight)}</span>
+            </div>
           </div>
-        </div>
-        <div>
-          <div class="views">${escapeHtml(v.viewCountCompact ?? "0")}</div>
-          <div class="views-sub">просмотров</div>
-        </div>
-      </a>
-    `).join("");
+          <div>
+            <div class="views">${rightMain}</div>
+            <div class="views-sub">${rightSub}</div>
+          </div>
+        </a>
+      `;
+    }).join("");
   }
 
   try {
@@ -329,8 +495,10 @@
     const data = await res.json();
     const t = data.totals || {};
     $("sub").textContent = `${data.channelHandle || ""} — ${t.videos || 0} роликов с меткой "${data.marker || "kugoo.ru"}"`;
-    renderKpis(t);
-    renderTop(data.top || []);
+    renderKpis(t, data.deltas);
+    renderChart(data.history, data.videoDrops);
+    renderTop(data.top || [], "top", "views");
+    renderTop(data.topByEr || [], "top-er", "er");
     const q = data.quotes || {};
     const kugooQuotes = Array.isArray(q) ? q : (q.kugoo || []);
     const dnsQuotes = Array.isArray(q) ? [] : (q.dns || []);
@@ -340,7 +508,9 @@
   } catch (e) {
     $("sub").textContent = "Не удалось загрузить data.json";
     $("kpis").innerHTML = `<div class="empty">Ошибка: ${escapeHtml(e.message)}</div>`;
-    renderTop([]);
+    renderTop([], "top", "views");
+    renderTop([], "top-er", "er");
+    renderChart({ points: [] }, []);
     renderQuotes([], "quotes-kugoo", "Ошибка загрузки.");
     renderQuotes([], "quotes-dns", "Ошибка загрузки.");
   }
