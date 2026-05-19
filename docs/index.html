@@ -108,12 +108,14 @@
   .pipeline-badge[data-s="2"] { background: var(--surface-2); color: var(--text); }
   .pipeline-badge[data-s="3"] { background: var(--border); color: var(--text); }
   @media (prefers-color-scheme: light) {
-    .pipeline-badge[data-s="4"] { background: #333; color: #fff; border-color: #333; }
-    .pipeline-badge[data-s="5"] { background: #000; color: #fff; border-color: #000; }
+    .pipeline-badge[data-s="4"] { background: #6b7280; color: #fff; border-color: #6b7280; }
+    .pipeline-badge[data-s="5"] { background: #333; color: #fff; border-color: #333; }
+    .pipeline-badge[data-s="6"] { background: #000; color: #fff; border-color: #000; }
   }
   @media (prefers-color-scheme: dark) {
-    .pipeline-badge[data-s="4"] { background: #d4d4d8; color: #0a0a0a; border-color: #d4d4d8; }
-    .pipeline-badge[data-s="5"] { background: #fff; color: #0a0a0a; border-color: #fff; }
+    .pipeline-badge[data-s="4"] { background: #6b7280; color: #fff; border-color: #6b7280; }
+    .pipeline-badge[data-s="5"] { background: #d4d4d8; color: #0a0a0a; border-color: #d4d4d8; }
+    .pipeline-badge[data-s="6"] { background: #fff; color: #0a0a0a; border-color: #fff; }
   }
   .pipeline-empty-state {
     color: var(--muted);
@@ -497,14 +499,14 @@
       <h2>В производстве</h2>
       <div class="pipeline-list" id="pipeline-board"></div>
       <div class="pipeline-edit-hint">
-        Список ведётся вручную в файле <code>docs/pipeline.json</code>. Чтобы добавить новый ролик — отредактируй этот файл и закоммить. Статусы: Идея → Сценарий → Подготовка → Съёмка → Публикация → Отчёт.
+        Список ведётся вручную в файле <code>docs/pipeline.json</code>. Чтобы добавить новый ролик — отредактируй этот файл и закоммить. Статусы: Идея → Сценарий → Подготовка → Съёмка → Монтаж → Публикация → Отчёт.
       </div>
     </section>
   </div><!-- /.tab-pipeline -->
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.12</span>
+    <span>Источник: YouTube Data API v3 · v0.13</span>
   </footer>
 </div>
 
@@ -691,7 +693,7 @@
     };
   }
 
-  const PIPELINE_STATUSES = ["Идея", "Сценарий", "Подготовка", "Съёмка", "Публикация", "Отчёт"];
+  const PIPELINE_STATUSES = ["Идея", "Сценарий", "Подготовка", "Съёмка", "Монтаж", "Публикация", "Отчёт"];
 
   function renderPipeline(items) {
     const el = $("pipeline-board");
