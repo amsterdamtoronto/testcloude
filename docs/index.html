@@ -120,6 +120,75 @@
   .chart .dot { fill: var(--text); }
   .chart .drop { fill: var(--muted); opacity: 0.5; }
   .chart .empty-msg { fill: var(--muted); font-size: 12px; font-family: inherit; }
+  details.videos-all {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0;
+  }
+  details.videos-all > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  details.videos-all > summary::-webkit-details-marker { display: none; }
+  details.videos-all > summary::before {
+    content: "▸";
+    color: var(--muted);
+    margin-right: 8px;
+    font-size: 10px;
+    transition: transform 0.15s ease;
+    display: inline-block;
+  }
+  details.videos-all[open] > summary::before { transform: rotate(90deg); }
+  details.videos-all > summary .count { color: var(--muted); font-weight: 400; }
+  .videos-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .videos-table th,
+  .videos-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .videos-table th {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--surface-2);
+  }
+  .videos-table tr:last-child td { border-bottom: none; }
+  .videos-table td.num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .videos-table td.idx { color: var(--muted); text-align: right; width: 32px; }
+  .videos-table a.t-title {
+    color: var(--text);
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.3;
+  }
+  .videos-table a.t-title:hover { text-decoration: underline; }
+  .videos-table .col-date { white-space: nowrap; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .videos-table .col-dur { color: var(--muted); font-variant-numeric: tabular-nums; }
+  @media (max-width: 720px) {
+    .videos-table th.hide-sm, .videos-table td.hide-sm { display: none; }
+    .videos-table th, .videos-table td { padding: 8px 8px; font-size: 12px; }
+  }
   .top {
     display: flex;
     flex-direction: column;
@@ -295,9 +364,18 @@
     <div class="quotes" id="quotes-dns"></div>
   </section>
 
+  <section>
+    <details class="videos-all" id="all-videos-block">
+      <summary>
+        <span>Все ролики коллабы <span class="count" id="all-videos-count"></span></span>
+      </summary>
+      <div id="all-videos"></div>
+    </details>
+  </section>
+
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.08</span>
+    <span>Источник: YouTube Data API v3 · v0.09</span>
   </footer>
 </div>
 
@@ -457,6 +535,52 @@
     `).join("");
   }
 
+  function renderAllVideos(videos) {
+    const el = $("all-videos");
+    const cnt = $("all-videos-count");
+    if (!videos || !videos.length) {
+      cnt.textContent = "";
+      el.innerHTML = '<div class="empty">Нет данных.</div>';
+      return;
+    }
+    cnt.textContent = "(" + videos.length + ")";
+    const rows = videos.map((v, i) => {
+      const er = (v.engagementRate ?? ((v.viewCount > 0
+        ? (v.likeCount + v.commentCount) / v.viewCount * 100 : 0))).toFixed(2);
+      return `
+        <tr>
+          <td class="idx">${i + 1}</td>
+          <td class="col-date">${escapeHtml(formatDate(v.publishedAt))}</td>
+          <td>
+            <a class="t-title" href="${escapeHtml(v.url)}" target="_blank" rel="noopener">${escapeHtml(v.title)}</a>
+          </td>
+          <td class="col-dur hide-sm">${escapeHtml(v.duration || "")}</td>
+          <td class="num">${(v.viewCount || 0).toLocaleString("ru-RU")}</td>
+          <td class="num hide-sm">${(v.likeCount || 0).toLocaleString("ru-RU")}</td>
+          <td class="num hide-sm">${(v.commentCount || 0).toLocaleString("ru-RU")}</td>
+          <td class="num">${er}%</td>
+        </tr>
+      `;
+    }).join("");
+    el.innerHTML = `
+      <table class="videos-table">
+        <thead>
+          <tr>
+            <th class="idx">#</th>
+            <th>Дата</th>
+            <th>Название</th>
+            <th class="hide-sm">Длит.</th>
+            <th class="num">Просмотры</th>
+            <th class="num hide-sm">Лайки</th>
+            <th class="num hide-sm">Комменты</th>
+            <th class="num">ER</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
   function renderTop(top, elId, mode) {
     const el = $(elId);
     if (!top || !top.length) {
@@ -505,6 +629,7 @@
     const dnsQuotes = Array.isArray(q) ? [] : (q.dns || []);
     renderQuotes(kugooQuotes, "quotes-kugoo", "Положительных комментариев пока нет.");
     renderQuotes(dnsQuotes, "quotes-dns", "В комментариях к этим роликам пока нет положительных упоминаний DNS.");
+    renderAllVideos(data.videos || []);
     $("updated").textContent = "Последнее обновление: " + (data.updatedAtMsk || "—");
   } catch (e) {
     $("sub").textContent = "Не удалось загрузить data.json";
@@ -514,6 +639,7 @@
     renderChart({ points: [] }, []);
     renderQuotes([], "quotes-kugoo", "Ошибка загрузки.");
     renderQuotes([], "quotes-dns", "Ошибка загрузки.");
+    renderAllVideos([]);
   }
 })();
 </script>
