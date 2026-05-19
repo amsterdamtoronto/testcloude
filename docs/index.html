@@ -100,10 +100,11 @@
     border-bottom-color: var(--text);
     font-weight: 500;
   }
-  .tab-stats, .tab-pipeline, .tab-telegram { display: none; }
+  .tab-stats, .tab-pipeline, .tab-telegram, .tab-shorts { display: none; }
   body[data-view="stats"] .tab-stats { display: block; }
   body[data-view="pipeline"] .tab-pipeline { display: block; }
   body[data-view="telegram"] .tab-telegram { display: block; }
+  body[data-view="shorts"] .tab-shorts { display: block; }
   .pipeline-list {
     display: flex;
     flex-direction: column;
@@ -514,7 +515,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.20</span></h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.21</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -529,6 +530,7 @@
 
   <nav class="tabs">
     <button id="tab-stats" class="active" data-view="stats">Статистика вертикальные</button>
+    <button id="tab-shorts" data-view="shorts">Shorts</button>
     <button id="tab-telegram" data-view="telegram">Телеграм-канал</button>
     <button id="tab-pipeline" data-view="pipeline">В производстве</button>
   </nav>
@@ -580,21 +582,23 @@
     </details>
   </section>
 
-  <section>
-    <h2>Shorts с меткой kugoo.ru</h2>
-    <div class="kpi-grid" id="shorts-kpis"></div>
-  </section>
-
-  <section>
-    <details class="videos-all" id="shorts-block">
-      <summary>
-        <span>Все Shorts <span class="count" id="shorts-count"></span></span>
-      </summary>
-      <div id="shorts-list"></div>
-    </details>
-  </section>
-
   </div><!-- /.tab-stats -->
+
+  <div class="tab-shorts">
+    <section>
+      <h2>Shorts с меткой kugoo.ru</h2>
+      <div class="kpi-grid" id="shorts-kpis"></div>
+    </section>
+
+    <section>
+      <details class="videos-all" id="shorts-block" open>
+        <summary>
+          <span>Все Shorts <span class="count" id="shorts-count"></span></span>
+        </summary>
+        <div id="shorts-list"></div>
+      </details>
+    </section>
+  </div><!-- /.tab-shorts -->
 
   <div class="tab-telegram">
     <section>
