@@ -514,7 +514,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.18</span></h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.20</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -577,6 +577,20 @@
         <span>Все ролики коллабы <span class="count" id="all-videos-count"></span></span>
       </summary>
       <div id="all-videos"></div>
+    </details>
+  </section>
+
+  <section>
+    <h2>Shorts с меткой kugoo.ru</h2>
+    <div class="kpi-grid" id="shorts-kpis"></div>
+  </section>
+
+  <section>
+    <details class="videos-all" id="shorts-block">
+      <summary>
+        <span>Все Shorts <span class="count" id="shorts-count"></span></span>
+      </summary>
+      <div id="shorts-list"></div>
     </details>
   </section>
 
@@ -818,8 +832,10 @@
     { key: "commentCount",    label: "Комменты", type: "num",    defaultDir: -1, cls: "num hide-sm" },
     { key: "engagementRate",  label: "ER",       type: "num",    defaultDir: -1, cls: "num" },
   ];
-  const sortState = { key: "publishedAt", dir: -1 };
-  let allVideosCache = [];
+  const tableStates = {
+    videos: { cache: [], sort: { key: "publishedAt", dir: -1 } },
+    shorts: { cache: [], sort: { key: "publishedAt", dir: -1 } },
+  };
 
   function compareBy(key, type, dir) {
     return (a, b) => {
@@ -893,23 +909,25 @@
     try { localStorage.setItem("theme", next); } catch (e) {}
   });
 
-  function renderAllVideos(videos) {
-    const cnt = $("all-videos-count");
-    if (videos) allVideosCache = videos;
-    const list = allVideosCache;
+  function renderVideoTable(stateKey, listElId, countElId, items) {
+    const st = tableStates[stateKey];
+    if (items) st.cache = items;
+    const list = st.cache;
+    const cnt = $(countElId);
     if (!list.length) {
-      cnt.textContent = "";
-      $("all-videos").innerHTML = '<div class="empty">Нет данных.</div>';
+      if (cnt) cnt.textContent = "";
+      $(listElId).innerHTML = '<div class="empty">Нет данных.</div>';
       return;
     }
-    cnt.textContent = "(" + list.length + ")";
-    const col = SORT_COLS.find(c => c.key === sortState.key);
-    const sorted = [...list].sort(compareBy(col.key, col.type, sortState.dir));
+    if (cnt) cnt.textContent = "(" + list.length + ")";
+    const sort = st.sort;
+    const col = SORT_COLS.find(c => c.key === sort.key);
+    const sorted = [...list].sort(compareBy(col.key, col.type, sort.dir));
 
     const arrow = (k) =>
-      k === sortState.key ? `<span class="arrow">${sortState.dir === 1 ? "▲" : "▼"}</span>` : "";
+      k === sort.key ? `<span class="arrow">${sort.dir === 1 ? "▲" : "▼"}</span>` : "";
     const headCells = `<th class="idx">#</th>` + SORT_COLS.map(c => {
-      const active = c.key === sortState.key ? " active" : "";
+      const active = c.key === sort.key ? " active" : "";
       return `<th class="sortable ${c.cls}${active}" data-key="${c.key}">${escapeHtml(c.label)}${arrow(c.key)}</th>`;
     }).join("");
 
@@ -932,27 +950,50 @@
       `;
     }).join("");
 
-    $("all-videos").innerHTML = `
+    $(listElId).innerHTML = `
       <table class="videos-table">
         <thead><tr>${headCells}</tr></thead>
         <tbody>${rows}</tbody>
       </table>
     `;
 
-    $("all-videos").querySelectorAll("th.sortable").forEach(th => {
+    $(listElId).querySelectorAll("th.sortable").forEach(th => {
       th.addEventListener("click", () => {
         const key = th.getAttribute("data-key");
-        const col = SORT_COLS.find(c => c.key === key);
-        if (!col) return;
-        if (sortState.key === key) {
-          sortState.dir = -sortState.dir;
+        const colDef = SORT_COLS.find(c => c.key === key);
+        if (!colDef) return;
+        if (sort.key === key) {
+          sort.dir = -sort.dir;
         } else {
-          sortState.key = key;
-          sortState.dir = col.defaultDir;
+          sort.key = key;
+          sort.dir = colDef.defaultDir;
         }
-        renderAllVideos();
+        renderVideoTable(stateKey, listElId, countElId);
       });
     });
+  }
+
+  function renderAllVideos(videos) {
+    renderVideoTable("videos", "all-videos", "all-videos-count", videos);
+  }
+
+  function renderShorts(shorts) {
+    const block = shorts || {};
+    const totals = block.totals || {};
+    const items = [
+      { label: "Shorts", value: totals.count ?? 0 },
+      { label: "Просмотров", value: totals.viewsCompact ?? "0" },
+      { label: "Лайков", value: totals.likesCompact ?? "0" },
+      { label: "Комментариев", value: totals.commentsCompact ?? "0" },
+      { label: "Engagement Rate", value: (totals.engagementRate ?? 0).toFixed(2) + "%" },
+    ];
+    $("shorts-kpis").innerHTML = items.map(i => `
+      <div class="kpi">
+        <div class="kpi-label">${escapeHtml(i.label)}</div>
+        <div class="kpi-value">${escapeHtml(String(i.value))}</div>
+      </div>
+    `).join("");
+    renderVideoTable("shorts", "shorts-list", "shorts-count", block.videos || []);
   }
 
   function renderTop(top, elId, mode) {
@@ -1004,6 +1045,7 @@
     renderQuotes(kugooQuotes, "quotes-kugoo", "Положительных комментариев пока нет.");
     renderQuotes(dnsQuotes, "quotes-dns", "В комментариях к этим роликам пока нет положительных упоминаний DNS.");
     renderAllVideos(data.videos || []);
+    renderShorts(data.shorts);
     $("updated").textContent = "Последнее обновление: " + (data.updatedAtMsk || "—");
   } catch (e) {
     $("kpis").innerHTML = `<div class="empty">Ошибка: ${escapeHtml(e.message)}</div>`;
@@ -1013,6 +1055,7 @@
     renderQuotes([], "quotes-kugoo", "Ошибка загрузки.");
     renderQuotes([], "quotes-dns", "Ошибка загрузки.");
     renderAllVideos([]);
+    renderShorts({});
   }
 })();
 </script>

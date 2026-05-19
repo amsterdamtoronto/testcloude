@@ -28,7 +28,11 @@ from googleapiclient.errors import HttpError
 
 CHANNEL_ID = os.environ.get("YOUTUBE_CHANNEL_ID", "UCvy7FIEQYztchmNfCROlgDw")
 MARKER = os.environ.get("COLLAB_MARKER", "kugoo.ru").lower()
-MIN_PUBLISHED_AT = os.environ.get("COLLAB_SINCE", "2025-04-14T00:00:00Z")
+LONG_SINCE = os.environ.get("COLLAB_SINCE", "2025-04-14T00:00:00Z")
+SHORTS_SINCE = os.environ.get("SHORTS_SINCE", "2025-02-01T00:00:00Z")
+# Broadest floor — used when listing video IDs from the uploads playlist
+BROAD_SINCE = min(LONG_SINCE, SHORTS_SINCE)
+SHORTS_MAX_DURATION = 60  # YouTube treats clips ≤ 60s as Shorts
 
 ROOT = Path(__file__).resolve().parent.parent
 BACKEND_DIR = ROOT / "backend"
@@ -302,7 +306,7 @@ def list_video_ids(youtube, playlist_id: str) -> list[str]:
             published = item.get("contentDetails", {}).get("videoPublishedAt")
             if not vid:
                 continue
-            if published and published < MIN_PUBLISHED_AT:
+            if published and published < BROAD_SINCE:
                 continue
             ids.append(vid)
         token = resp.get("nextPageToken")
@@ -330,8 +334,6 @@ def fetch_video_details(youtube, video_ids: list[str]) -> list[dict]:
             if MARKER not in description.lower():
                 continue
             duration_s = parse_iso_duration(content.get("duration", ""))
-            if duration_s < 60:
-                continue
             thumbs = snippet.get("thumbnails", {}) or {}
             thumb = (
                 thumbs.get("medium")
@@ -349,6 +351,7 @@ def fetch_video_details(youtube, video_ids: list[str]) -> list[dict]:
                     "commentCount": int(stats.get("commentCount", 0)),
                     "duration": fmt_duration(duration_s),
                     "durationSeconds": duration_s,
+                    "kind": "short" if duration_s <= SHORTS_MAX_DURATION else "long",
                     "thumbnail": thumb,
                     "url": f"https://www.youtube.com/watch?v={item['id']}",
                 }
@@ -832,6 +835,7 @@ def build_payload(
     history: dict,
     deltas: dict,
     telegram: dict | None = None,
+    shorts: list[dict] | None = None,
 ) -> dict:
     total_videos = len(videos)
     total_views = sum(v["viewCount"] for v in videos)
@@ -918,6 +922,48 @@ def build_payload(
             "dns": dns_quotes,
         },
         "telegram": telegram or {},
+        "shorts": _shorts_block(shorts or []),
+    }
+
+
+def _shorts_block(shorts: list[dict]) -> dict:
+    for v in shorts:
+        v["engagementRate"] = round(
+            (v["likeCount"] + v["commentCount"]) / v["viewCount"] * 100, 2
+        ) if v["viewCount"] else 0.0
+    total_views = sum(v["viewCount"] for v in shorts)
+    total_likes = sum(v["likeCount"] for v in shorts)
+    total_comments = sum(v["commentCount"] for v in shorts)
+    er = (total_likes + total_comments) / total_views * 100 if total_views else 0.0
+    return {
+        "since": SHORTS_SINCE,
+        "totals": {
+            "count": len(shorts),
+            "views": total_views,
+            "viewsCompact": fmt_compact(total_views),
+            "likes": total_likes,
+            "likesCompact": fmt_compact(total_likes),
+            "comments": total_comments,
+            "commentsCompact": fmt_compact(total_comments),
+            "engagementRate": round(er, 2),
+        },
+        "videos": [
+            {
+                "videoId": v["videoId"],
+                "title": v["title"],
+                "publishedAt": v["publishedAt"],
+                "viewCount": v["viewCount"],
+                "viewCountCompact": fmt_compact(v["viewCount"]),
+                "likeCount": v["likeCount"],
+                "commentCount": v["commentCount"],
+                "duration": v["duration"],
+                "durationSeconds": v["durationSeconds"],
+                "engagementRate": v["engagementRate"],
+                "thumbnail": v["thumbnail"],
+                "url": f"https://www.youtube.com/shorts/{v['videoId']}",
+            }
+            for v in sorted(shorts, key=lambda x: x["publishedAt"], reverse=True)
+        ],
     }
 
 
@@ -948,8 +994,19 @@ def main() -> int:
         playlist_id = get_uploads_playlist(youtube, CHANNEL_ID)
         log.info("Uploads playlist: %s", playlist_id)
         video_ids = list_video_ids(youtube, playlist_id)
-        videos = fetch_video_details(youtube, video_ids)
-        log.info("Matched %d collab videos (marker=%s)", len(videos), MARKER)
+        all_matched = fetch_video_details(youtube, video_ids)
+        videos = [
+            v for v in all_matched
+            if v["kind"] == "long" and v["publishedAt"] >= LONG_SINCE
+        ]
+        shorts = [
+            v for v in all_matched
+            if v["kind"] == "short" and v["publishedAt"] >= SHORTS_SINCE
+        ]
+        log.info(
+            "Matched %d collab items (marker=%s): %d long-form, %d shorts",
+            len(all_matched), MARKER, len(videos), len(shorts),
+        )
     except HttpError as e:
         log.exception("YouTube API HttpError: %s", e)
         log.warning("Keeping previous data.json")
@@ -959,7 +1016,7 @@ def main() -> int:
         log.warning("Keeping previous data.json")
         return 1
 
-    if not videos:
+    if not videos and not shorts:
         log.warning("No videos matched marker — keeping previous data.json")
         return 1
 
@@ -1035,15 +1092,17 @@ def main() -> int:
 
     payload = build_payload(
         videos, taken_at, kugoo_quotes, dns_quotes, history, deltas,
-        telegram=telegram_payload,
+        telegram=telegram_payload, shorts=shorts,
     )
     write_json_atomic(payload)
     log.info(
-        "Wrote %s — videos=%d views=%d ER=%.2f%% kugoo=%d dns=%d",
+        "Wrote %s — long=%d views=%d ER=%.2f%% shorts=%d shorts_views=%d kugoo=%d dns=%d",
         JSON_PATH,
         payload["totals"]["videos"],
         payload["totals"]["views"],
         payload["totals"]["engagementRate"],
+        payload["shorts"]["totals"]["count"],
+        payload["shorts"]["totals"]["views"],
         len(payload["quotes"]["kugoo"]),
         len(payload["quotes"]["dns"]),
     )
