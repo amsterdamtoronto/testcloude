@@ -841,6 +841,7 @@ def build_payload(
     telegram: dict | None = None,
     shorts: list[dict] | None = None,
     shorts_deltas: dict | None = None,
+    shorts_kugoo_quotes: list[dict] | None = None,
 ) -> dict:
     total_videos = len(videos)
     total_views = sum(v["viewCount"] for v in videos)
@@ -927,11 +928,15 @@ def build_payload(
             "dns": dns_quotes,
         },
         "telegram": telegram or {},
-        "shorts": _shorts_block(shorts or [], shorts_deltas or {}),
+        "shorts": _shorts_block(
+            shorts or [], shorts_deltas or {}, shorts_kugoo_quotes or [],
+        ),
     }
 
 
-def _shorts_block(shorts: list[dict], shorts_deltas: dict) -> dict:
+def _shorts_block(
+    shorts: list[dict], shorts_deltas: dict, kugoo_quotes: list[dict]
+) -> dict:
     for v in shorts:
         v["engagementRate"] = round(
             (v["likeCount"] + v["commentCount"]) / v["viewCount"] * 100, 2
@@ -988,6 +993,7 @@ def _shorts_block(shorts: list[dict], shorts_deltas: dict) -> dict:
         },
         "top": [card(v) for v in top_views],
         "topByEr": [card(v) for v in top_er],
+        "quotes": {"kugoo": kugoo_quotes},
         "videos": [
             {
                 "videoId": v["videoId"],
@@ -1140,13 +1146,26 @@ def main() -> int:
         log.warning("Comment fetch failed (continuing without quotes): %s", e)
         kugoo_quotes, dns_quotes = [], []
 
+    try:
+        shorts_raw_comments = fetch_comments(youtube, shorts)
+        shorts_kugoo_quotes = pick_quotes(
+            shorts_raw_comments, CHANNEL_ID, taken_at, KUGOO_TOKENS,
+            require_brand=False, label="kugoo-shorts",
+            min_likes=KUGOO_MIN_LIKES, min_score=KUGOO_MIN_SCORE,
+        )
+    except Exception as e:
+        log.warning("Shorts comment fetch failed: %s", e)
+        shorts_kugoo_quotes = []
+
     payload = build_payload(
         videos, taken_at, kugoo_quotes, dns_quotes, history, deltas,
         telegram=telegram_payload, shorts=shorts, shorts_deltas=shorts_deltas,
+        shorts_kugoo_quotes=shorts_kugoo_quotes,
     )
     write_json_atomic(payload)
     log.info(
-        "Wrote %s — long=%d views=%d ER=%.2f%% shorts=%d shorts_views=%d kugoo=%d dns=%d",
+        "Wrote %s — long=%d views=%d ER=%.2f%% shorts=%d shorts_views=%d "
+        "kugoo=%d dns=%d shorts_kugoo=%d",
         JSON_PATH,
         payload["totals"]["videos"],
         payload["totals"]["views"],
@@ -1155,6 +1174,7 @@ def main() -> int:
         payload["shorts"]["totals"]["views"],
         len(payload["quotes"]["kugoo"]),
         len(payload["quotes"]["dns"]),
+        len(payload["shorts"]["quotes"]["kugoo"]),
     )
     return 0
 

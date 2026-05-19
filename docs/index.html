@@ -529,7 +529,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.26</span></h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.27</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -611,6 +611,11 @@
     <section>
       <h2>Топ-3 Shorts по вовлечённости (ER)</h2>
       <div class="top" id="shorts-top-er"></div>
+    </section>
+
+    <section>
+      <h2>Зрители говорят про Kugoo</h2>
+      <div class="quotes" id="shorts-quotes-kugoo"></div>
     </section>
 
     <section>
@@ -1038,6 +1043,9 @@
     }).join("");
     renderTop(block.top || [], "shorts-top", "views");
     renderTop(block.topByEr || [], "shorts-top-er", "er");
+    const sq = (block.quotes && block.quotes.kugoo) || [];
+    renderQuotes(sq, "shorts-quotes-kugoo",
+      "Положительных комментариев под Shorts пока нет.");
     renderVideoTable("shorts", "shorts-list", "shorts-count", block.videos || []);
   }
 
