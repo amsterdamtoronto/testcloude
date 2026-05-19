@@ -100,10 +100,9 @@
     border-bottom-color: var(--text);
     font-weight: 500;
   }
-  .tab-stats, .tab-pipeline, .tab-telegram, .tab-shorts { display: none; }
+  .tab-stats, .tab-pipeline, .tab-shorts { display: none; }
   body[data-view="stats"] .tab-stats { display: block; }
   body[data-view="pipeline"] .tab-pipeline { display: block; }
-  body[data-view="telegram"] .tab-telegram { display: block; }
   body[data-view="shorts"] .tab-shorts { display: block; }
   .pipeline-list {
     display: flex;
@@ -269,34 +268,6 @@
   .chart .dot { fill: var(--text); }
   .chart .drop { fill: var(--muted); opacity: 0.5; }
   .chart .empty-msg { fill: var(--muted); font-size: 12px; font-family: inherit; }
-  .tg-head {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .tg-channel, .tg-kpi {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-  }
-  .tg-channel-label, .tg-kpi .kpi-label {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-  .tg-channel-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text);
-    text-decoration: none;
-    display: block;
-    word-break: break-all;
-  }
-  .tg-channel-name:hover { color: var(--accent); }
-  @media (max-width: 560px) {
-    .tg-head { grid-template-columns: 1fr; }
-  }
   details.videos-all {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -515,7 +486,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.24</span></h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.25</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -531,7 +502,6 @@
   <nav class="tabs">
     <button id="tab-stats" class="active" data-view="stats">Статистика вертикальные</button>
     <button id="tab-shorts" data-view="shorts">Shorts</button>
-    <button id="tab-telegram" data-view="telegram">Телеграм-канал</button>
     <button id="tab-pipeline" data-view="pipeline">В производстве</button>
   </nav>
 
@@ -586,11 +556,6 @@
 
   <div class="tab-shorts">
     <section>
-      <h2>Shorts с меткой kugoo.ru</h2>
-      <div class="kpi-grid" id="shorts-kpis"></div>
-    </section>
-
-    <section>
       <h2>Топ-3 Shorts по просмотрам</h2>
       <div class="top" id="shorts-top"></div>
     </section>
@@ -601,7 +566,7 @@
     </section>
 
     <section>
-      <details class="videos-all" id="shorts-block" open>
+      <details class="videos-all" id="shorts-block">
         <summary>
           <span>Все Shorts <span class="count" id="shorts-count"></span></span>
         </summary>
@@ -609,37 +574,6 @@
       </details>
     </section>
   </div><!-- /.tab-shorts -->
-
-  <div class="tab-telegram">
-    <section>
-      <h2>Телеграм-канал</h2>
-      <div class="tg-head">
-        <div class="tg-channel">
-          <div class="tg-channel-label">Канал</div>
-          <a id="tg-channel-link" href="#" target="_blank" rel="noopener" class="tg-channel-name">—</a>
-        </div>
-        <div class="tg-kpi">
-          <div class="kpi-label">Подписчиков</div>
-          <div class="kpi-value" id="tg-subs">—</div>
-          <div class="kpi-delta" id="tg-deltas">
-            <span class="kpi-delta-row"><b>—</b> за 24ч</span>
-            <span class="kpi-delta-row"><b>—</b> за 7д</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <h2>Динамика подписчиков</h2>
-      <div class="chart-wrap">
-        <div class="chart-head">
-          <span id="tg-chart-range">за 30 дн.</span>
-          <b id="tg-chart-current">—</b>
-        </div>
-        <div class="chart" id="tg-chart"></div>
-      </div>
-    </section>
-  </div><!-- /.tab-telegram -->
 
   <div class="tab-pipeline">
     <section>
@@ -792,30 +726,6 @@
       elId: "chart", rangeElId: "chart-range", currentElId: "chart-current",
       points: h.points || [], rangeDays: h.rangeDays, valueKey: "views",
       currentSuffix: "просмотров", drops: drops,
-    });
-  }
-
-  function renderTelegram(tg) {
-    tg = tg || {};
-    const link = $("tg-channel-link");
-    if (tg.channel) {
-      link.textContent = "@" + tg.channel;
-      link.href = tg.url || ("https://t.me/" + tg.channel);
-    } else {
-      link.textContent = "—"; link.href = "#";
-    }
-    $("tg-subs").textContent = tg.subscribersCompact || "—";
-    const d24 = tg.deltas && tg.deltas.h24;
-    const d7  = tg.deltas && tg.deltas.d7;
-    $("tg-deltas").innerHTML =
-      `<span class="kpi-delta-row"><b>${escapeHtml(d24 && d24.signed != null ? d24.signed : "—")}</b> за 24ч</span>` +
-      `<span class="kpi-delta-row"><b>${escapeHtml(d7  && d7.signed  != null ? d7.signed  : "—")}</b> за 7д</span>`;
-    drawLineChart({
-      elId: "tg-chart", rangeElId: "tg-chart-range", currentElId: "tg-chart-current",
-      points: (tg.history && tg.history.points) || [],
-      rangeDays: tg.history && tg.history.rangeDays,
-      valueKey: "subscribers",
-      currentSuffix: "подписчиков",
     });
   }
 
@@ -993,36 +903,6 @@
 
   function renderShorts(shorts) {
     const block = shorts || {};
-    const totals = block.totals || {};
-    const deltas = block.deltas || null;
-    const d24 = (deltas && deltas.h24) || {};
-    const d7  = (deltas && deltas.d7)  || {};
-    const items = [
-      { label: "Shorts", value: totals.count ?? 0 },
-      { label: "Просмотров", value: totals.viewsCompact ?? "0",
-        showDelta: !!deltas, d24: deltaText(d24.views), d7: deltaText(d7.views) },
-      { label: "Лайков", value: totals.likesCompact ?? "0",
-        showDelta: !!deltas, d24: deltaText(d24.likes), d7: deltaText(d7.likes) },
-      { label: "Комментариев", value: totals.commentsCompact ?? "0",
-        showDelta: !!deltas, d24: deltaText(d24.comments), d7: deltaText(d7.comments) },
-      { label: "Engagement Rate", value: (totals.engagementRate ?? 0).toFixed(2) + "%" },
-    ];
-    $("shorts-kpis").innerHTML = items.map(i => {
-      let delta = "";
-      if (i.showDelta) {
-        delta = `<div class="kpi-delta">
-          <span class="kpi-delta-row"><b>${escapeHtml(i.d24)}</b> за 24ч</span>
-          <span class="kpi-delta-row"><b>${escapeHtml(i.d7)}</b> за 7д</span>
-        </div>`;
-      }
-      return `
-        <div class="kpi">
-          <div class="kpi-label">${escapeHtml(i.label)}</div>
-          <div class="kpi-value">${escapeHtml(String(i.value))}</div>
-          ${delta}
-        </div>
-      `;
-    }).join("");
     renderTop(block.top || [], "shorts-top", "views");
     renderTop(block.topByEr || [], "shorts-top-er", "er");
     renderVideoTable("shorts", "shorts-list", "shorts-count", block.videos || []);
@@ -1068,7 +948,6 @@
     const t = data.totals || {};
     renderKpis(t, data.deltas);
     renderChart(data.history, data.videoDrops);
-    renderTelegram(data.telegram);
     renderTop(data.top || [], "top", "views");
     renderTop(data.topByEr || [], "top-er", "er");
     const q = data.quotes || {};
