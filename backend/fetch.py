@@ -32,7 +32,7 @@ LONG_SINCE = os.environ.get("COLLAB_SINCE", "2025-04-14T00:00:00Z")
 SHORTS_SINCE = os.environ.get("SHORTS_SINCE", "2025-02-01T00:00:00Z")
 # Broadest floor — used when listing video IDs from the uploads playlist
 BROAD_SINCE = min(LONG_SINCE, SHORTS_SINCE)
-SHORTS_MAX_DURATION = 60  # YouTube treats clips ≤ 60s as Shorts
+SHORTS_MAX_DURATION = 180  # YouTube treats clips up to 3 minutes as Shorts (since 2024)
 
 ROOT = Path(__file__).resolve().parent.parent
 BACKEND_DIR = ROOT / "backend"
