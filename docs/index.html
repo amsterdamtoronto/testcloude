@@ -26,6 +26,7 @@
     --muted: #6b7280;
     --rank-bg: #18181b;
     --rank-fg: #ffffff;
+    --accent: #ff6b00;
   }
   :root[data-theme="dark"] {
     --bg: #0a0a0a;
@@ -175,6 +176,16 @@
     font-weight: 600;
     margin: 0 0 4px;
     letter-spacing: -0.01em;
+  }
+  h1 .brand-kugoo { color: var(--accent); }
+  h1 .version {
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+    vertical-align: middle;
   }
   .sub { color: var(--muted); font-size: 14px; }
   section { margin-top: 32px; }
@@ -465,7 +476,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1>Kugoo × FastMotion</h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion dashboard<span class="version">v0.16</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -544,7 +555,7 @@
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.15</span>
+    <span>Источник: YouTube Data API v3</span>
   </footer>
 </div>
 
