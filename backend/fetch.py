@@ -589,7 +589,13 @@ def pick_quotes(
 
 
 def _aggregate_snapshots(conn: sqlite3.Connection, since_iso: str) -> list[dict]:
-    """Sum per-snapshot totals across videos, ordered by time."""
+    """Sum per-snapshot totals across long-form videos only.
+
+    Filtering by duration_seconds > SHORTS_MAX_DURATION makes history and
+    delta calculations consistent even for snapshots that were written
+    back when our Shorts threshold was 60 seconds and 60-180s clips were
+    mistakenly classified as long-form.
+    """
     cur = conn.execute(
         """
         SELECT taken_at,
@@ -597,11 +603,11 @@ def _aggregate_snapshots(conn: sqlite3.Connection, since_iso: str) -> list[dict]
                SUM(like_count)    AS likes,
                SUM(comment_count) AS comments
         FROM snapshots
-        WHERE taken_at >= ?
+        WHERE taken_at >= ? AND duration_seconds > ?
         GROUP BY taken_at
         ORDER BY taken_at
         """,
-        (since_iso,),
+        (since_iso, SHORTS_MAX_DURATION),
     )
     return [
         {"ts": r[0], "views": int(r[1] or 0),
@@ -651,12 +657,12 @@ def compute_deltas(
                    SUM(like_count)    AS likes,
                    SUM(comment_count) AS comments
             FROM snapshots
-            WHERE taken_at <= ?
+            WHERE taken_at <= ? AND duration_seconds > ?
             GROUP BY taken_at
             ORDER BY taken_at DESC
             LIMIT 1
             """,
-            (target,),
+            (target, SHORTS_MAX_DURATION),
         )
         row = cur.fetchone()
         if not row:
