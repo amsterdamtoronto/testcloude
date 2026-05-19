@@ -100,8 +100,10 @@
     border-bottom-color: var(--text);
     font-weight: 500;
   }
-  body.view-pipeline .tab-stats { display: none; }
-  body:not(.view-pipeline) .tab-pipeline { display: none; }
+  .tab-stats, .tab-pipeline, .tab-telegram { display: none; }
+  body[data-view="stats"] .tab-stats { display: block; }
+  body[data-view="pipeline"] .tab-pipeline { display: block; }
+  body[data-view="telegram"] .tab-telegram { display: block; }
   .pipeline-list {
     display: flex;
     flex-direction: column;
@@ -266,6 +268,34 @@
   .chart .dot { fill: var(--text); }
   .chart .drop { fill: var(--muted); opacity: 0.5; }
   .chart .empty-msg { fill: var(--muted); font-size: 12px; font-family: inherit; }
+  .tg-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .tg-channel, .tg-kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .tg-channel-label, .tg-kpi .kpi-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .tg-channel-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    display: block;
+    word-break: break-all;
+  }
+  .tg-channel-name:hover { color: var(--accent); }
+  @media (max-width: 560px) {
+    .tg-head { grid-template-columns: 1fr; }
+  }
   details.videos-all {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -480,11 +510,11 @@
   }
 </style>
 </head>
-<body>
+<body data-view="stats">
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.17</span></h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.18</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -499,6 +529,7 @@
 
   <nav class="tabs">
     <button id="tab-stats" class="active" data-view="stats">Статистика вертикальные</button>
+    <button id="tab-telegram" data-view="telegram">Телеграм-канал</button>
     <button id="tab-pipeline" data-view="pipeline">В производстве</button>
   </nav>
 
@@ -551,6 +582,37 @@
 
   </div><!-- /.tab-stats -->
 
+  <div class="tab-telegram">
+    <section>
+      <h2>Телеграм-канал</h2>
+      <div class="tg-head">
+        <div class="tg-channel">
+          <div class="tg-channel-label">Канал</div>
+          <a id="tg-channel-link" href="#" target="_blank" rel="noopener" class="tg-channel-name">—</a>
+        </div>
+        <div class="tg-kpi">
+          <div class="kpi-label">Подписчиков</div>
+          <div class="kpi-value" id="tg-subs">—</div>
+          <div class="kpi-delta" id="tg-deltas">
+            <span class="kpi-delta-row"><b>—</b> за 24ч</span>
+            <span class="kpi-delta-row"><b>—</b> за 7д</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Динамика подписчиков</h2>
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <span id="tg-chart-range">за 30 дн.</span>
+          <b id="tg-chart-current">—</b>
+        </div>
+        <div class="chart" id="tg-chart"></div>
+      </div>
+    </section>
+  </div><!-- /.tab-telegram -->
+
   <div class="tab-pipeline">
     <section>
       <h2>В производстве</h2>
@@ -563,7 +625,7 @@
 
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3</span>
+    <span>Источник: YouTube Data API v3 + Telegram</span>
   </footer>
 </div>
 
@@ -622,15 +684,13 @@
     }).join("");
   }
 
-  function renderChart(history, drops) {
-    const el = $("chart");
-    const points = (history && history.points) || [];
-    const cur = $("chart-current");
-    if (points.length >= 1) {
-      cur.textContent = (points[points.length - 1].views || 0).toLocaleString("ru-RU") + " просмотров";
-    }
-    if (history && history.rangeDays) {
-      $("chart-range").textContent = "за " + history.rangeDays + " дн.";
+  function drawLineChart(opts) {
+    const { elId, rangeElId, currentElId, points, rangeDays, valueKey, drops, currentSuffix } = opts;
+    const el = $(elId);
+    if (rangeElId && rangeDays) $(rangeElId).textContent = "за " + rangeDays + " дн.";
+    if (currentElId && points.length >= 1) {
+      const lastV = points[points.length - 1][valueKey] || 0;
+      $(currentElId).textContent = lastV.toLocaleString("ru-RU") + (currentSuffix ? " " + currentSuffix : "");
     }
     if (points.length < 2) {
       el.innerHTML = `<svg viewBox="0 0 800 220" preserveAspectRatio="none">
@@ -644,7 +704,7 @@
     const plotH = H - MT - MB;
 
     const ts = points.map(p => new Date(p.ts).getTime());
-    const vs = points.map(p => p.views || 0);
+    const vs = points.map(p => p[valueKey] || 0);
     const tMin = ts[0], tMax = ts[ts.length - 1];
     const vMin = Math.min(...vs), vMax = Math.max(...vs);
     const vRange = Math.max(1, vMax - vMin);
@@ -657,9 +717,8 @@
     }
     const area = path + ` L ${xs(tMax)} ${MT + plotH} L ${xs(tMin)} ${MT + plotH} Z`;
 
-    // Y axis (3 ticks)
     const yTicks = [vMin, vMin + vRange / 2, vMax].map(v => ({
-      v, y: ys(v),
+      y: ys(v),
       label: v >= 1e6 ? (v / 1e6).toFixed(2) + "M" :
              v >= 1e3 ? (v / 1e3).toFixed(0) + "K" : String(Math.round(v)),
     }));
@@ -670,17 +729,12 @@
       `<text x="${ML - 8}" y="${t.y + 3}" text-anchor="end">${t.label}</text>`
     ).join("");
 
-    // X axis (3 dates)
-    const fmtDay = (ms) => {
-      const d = new Date(ms);
-      return d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
-    };
+    const fmtDay = (ms) => new Date(ms).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
     const xTicks = [tMin, (tMin + tMax) / 2, tMax];
     const xLabels = xTicks.map(t =>
       `<text x="${xs(t)}" y="${H - 10}" text-anchor="middle">${fmtDay(t)}</text>`
     ).join("");
 
-    // Video drop triangles (in plot range only)
     let dropsMarkup = "";
     if (Array.isArray(drops)) {
       for (const d of drops) {
@@ -691,7 +745,6 @@
         dropsMarkup += `<polygon class="drop" points="${x - 3},${y + 4} ${x + 3},${y + 4} ${x},${y}"><title>${escapeHtml(d.title)}</title></polygon>`;
       }
     }
-
     const lastX = xs(ts[ts.length - 1]);
     const lastY = ys(vs[vs.length - 1]);
 
@@ -703,6 +756,39 @@
       <g class="axis">${yLabels}${xLabels}</g>
       <g class="drops">${dropsMarkup}</g>
     </svg>`;
+  }
+
+  function renderChart(history, drops) {
+    const h = history || {};
+    drawLineChart({
+      elId: "chart", rangeElId: "chart-range", currentElId: "chart-current",
+      points: h.points || [], rangeDays: h.rangeDays, valueKey: "views",
+      currentSuffix: "просмотров", drops: drops,
+    });
+  }
+
+  function renderTelegram(tg) {
+    tg = tg || {};
+    const link = $("tg-channel-link");
+    if (tg.channel) {
+      link.textContent = "@" + tg.channel;
+      link.href = tg.url || ("https://t.me/" + tg.channel);
+    } else {
+      link.textContent = "—"; link.href = "#";
+    }
+    $("tg-subs").textContent = tg.subscribersCompact || "—";
+    const d24 = tg.deltas && tg.deltas.h24;
+    const d7  = tg.deltas && tg.deltas.d7;
+    $("tg-deltas").innerHTML =
+      `<span class="kpi-delta-row"><b>${escapeHtml(d24 && d24.signed != null ? d24.signed : "—")}</b> за 24ч</span>` +
+      `<span class="kpi-delta-row"><b>${escapeHtml(d7  && d7.signed  != null ? d7.signed  : "—")}</b> за 7д</span>`;
+    drawLineChart({
+      elId: "tg-chart", rangeElId: "tg-chart-range", currentElId: "tg-chart-current",
+      points: (tg.history && tg.history.points) || [],
+      rangeDays: tg.history && tg.history.rangeDays,
+      valueKey: "subscribers",
+      currentSuffix: "подписчиков",
+    });
   }
 
   function renderQuotes(quotes, elId, emptyText) {
@@ -791,7 +877,7 @@
   }
 
   function activateTab(view) {
-    document.body.classList.toggle("view-pipeline", view === "pipeline");
+    document.body.dataset.view = view;
     document.querySelectorAll(".tabs button").forEach(b => {
       b.classList.toggle("active", b.dataset.view === view);
     });
@@ -909,6 +995,7 @@
     const t = data.totals || {};
     renderKpis(t, data.deltas);
     renderChart(data.history, data.videoDrops);
+    renderTelegram(data.telegram);
     renderTop(data.top || [], "top", "views");
     renderTop(data.topByEr || [], "top-er", "er");
     const q = data.quotes || {};

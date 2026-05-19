@@ -15,6 +15,8 @@ import re
 import sqlite3
 import sys
 import tempfile
+import urllib.request
+import urllib.error
 from datetime import datetime, timedelta, timezone
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -175,6 +177,12 @@ HISTORY_POINTS = 100
 TOP_ER_LIMIT = 3
 SNAPSHOT_RETENTION_DAYS = 90
 
+TELEGRAM_CHANNEL = os.environ.get("TG_CHANNEL", "Jilong_Rus")
+TELEGRAM_UA = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
+)
+
 
 def setup_logging() -> logging.Logger:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -217,6 +225,19 @@ def init_db() -> sqlite3.Connection:
     )
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_snapshots_video ON snapshots(video_id, taken_at)"
+    )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS tg_snapshots (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            taken_at TEXT NOT NULL,
+            channel TEXT NOT NULL,
+            subscribers INTEGER NOT NULL
+        )
+        """
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_tg_snapshots_chan ON tg_snapshots(channel, taken_at)"
     )
     conn.commit()
     return conn
@@ -663,6 +684,122 @@ def fmt_signed(n: int | None) -> str | None:
     return f"{sign}{fmt_compact(abs(n))}"
 
 
+TG_PATTERNS = [
+    # <span class="counter_value">12 345</span><span class="counter_type">subscribers</span>
+    re.compile(
+        r'class=["\']counter_value["\'][^>]*>([^<]+)</[^>]+>\s*'
+        r'<[^>]+class=["\']counter_type["\'][^>]*>\s*subscriber',
+        re.IGNORECASE,
+    ),
+    # <div class="tgme_header_counter">12 345 subscribers</div>
+    re.compile(
+        r'class=["\']tgme_header_counter["\'][^>]*>\s*([\d\s .,KkКк]+)\s*subscriber',
+        re.IGNORECASE,
+    ),
+    # generic ">12 345 subscribers<"
+    re.compile(r'>\s*([\d\s .,KkКк]+)\s*subscribers?\s*<', re.IGNORECASE),
+]
+
+
+def _parse_subscriber_count(raw: str) -> int | None:
+    raw = raw.strip()
+    if not raw:
+        return None
+    if re.search(r'[KkКк]', raw):
+        num = re.sub(r'[^\d.]', '', raw.replace(',', '.'))
+        try:
+            return int(float(num) * 1000)
+        except (ValueError, TypeError):
+            return None
+    digits = re.sub(r'\D', '', raw)
+    return int(digits) if digits else None
+
+
+def fetch_telegram_subscribers(channel: str) -> int | None:
+    url = f"https://t.me/s/{channel}"
+    req = urllib.request.Request(url, headers={
+        "User-Agent": TELEGRAM_UA,
+        "Accept-Language": "en-US,en;q=0.9",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            html = resp.read().decode("utf-8", errors="ignore")
+    except urllib.error.HTTPError as e:
+        log.warning("Telegram HTTP %s for %s", e.code, channel)
+        return None
+    except Exception as e:
+        log.warning("Telegram fetch error: %s", e)
+        return None
+
+    for p in TG_PATTERNS:
+        m = p.search(html)
+        if m:
+            n = _parse_subscriber_count(m.group(1))
+            if n is not None and n > 0:
+                return n
+    log.warning("Could not parse subscribers from t.me/s/%s page", channel)
+    return None
+
+
+def save_tg_snapshot(conn: sqlite3.Connection, taken_at: str, channel: str, subs: int) -> None:
+    conn.execute(
+        "INSERT INTO tg_snapshots(taken_at, channel, subscribers) VALUES (?, ?, ?)",
+        (taken_at, channel, subs),
+    )
+    conn.commit()
+
+
+def compute_tg_history(conn: sqlite3.Connection, channel: str, now_utc: datetime) -> dict:
+    since = (now_utc - timedelta(days=HISTORY_DAYS)).isoformat()
+    cur = conn.execute(
+        """
+        SELECT taken_at, subscribers FROM tg_snapshots
+        WHERE channel = ? AND taken_at >= ?
+        ORDER BY taken_at
+        """,
+        (channel, since),
+    )
+    raw = [{"ts": r[0], "subscribers": int(r[1])} for r in cur.fetchall()]
+    return {
+        "rangeDays": HISTORY_DAYS,
+        "points": _resample(raw, HISTORY_POINTS),
+        "rawCount": len(raw),
+    }
+
+
+def compute_tg_deltas(
+    conn: sqlite3.Connection, channel: str, current: int, now_utc: datetime
+) -> dict:
+    def find_at(hours: int) -> dict | None:
+        target = (now_utc - timedelta(hours=hours)).isoformat()
+        cur = conn.execute(
+            """
+            SELECT taken_at, subscribers FROM tg_snapshots
+            WHERE channel = ? AND taken_at <= ?
+            ORDER BY taken_at DESC LIMIT 1
+            """,
+            (channel, target),
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        return {"ts": row[0], "subscribers": int(row[1])}
+
+    def delta_for(prev):
+        if not prev:
+            return None
+        return {
+            "abs": current - prev["subscribers"],
+            "signed": fmt_signed(current - prev["subscribers"]),
+            "since": prev["ts"],
+        }
+
+    return {
+        "h24": delta_for(find_at(24)),
+        "d7":  delta_for(find_at(168)),
+    }
+
+
 def build_payload(
     videos: list[dict],
     taken_at_utc: datetime,
@@ -670,6 +807,7 @@ def build_payload(
     dns_quotes: list[dict],
     history: dict,
     deltas: dict,
+    telegram: dict | None = None,
 ) -> dict:
     total_videos = len(videos)
     total_views = sum(v["viewCount"] for v in videos)
@@ -755,6 +893,7 @@ def build_payload(
             "kugoo": kugoo_quotes,
             "dns": dns_quotes,
         },
+        "telegram": telegram or {},
     }
 
 
@@ -822,6 +961,32 @@ def main() -> int:
             "yes" if deltas.get("h24") else "no",
             "yes" if deltas.get("d7") else "no",
         )
+
+        telegram_payload: dict = {
+            "channel": TELEGRAM_CHANNEL,
+            "url": f"https://t.me/{TELEGRAM_CHANNEL}",
+            "subscribers": None,
+            "subscribersCompact": "—",
+            "deltas": {"h24": None, "d7": None},
+            "history": {"rangeDays": HISTORY_DAYS, "points": [], "rawCount": 0},
+        }
+        subs = fetch_telegram_subscribers(TELEGRAM_CHANNEL)
+        if subs is not None:
+            save_tg_snapshot(conn, taken_at.isoformat(), TELEGRAM_CHANNEL, subs)
+            tg_cutoff = (taken_at - timedelta(days=SNAPSHOT_RETENTION_DAYS)).isoformat()
+            conn.execute(
+                "DELETE FROM tg_snapshots WHERE taken_at < ?", (tg_cutoff,)
+            )
+            conn.commit()
+            telegram_payload.update({
+                "subscribers": subs,
+                "subscribersCompact": fmt_compact(subs),
+                "deltas": compute_tg_deltas(conn, TELEGRAM_CHANNEL, subs, taken_at),
+                "history": compute_tg_history(conn, TELEGRAM_CHANNEL, taken_at),
+            })
+            log.info("Telegram @%s: %d subscribers", TELEGRAM_CHANNEL, subs)
+        else:
+            log.warning("Telegram @%s: subscribers unavailable", TELEGRAM_CHANNEL)
     finally:
         conn.close()
 
@@ -842,7 +1007,8 @@ def main() -> int:
         kugoo_quotes, dns_quotes = [], []
 
     payload = build_payload(
-        videos, taken_at, kugoo_quotes, dns_quotes, history, deltas
+        videos, taken_at, kugoo_quotes, dns_quotes, history, deltas,
+        telegram=telegram_payload,
     )
     write_json_atomic(payload)
     log.info(
