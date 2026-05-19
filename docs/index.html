@@ -42,7 +42,101 @@
     margin: 0 auto;
     padding: 48px 24px 64px;
   }
-  header { margin-bottom: 32px; }
+  header { margin-bottom: 24px; }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tabs button {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 14px;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-bottom: -1px;
+  }
+  .tabs button:hover { color: var(--text); }
+  .tabs button.active {
+    color: var(--text);
+    border-bottom-color: var(--text);
+    font-weight: 500;
+  }
+  body.view-pipeline .tab-stats { display: none; }
+  body:not(.view-pipeline) .tab-pipeline { display: none; }
+  .pipeline-board {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .pipeline-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pipeline-col-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .pipeline-col-head .col-count {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+  .pipeline-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .pipeline-empty-col {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    padding: 8px 0;
+  }
+  .pipeline-edit-hint {
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .pipeline-edit-hint code {
+    background: var(--surface-2);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  @media (max-width: 1000px) {
+    .pipeline-board { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 600px) {
+    .pipeline-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 420px) {
+    .pipeline-board { grid-template-columns: 1fr; }
+  }
   h1 {
     font-size: 22px;
     font-weight: 600;
@@ -341,6 +435,13 @@
     <div class="sub" id="sub">Дашборд коллабы — загрузка…</div>
   </header>
 
+  <nav class="tabs">
+    <button id="tab-stats" class="active" data-view="stats">Статистика</button>
+    <button id="tab-pipeline" data-view="pipeline">Ролики в работе</button>
+  </nav>
+
+  <div class="tab-stats">
+
   <section>
     <h2>Сводка</h2>
     <div class="kpi-grid" id="kpis"></div>
@@ -386,9 +487,21 @@
     </details>
   </section>
 
+  </div><!-- /.tab-stats -->
+
+  <div class="tab-pipeline">
+    <section>
+      <h2>Ролики в работе</h2>
+      <div class="pipeline-board" id="pipeline-board"></div>
+      <div class="pipeline-edit-hint">
+        Список ведётся вручную в файле <code>docs/pipeline.json</code>. Чтобы добавить новый ролик — отредактируй этот файл и закоммить. Статусы: Идея → Сценарий → Подготовка → Съёмка → Публикация → Отчёт.
+      </div>
+    </section>
+  </div><!-- /.tab-pipeline -->
+
   <footer>
     <span id="updated">Последнее обновление: —</span>
-    <span>Источник: YouTube Data API v3 · v0.10</span>
+    <span>Источник: YouTube Data API v3 · v0.11</span>
   </footer>
 </div>
 
@@ -574,6 +687,55 @@
       return av.localeCompare(bv, "ru") * dir;
     };
   }
+
+  const PIPELINE_STATUSES = ["Идея", "Сценарий", "Подготовка", "Съёмка", "Публикация", "Отчёт"];
+
+  function renderPipeline(items) {
+    const el = $("pipeline-board");
+    const list = Array.isArray(items) ? items : [];
+    const byStatus = Object.fromEntries(PIPELINE_STATUSES.map(s => [s, []]));
+    for (const it of list) {
+      const s = (it.status || "").trim();
+      if (s in byStatus) byStatus[s].push(it);
+    }
+    el.innerHTML = PIPELINE_STATUSES.map(status => {
+      const cards = byStatus[status];
+      const body = cards.length
+        ? cards.map(c => `<div class="pipeline-card">${escapeHtml(c.title || "—")}</div>`).join("")
+        : `<div class="pipeline-empty-col">пусто</div>`;
+      return `
+        <div class="pipeline-col">
+          <div class="pipeline-col-head">
+            <span>${escapeHtml(status)}</span>
+            <span class="col-count">${cards.length}</span>
+          </div>
+          ${body}
+        </div>
+      `;
+    }).join("");
+  }
+
+  async function loadPipeline() {
+    try {
+      const res = await fetch("./pipeline.json?ts=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      renderPipeline(data);
+    } catch (e) {
+      $("pipeline-board").innerHTML = `<div class="empty">Не удалось загрузить pipeline.json: ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  function activateTab(view) {
+    document.body.classList.toggle("view-pipeline", view === "pipeline");
+    document.querySelectorAll(".tabs button").forEach(b => {
+      b.classList.toggle("active", b.dataset.view === view);
+    });
+    if (view === "pipeline") loadPipeline();
+  }
+  document.querySelectorAll(".tabs button").forEach(b => {
+    b.addEventListener("click", () => activateTab(b.dataset.view));
+  });
 
   function renderAllVideos(videos) {
     const cnt = $("all-videos-count");
