@@ -188,6 +188,14 @@ TELEGRAM_UA = (
 )
 
 
+def _redact(text: object) -> str:
+    """Strip the API key from any string before it reaches a log.
+    GitHub Actions logs are public for public repos, and googleapiclient's
+    HttpError embeds the full request URL (including ?key=...) in its message.
+    """
+    return re.sub(r'([?&](?:key|access_token)=)[^&\s"\']+', r'\1REDACTED', str(text))
+
+
 def setup_logging() -> logging.Logger:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     logger = logging.getLogger("fetch")
@@ -406,7 +414,7 @@ def fetch_comments(youtube, videos: list[dict]) -> list[dict]:
             if status in (403, 404):
                 log.info("Comments unavailable for %s (HTTP %s)", v["videoId"], status)
                 continue
-            log.warning("commentThreads error for %s: %s", v["videoId"], e)
+            log.warning("commentThreads error for %s: %s", v["videoId"], _redact(e))
             continue
         for item in resp.get("items", []):
             top = (
@@ -1055,11 +1063,14 @@ def main() -> int:
             len(all_matched), MARKER, len(videos), len(shorts),
         )
     except HttpError as e:
-        log.exception("YouTube API HttpError: %s", e)
+        status = getattr(getattr(e, "resp", None), "status", "?")
+        # Do not use log.exception here — the traceback would also embed the
+        # request URL with the API key. Log only a redacted one-line summary.
+        log.error("YouTube API HttpError %s: %s", status, _redact(e))
         log.warning("Keeping previous data.json")
         return 1
     except Exception as e:
-        log.exception("Fetch failed: %s", e)
+        log.error("Fetch failed: %s", _redact(e))
         log.warning("Keeping previous data.json")
         return 1
 
