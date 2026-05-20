@@ -652,13 +652,22 @@ def compute_history(conn: sqlite3.Connection, now_utc: datetime, kind: str = "lo
 def compute_deltas(
     conn: sqlite3.Connection, current: dict, now_utc: datetime, kind: str = "long"
 ) -> dict:
-    """Compare current totals against snapshots ~24h and ~7d ago for one kind."""
+    """Compare current totals against snapshots ~24h and ~7d ago for one kind.
+
+    A delta is only returned if the baseline snapshot covered a comparable
+    set of videos (>= 80% of the current count). Otherwise the "delta" would
+    just reflect the dataset growing — e.g. Shorts history only started being
+    recorded part-way through, so early snapshots have far fewer rows.
+    """
     op = ">" if kind == "long" else "<="
+    current_count = int(current.get("count", 0))
+
     def find_at(hours: int) -> dict | None:
         target = (now_utc - timedelta(hours=hours)).isoformat()
         cur = conn.execute(
             f"""
             SELECT taken_at,
+                   COUNT(*)           AS n,
                    SUM(view_count)    AS views,
                    SUM(like_count)    AS likes,
                    SUM(comment_count) AS comments
@@ -673,11 +682,13 @@ def compute_deltas(
         row = cur.fetchone()
         if not row:
             return None
-        return {"ts": row[0], "views": int(row[1] or 0),
-                "likes": int(row[2] or 0), "comments": int(row[3] or 0)}
+        return {"ts": row[0], "count": int(row[1] or 0), "views": int(row[2] or 0),
+                "likes": int(row[3] or 0), "comments": int(row[4] or 0)}
 
     def delta_for(prev: dict | None) -> dict | None:
         if not prev:
+            return None
+        if current_count and prev["count"] < current_count * 0.8:
             return None
         return {
             "views": current["views"] - prev["views"],
@@ -1091,6 +1102,7 @@ def main() -> int:
             "views":    sum(v["viewCount"] for v in videos),
             "likes":    sum(v["likeCount"] for v in videos),
             "comments": sum(v["commentCount"] for v in videos),
+            "count":    len(videos),
         }
         history = compute_history(conn, taken_at, kind="long")
         deltas = compute_deltas(conn, current_totals, taken_at, kind="long")
@@ -1098,6 +1110,7 @@ def main() -> int:
             "views":    sum(v["viewCount"] for v in shorts),
             "likes":    sum(v["likeCount"] for v in shorts),
             "comments": sum(v["commentCount"] for v in shorts),
+            "count":    len(shorts),
         }
         shorts_deltas = compute_deltas(conn, shorts_current_totals, taken_at, kind="short")
         log.info(
