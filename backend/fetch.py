@@ -43,7 +43,7 @@ SHORTS_MAX_DURATION = 180  # YouTube treats clips up to 3 minutes as Shorts (sin
 CHANNELS = [
     {
         "id":           "fastmotion",
-        "title":        "FastMotion (kugoo.ru)",
+        "title":        "FastMotion",
         "channel_ref":  ("id", "UCvy7FIEQYztchmNfCROlgDw"),
         "handle":       "@fastmotionelectric",
         "marker":       "kugoo.ru",
