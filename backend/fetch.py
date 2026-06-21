@@ -268,10 +268,12 @@ def init_db() -> sqlite3.Connection:
     # One-shot migration: add channel_id column to existing snapshots table.
     cols = [r[1] for r in conn.execute("PRAGMA table_info(snapshots)").fetchall()]
     if "channel_id" not in cols:
-        # All pre-existing rows are FastMotion's collab snapshots.
+        # All pre-existing rows are FastMotion's collab snapshots. SQLite's
+        # ALTER TABLE ADD COLUMN doesn't accept ? for DEFAULT, so inline the
+        # constant directly.
         conn.execute(
-            "ALTER TABLE snapshots ADD COLUMN channel_id TEXT NOT NULL DEFAULT ?",
-            ("UCvy7FIEQYztchmNfCROlgDw",),
+            "ALTER TABLE snapshots ADD COLUMN channel_id TEXT NOT NULL "
+            "DEFAULT 'UCvy7FIEQYztchmNfCROlgDw'"
         )
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_snapshots_chan ON snapshots(channel_id, taken_at)"
