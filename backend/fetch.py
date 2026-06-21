@@ -34,6 +34,33 @@ SHORTS_SINCE = os.environ.get("SHORTS_SINCE", "2025-02-01T00:00:00Z")
 BROAD_SINCE = min(LONG_SINCE, SHORTS_SINCE)
 SHORTS_MAX_DURATION = 180  # YouTube treats clips up to 3 minutes as Shorts (since 2024)
 
+# Multi-channel config. Each entry produces an independent block in data.json
+# under data.channels.<id>. Resolution:
+#   channel_ref = ("id", "UCxxx") | ("handle", "Name")  — how to find the channel
+#   marker      = substring required in description (None = take all videos)
+#   long_since  = ISO timestamp floor for long-form videos (>180s)
+#   shorts_since = ISO timestamp floor for shorts (≤180s)
+CHANNELS = [
+    {
+        "id":           "fastmotion",
+        "title":        "FastMotion (kugoo.ru)",
+        "channel_ref":  ("id", "UCvy7FIEQYztchmNfCROlgDw"),
+        "handle":       "@fastmotionelectric",
+        "marker":       "kugoo.ru",
+        "long_since":   "2025-04-14T00:00:00Z",
+        "shorts_since": "2025-02-01T00:00:00Z",
+    },
+    {
+        "id":           "kugooru",
+        "title":        "Kugoo.ru",
+        "channel_ref":  ("handle", "Kugooru"),
+        "handle":       "@Kugooru",
+        "marker":       None,
+        "long_since":   "2026-05-01T00:00:00Z",
+        "shorts_since": "2026-05-01T00:00:00Z",
+    },
+]
+
 ROOT = Path(__file__).resolve().parent.parent
 BACKEND_DIR = ROOT / "backend"
 FRONTEND_DIR = ROOT / "docs"
@@ -238,6 +265,17 @@ def init_db() -> sqlite3.Connection:
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_snapshots_video ON snapshots(video_id, taken_at)"
     )
+    # One-shot migration: add channel_id column to existing snapshots table.
+    cols = [r[1] for r in conn.execute("PRAGMA table_info(snapshots)").fetchall()]
+    if "channel_id" not in cols:
+        # All pre-existing rows are FastMotion's collab snapshots.
+        conn.execute(
+            "ALTER TABLE snapshots ADD COLUMN channel_id TEXT NOT NULL DEFAULT ?",
+            ("UCvy7FIEQYztchmNfCROlgDw",),
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_snapshots_chan ON snapshots(channel_id, taken_at)"
+        )
     conn.execute(
         """
         CREATE TABLE IF NOT EXISTS tg_snapshots (
@@ -282,6 +320,23 @@ def fmt_compact(n: int) -> str:
     return str(n)
 
 
+def resolve_channel_id(youtube, ref: tuple[str, str]) -> str:
+    kind, value = ref
+    if kind == "id":
+        return value
+    if kind == "handle":
+        resp = (
+            youtube.channels()
+            .list(part="id", forHandle=value, maxResults=1)
+            .execute()
+        )
+        items = resp.get("items", [])
+        if not items:
+            raise RuntimeError(f"Could not resolve handle @{value}")
+        return items[0]["id"]
+    raise ValueError(f"Unknown channel ref kind: {kind}")
+
+
 def get_uploads_playlist(youtube, channel_id: str) -> str:
     resp = (
         youtube.channels()
@@ -294,7 +349,7 @@ def get_uploads_playlist(youtube, channel_id: str) -> str:
     return items[0]["contentDetails"]["relatedPlaylists"]["uploads"]
 
 
-def list_video_ids(youtube, playlist_id: str) -> list[str]:
+def list_video_ids(youtube, playlist_id: str, since_iso: str) -> list[str]:
     ids: list[str] = []
     token: str | None = None
     pages = 0
@@ -309,23 +364,27 @@ def list_video_ids(youtube, playlist_id: str) -> list[str]:
             )
             .execute()
         )
+        stop = False
         for item in resp.get("items", []):
             vid = item.get("contentDetails", {}).get("videoId")
             published = item.get("contentDetails", {}).get("videoPublishedAt")
             if not vid:
                 continue
-            if published and published < BROAD_SINCE:
+            if published and published < since_iso:
+                # Uploads playlist is reverse-chronological — older entries
+                # can't get newer, so we can stop the walk here.
+                stop = True
                 continue
             ids.append(vid)
         token = resp.get("nextPageToken")
         pages += 1
-        if not token:
+        if not token or stop:
             break
     log.info("Listed %d video ids across %d pages", len(ids), pages)
     return ids
 
 
-def fetch_video_details(youtube, video_ids: list[str]) -> list[dict]:
+def fetch_video_details(youtube, video_ids: list[str], marker: str | None) -> list[dict]:
     out: list[dict] = []
     for i in range(0, len(video_ids), 50):
         batch = video_ids[i : i + 50]
@@ -339,7 +398,7 @@ def fetch_video_details(youtube, video_ids: list[str]) -> list[dict]:
             stats = item.get("statistics", {})
             content = item.get("contentDetails", {})
             description = snippet.get("description", "") or ""
-            if MARKER not in description.lower():
+            if marker and marker not in description.lower():
                 continue
             duration_s = parse_iso_duration(content.get("duration", ""))
             thumbs = snippet.get("thumbnails", {}) or {}
@@ -367,7 +426,9 @@ def fetch_video_details(youtube, video_ids: list[str]) -> list[dict]:
     return out
 
 
-def save_snapshot(conn: sqlite3.Connection, taken_at: str, videos: list[dict]) -> None:
+def save_snapshot(
+    conn: sqlite3.Connection, taken_at: str, channel_id: str, videos: list[dict]
+) -> None:
     rows = [
         (
             taken_at,
@@ -379,6 +440,7 @@ def save_snapshot(conn: sqlite3.Connection, taken_at: str, videos: list[dict]) -
             v["commentCount"],
             v["durationSeconds"],
             v["thumbnail"],
+            channel_id,
         )
         for v in videos
     ]
@@ -386,8 +448,8 @@ def save_snapshot(conn: sqlite3.Connection, taken_at: str, videos: list[dict]) -
         """
         INSERT INTO snapshots
             (taken_at, video_id, title, published_at, view_count,
-             like_count, comment_count, duration_seconds, thumbnail)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+             like_count, comment_count, duration_seconds, thumbnail, channel_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         rows,
     )
@@ -597,9 +659,9 @@ def pick_quotes(
 
 
 def _aggregate_snapshots(
-    conn: sqlite3.Connection, since_iso: str, kind: str = "long"
+    conn: sqlite3.Connection, channel_id: str, since_iso: str, kind: str = "long"
 ) -> list[dict]:
-    """Sum per-snapshot totals for one kind ("long" or "short")."""
+    """Sum per-snapshot totals for one channel + one kind ("long" or "short")."""
     op = ">" if kind == "long" else "<="
     cur = conn.execute(
         f"""
@@ -608,11 +670,11 @@ def _aggregate_snapshots(
                SUM(like_count)    AS likes,
                SUM(comment_count) AS comments
         FROM snapshots
-        WHERE taken_at >= ? AND duration_seconds {op} ?
+        WHERE channel_id = ? AND taken_at >= ? AND duration_seconds {op} ?
         GROUP BY taken_at
         ORDER BY taken_at
         """,
-        (since_iso, SHORTS_MAX_DURATION),
+        (channel_id, since_iso, SHORTS_MAX_DURATION),
     )
     return [
         {"ts": r[0], "views": int(r[1] or 0),
@@ -639,9 +701,11 @@ def _parse_iso(value: str) -> datetime | None:
         return None
 
 
-def compute_history(conn: sqlite3.Connection, now_utc: datetime, kind: str = "long") -> dict:
+def compute_history(
+    conn: sqlite3.Connection, channel_id: str, now_utc: datetime, kind: str = "long"
+) -> dict:
     since = (now_utc - timedelta(days=HISTORY_DAYS)).isoformat()
-    points = _aggregate_snapshots(conn, since, kind=kind)
+    points = _aggregate_snapshots(conn, channel_id, since, kind=kind)
     return {
         "rangeDays": HISTORY_DAYS,
         "points": _resample(points, HISTORY_POINTS),
@@ -650,7 +714,8 @@ def compute_history(conn: sqlite3.Connection, now_utc: datetime, kind: str = "lo
 
 
 def compute_deltas(
-    conn: sqlite3.Connection, current: dict, now_utc: datetime, kind: str = "long"
+    conn: sqlite3.Connection, channel_id: str, current: dict, now_utc: datetime,
+    kind: str = "long",
 ) -> dict:
     """Compare current totals against snapshots ~24h and ~7d ago for one kind.
 
@@ -672,12 +737,12 @@ def compute_deltas(
                    SUM(like_count)    AS likes,
                    SUM(comment_count) AS comments
             FROM snapshots
-            WHERE taken_at <= ? AND duration_seconds {op} ?
+            WHERE channel_id = ? AND taken_at <= ? AND duration_seconds {op} ?
             GROUP BY taken_at
             ORDER BY taken_at DESC
             LIMIT 1
             """,
-            (target, SHORTS_MAX_DURATION),
+            (channel_id, target, SHORTS_MAX_DURATION),
         )
         row = cur.fetchone()
         if not row:
@@ -850,17 +915,25 @@ def compute_tg_deltas(
     }
 
 
-def build_payload(
+def _fmt_delta(d: dict | None, key: str) -> dict | None:
+    if not d:
+        return None
+    val = d[key]
+    return {"abs": val, "signed": fmt_signed(val), "since": d["since"]}
+
+
+def build_channel_block(
+    channel_cfg: dict,
+    channel_id: str,
     videos: list[dict],
-    taken_at_utc: datetime,
+    shorts: list[dict],
     kugoo_quotes: list[dict],
     dns_quotes: list[dict],
     history: dict,
     deltas: dict,
-    telegram: dict | None = None,
-    shorts: list[dict] | None = None,
-    shorts_deltas: dict | None = None,
-    shorts_kugoo_quotes: list[dict] | None = None,
+    shorts_deltas: dict,
+    shorts_kugoo_quotes: list[dict],
+    shorts_dns_quotes: list[dict],
 ) -> dict:
     total_videos = len(videos)
     total_views = sum(v["viewCount"] for v in videos)
@@ -900,19 +973,14 @@ def build_payload(
         key=lambda d: d["ts"],
     )
 
-    def fmt_delta(d: dict | None, key: str) -> dict | None:
-        if not d:
-            return None
-        val = d[key]
-        return {"abs": val, "signed": fmt_signed(val), "since": d["since"]}
-
-    taken_at_msk = taken_at_utc.astimezone(MSK)
     return {
-        "channelId": CHANNEL_ID,
-        "channelHandle": "@fastmotionelectric",
-        "marker": MARKER,
-        "updatedAtUtc": taken_at_utc.isoformat(),
-        "updatedAtMsk": taken_at_msk.strftime("%d.%m.%Y %H:%M МСК"),
+        "id": channel_cfg["id"],
+        "title": channel_cfg["title"],
+        "channelId": channel_id,
+        "channelHandle": channel_cfg["handle"],
+        "marker": channel_cfg.get("marker"),
+        "longSince": channel_cfg["long_since"],
+        "shortsSince": channel_cfg["shorts_since"],
         "totals": {
             "videos": total_videos,
             "views": total_views,
@@ -927,14 +995,14 @@ def build_payload(
         },
         "deltas": {
             "h24": {
-                "views":    fmt_delta(deltas.get("h24"), "views"),
-                "likes":    fmt_delta(deltas.get("h24"), "likes"),
-                "comments": fmt_delta(deltas.get("h24"), "comments"),
+                "views":    _fmt_delta(deltas.get("h24"), "views"),
+                "likes":    _fmt_delta(deltas.get("h24"), "likes"),
+                "comments": _fmt_delta(deltas.get("h24"), "comments"),
             },
             "d7": {
-                "views":    fmt_delta(deltas.get("d7"), "views"),
-                "likes":    fmt_delta(deltas.get("d7"), "likes"),
-                "comments": fmt_delta(deltas.get("d7"), "comments"),
+                "views":    _fmt_delta(deltas.get("d7"), "views"),
+                "likes":    _fmt_delta(deltas.get("d7"), "likes"),
+                "comments": _fmt_delta(deltas.get("d7"), "comments"),
             },
         },
         "top": [card(v) for v in top],
@@ -946,15 +1014,19 @@ def build_payload(
             "kugoo": kugoo_quotes,
             "dns": dns_quotes,
         },
-        "telegram": telegram or {},
         "shorts": _shorts_block(
-            shorts or [], shorts_deltas or {}, shorts_kugoo_quotes or [],
+            channel_cfg, shorts, shorts_deltas,
+            shorts_kugoo_quotes, shorts_dns_quotes,
         ),
     }
 
 
 def _shorts_block(
-    shorts: list[dict], shorts_deltas: dict, kugoo_quotes: list[dict]
+    channel_cfg: dict,
+    shorts: list[dict],
+    shorts_deltas: dict,
+    kugoo_quotes: list[dict],
+    dns_quotes: list[dict],
 ) -> dict:
     for v in shorts:
         v["engagementRate"] = round(
@@ -980,14 +1052,8 @@ def _shorts_block(
     top_views = sorted(shorts, key=lambda x: x["viewCount"], reverse=True)[:3]
     top_er = sorted(shorts, key=lambda x: x["engagementRate"], reverse=True)[:3]
 
-    def fmt_delta(d: dict | None, key: str) -> dict | None:
-        if not d:
-            return None
-        val = d[key]
-        return {"abs": val, "signed": fmt_signed(val), "since": d["since"]}
-
     return {
-        "since": SHORTS_SINCE,
+        "since": channel_cfg["shorts_since"],
         "totals": {
             "count": len(shorts),
             "views": total_views,
@@ -1000,19 +1066,19 @@ def _shorts_block(
         },
         "deltas": {
             "h24": {
-                "views":    fmt_delta(shorts_deltas.get("h24"), "views"),
-                "likes":    fmt_delta(shorts_deltas.get("h24"), "likes"),
-                "comments": fmt_delta(shorts_deltas.get("h24"), "comments"),
+                "views":    _fmt_delta(shorts_deltas.get("h24"), "views"),
+                "likes":    _fmt_delta(shorts_deltas.get("h24"), "likes"),
+                "comments": _fmt_delta(shorts_deltas.get("h24"), "comments"),
             },
             "d7": {
-                "views":    fmt_delta(shorts_deltas.get("d7"), "views"),
-                "likes":    fmt_delta(shorts_deltas.get("d7"), "likes"),
-                "comments": fmt_delta(shorts_deltas.get("d7"), "comments"),
+                "views":    _fmt_delta(shorts_deltas.get("d7"), "views"),
+                "likes":    _fmt_delta(shorts_deltas.get("d7"), "likes"),
+                "comments": _fmt_delta(shorts_deltas.get("d7"), "comments"),
             },
         },
         "top": [card(v) for v in top_views],
         "topByEr": [card(v) for v in top_er],
-        "quotes": {"kugoo": kugoo_quotes},
+        "quotes": {"kugoo": kugoo_quotes, "dns": dns_quotes},
         "videos": [
             {
                 "videoId": v["videoId"],
@@ -1046,6 +1112,111 @@ def write_json_atomic(payload: dict) -> None:
         raise
 
 
+def process_channel(
+    youtube, channel_cfg: dict, conn: sqlite3.Connection, taken_at: datetime,
+) -> dict | None:
+    """Pull data for one channel, save snapshots, build its payload block.
+
+    Returns the channel block dict, or None on a recoverable failure (so a
+    bad single channel doesn't kill the whole run).
+    """
+    cid = channel_cfg["id"]
+    try:
+        channel_id = resolve_channel_id(youtube, channel_cfg["channel_ref"])
+        playlist_id = get_uploads_playlist(youtube, channel_id)
+        long_since   = channel_cfg["long_since"]
+        shorts_since = channel_cfg["shorts_since"]
+        broad_since  = min(long_since, shorts_since)
+
+        video_ids = list_video_ids(youtube, playlist_id, broad_since)
+        all_matched = fetch_video_details(youtube, video_ids, channel_cfg.get("marker"))
+        videos = [
+            v for v in all_matched
+            if v["kind"] == "long" and v["publishedAt"] >= long_since
+        ]
+        shorts = [
+            v for v in all_matched
+            if v["kind"] == "short" and v["publishedAt"] >= shorts_since
+        ]
+        log.info(
+            "[%s] channel=%s, matched %d (marker=%s): %d long, %d shorts",
+            cid, channel_id, len(all_matched), channel_cfg.get("marker"),
+            len(videos), len(shorts),
+        )
+    except HttpError as e:
+        status = getattr(getattr(e, "resp", None), "status", "?")
+        log.error("[%s] YouTube API HttpError %s: %s", cid, status, _redact(e))
+        return None
+    except Exception as e:
+        log.error("[%s] channel fetch failed: %s", cid, _redact(e))
+        return None
+
+    if not videos and not shorts:
+        log.warning("[%s] no videos after filtering", cid)
+        return None
+
+    save_snapshot(conn, taken_at.isoformat(), channel_id, videos + shorts)
+    conn.commit()
+
+    current_totals = {
+        "views":    sum(v["viewCount"] for v in videos),
+        "likes":    sum(v["likeCount"] for v in videos),
+        "comments": sum(v["commentCount"] for v in videos),
+        "count":    len(videos),
+    }
+    shorts_current_totals = {
+        "views":    sum(v["viewCount"] for v in shorts),
+        "likes":    sum(v["likeCount"] for v in shorts),
+        "comments": sum(v["commentCount"] for v in shorts),
+        "count":    len(shorts),
+    }
+    history = compute_history(conn, channel_id, taken_at, kind="long")
+    deltas = compute_deltas(conn, channel_id, current_totals, taken_at, kind="long")
+    shorts_deltas = compute_deltas(
+        conn, channel_id, shorts_current_totals, taken_at, kind="short",
+    )
+
+    # Comments → quotes (long-form)
+    try:
+        raw_comments = fetch_comments(youtube, videos)
+        kugoo_quotes = pick_quotes(
+            raw_comments, channel_id, taken_at, KUGOO_TOKENS,
+            require_brand=False, label=f"{cid}-kugoo",
+            min_likes=KUGOO_MIN_LIKES, min_score=KUGOO_MIN_SCORE,
+        )
+        dns_quotes = pick_quotes(
+            raw_comments, channel_id, taken_at, DNS_TOKENS,
+            require_brand=True, label=f"{cid}-dns",
+            min_likes=DNS_MIN_LIKES, min_score=DNS_MIN_SCORE,
+        )
+    except Exception as e:
+        log.warning("[%s] comment fetch failed: %s", cid, _redact(e))
+        kugoo_quotes, dns_quotes = [], []
+
+    # Comments → quotes (shorts)
+    try:
+        shorts_raw_comments = fetch_comments(youtube, shorts)
+        shorts_kugoo_quotes = pick_quotes(
+            shorts_raw_comments, channel_id, taken_at, KUGOO_TOKENS,
+            require_brand=False, label=f"{cid}-kugoo-shorts",
+            min_likes=KUGOO_MIN_LIKES, min_score=KUGOO_MIN_SCORE,
+        )
+        shorts_dns_quotes = pick_quotes(
+            shorts_raw_comments, channel_id, taken_at, DNS_TOKENS,
+            require_brand=True, label=f"{cid}-dns-shorts",
+            min_likes=DNS_MIN_LIKES, min_score=DNS_MIN_SCORE,
+        )
+    except Exception as e:
+        log.warning("[%s] shorts comment fetch failed: %s", cid, _redact(e))
+        shorts_kugoo_quotes, shorts_dns_quotes = [], []
+
+    return build_channel_block(
+        channel_cfg, channel_id, videos, shorts,
+        kugoo_quotes, dns_quotes, history, deltas,
+        shorts_deltas, shorts_kugoo_quotes, shorts_dns_quotes,
+    )
+
+
 def main() -> int:
     api_key = os.environ.get("YOUTUBE_API_KEY")
     if not api_key:
@@ -1057,71 +1228,29 @@ def main() -> int:
 
     try:
         youtube = build("youtube", "v3", developerKey=api_key, cache_discovery=False)
-        playlist_id = get_uploads_playlist(youtube, CHANNEL_ID)
-        log.info("Uploads playlist: %s", playlist_id)
-        video_ids = list_video_ids(youtube, playlist_id)
-        all_matched = fetch_video_details(youtube, video_ids)
-        videos = [
-            v for v in all_matched
-            if v["kind"] == "long" and v["publishedAt"] >= LONG_SINCE
-        ]
-        shorts = [
-            v for v in all_matched
-            if v["kind"] == "short" and v["publishedAt"] >= SHORTS_SINCE
-        ]
-        log.info(
-            "Matched %d collab items (marker=%s): %d long-form, %d shorts",
-            len(all_matched), MARKER, len(videos), len(shorts),
-        )
-    except HttpError as e:
-        status = getattr(getattr(e, "resp", None), "status", "?")
-        # Do not use log.exception here — the traceback would also embed the
-        # request URL with the API key. Log only a redacted one-line summary.
-        log.error("YouTube API HttpError %s: %s", status, _redact(e))
-        log.warning("Keeping previous data.json")
-        return 1
     except Exception as e:
-        log.error("Fetch failed: %s", _redact(e))
-        log.warning("Keeping previous data.json")
-        return 1
-
-    if not videos and not shorts:
-        log.warning("No videos matched marker — keeping previous data.json")
+        log.error("YouTube client init failed: %s", _redact(e))
         return 1
 
     conn = init_db()
     try:
-        save_snapshot(conn, taken_at.isoformat(), videos + shorts)
+        # Per-snapshot retention: drop very old rows for any channel.
         cutoff = (taken_at - timedelta(days=SNAPSHOT_RETENTION_DAYS)).isoformat()
         cur = conn.execute("DELETE FROM snapshots WHERE taken_at < ?", (cutoff,))
         if cur.rowcount:
             log.info("Pruned %d snapshots older than %d days",
                      cur.rowcount, SNAPSHOT_RETENTION_DAYS)
         conn.commit()
-        current_totals = {
-            "views":    sum(v["viewCount"] for v in videos),
-            "likes":    sum(v["likeCount"] for v in videos),
-            "comments": sum(v["commentCount"] for v in videos),
-            "count":    len(videos),
-        }
-        history = compute_history(conn, taken_at, kind="long")
-        deltas = compute_deltas(conn, current_totals, taken_at, kind="long")
-        shorts_current_totals = {
-            "views":    sum(v["viewCount"] for v in shorts),
-            "likes":    sum(v["likeCount"] for v in shorts),
-            "comments": sum(v["commentCount"] for v in shorts),
-            "count":    len(shorts),
-        }
-        shorts_deltas = compute_deltas(conn, shorts_current_totals, taken_at, kind="short")
-        log.info(
-            "History: %d points (over %d days); long deltas: h24=%s d7=%s; "
-            "shorts deltas: h24=%s d7=%s",
-            len(history["points"]), history["rangeDays"],
-            "yes" if deltas.get("h24") else "no",
-            "yes" if deltas.get("d7") else "no",
-            "yes" if shorts_deltas.get("h24") else "no",
-            "yes" if shorts_deltas.get("d7") else "no",
-        )
+
+        channel_blocks: dict[str, dict] = {}
+        for cfg in CHANNELS:
+            block = process_channel(youtube, cfg, conn, taken_at)
+            if block is not None:
+                channel_blocks[cfg["id"]] = block
+
+        if not channel_blocks:
+            log.warning("No channels produced data — keeping previous data.json")
+            return 1
 
         telegram_payload: dict = {
             "channel": TELEGRAM_CHANNEL,
@@ -1154,52 +1283,17 @@ def main() -> int:
     finally:
         conn.close()
 
-    try:
-        raw_comments = fetch_comments(youtube, videos)
-        kugoo_quotes = pick_quotes(
-            raw_comments, CHANNEL_ID, taken_at, KUGOO_TOKENS,
-            require_brand=False, label="kugoo",
-            min_likes=KUGOO_MIN_LIKES, min_score=KUGOO_MIN_SCORE,
-        )
-        dns_quotes = pick_quotes(
-            raw_comments, CHANNEL_ID, taken_at, DNS_TOKENS,
-            require_brand=True, label="dns",
-            min_likes=DNS_MIN_LIKES, min_score=DNS_MIN_SCORE,
-        )
-    except Exception as e:
-        log.warning("Comment fetch failed (continuing without quotes): %s", e)
-        kugoo_quotes, dns_quotes = [], []
-
-    try:
-        shorts_raw_comments = fetch_comments(youtube, shorts)
-        shorts_kugoo_quotes = pick_quotes(
-            shorts_raw_comments, CHANNEL_ID, taken_at, KUGOO_TOKENS,
-            require_brand=False, label="kugoo-shorts",
-            min_likes=KUGOO_MIN_LIKES, min_score=KUGOO_MIN_SCORE,
-        )
-    except Exception as e:
-        log.warning("Shorts comment fetch failed: %s", e)
-        shorts_kugoo_quotes = []
-
-    payload = build_payload(
-        videos, taken_at, kugoo_quotes, dns_quotes, history, deltas,
-        telegram=telegram_payload, shorts=shorts, shorts_deltas=shorts_deltas,
-        shorts_kugoo_quotes=shorts_kugoo_quotes,
-    )
+    taken_at_msk = taken_at.astimezone(MSK)
+    payload = {
+        "updatedAtUtc": taken_at.isoformat(),
+        "updatedAtMsk": taken_at_msk.strftime("%d.%m.%Y %H:%M МСК"),
+        "channelOrder": [c["id"] for c in CHANNELS if c["id"] in channel_blocks],
+        "channels": channel_blocks,
+        "telegram": telegram_payload,
+    }
     write_json_atomic(payload)
-    log.info(
-        "Wrote %s — long=%d views=%d ER=%.2f%% shorts=%d shorts_views=%d "
-        "kugoo=%d dns=%d shorts_kugoo=%d",
-        JSON_PATH,
-        payload["totals"]["videos"],
-        payload["totals"]["views"],
-        payload["totals"]["engagementRate"],
-        payload["shorts"]["totals"]["count"],
-        payload["shorts"]["totals"]["views"],
-        len(payload["quotes"]["kugoo"]),
-        len(payload["quotes"]["dns"]),
-        len(payload["shorts"]["quotes"]["kugoo"]),
-    )
+    log.info("Wrote %s for channels: %s",
+             JSON_PATH, ", ".join(payload["channelOrder"]))
     return 0
 
 

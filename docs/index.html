@@ -77,6 +77,29 @@
   .theme-toggle svg { width: 18px; height: 18px; display: block; }
   :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
   :root:not([data-theme="dark"]) .theme-toggle .icon-sun { display: none; }
+  .channel-switcher {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .channel-switcher button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .channel-switcher button:hover { color: var(--text); }
+  .channel-switcher button.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
   .tabs {
     display: flex;
     gap: 4px;
@@ -529,7 +552,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.29</span></h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.30</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -541,6 +564,8 @@
       </svg>
     </button>
   </header>
+
+  <nav class="channel-switcher" id="channel-switcher"></nav>
 
   <nav class="tabs">
     <button id="tab-stats" class="active" data-view="stats">Статистика вертикальные</button>
@@ -1082,23 +1107,79 @@
     }).join("");
   }
 
+  // Older data.json had per-channel fields at the top level. Wrap it as a
+  // single FastMotion channel so the new code still renders.
+  function normalize(data) {
+    if (data && data.channels && data.channelOrder) return data;
+    return {
+      ...data,
+      channelOrder: ["fastmotion"],
+      channels: {
+        fastmotion: {
+          title: "FastMotion (kugoo.ru)",
+          totals: data.totals || {},
+          deltas: data.deltas || null,
+          top: data.top || [],
+          topByEr: data.topByEr || [],
+          videoDrops: data.videoDrops || [],
+          history: data.history || {},
+          videos: data.videos || [],
+          quotes: data.quotes || {},
+          shorts: data.shorts || {},
+        },
+      },
+    };
+  }
+
+  const channelState = { active: null };
+
+  function renderActiveChannel(data) {
+    const blk = (data.channels && data.channels[channelState.active]) || {};
+    const t = blk.totals || {};
+    renderKpis(t, blk.deltas);
+    renderChart(blk.history, blk.videoDrops);
+    renderTop(blk.top || [], "top", "views");
+    renderTop(blk.topByEr || [], "top-er", "er");
+    const q = blk.quotes || {};
+    renderQuotes(q.kugoo || [], "quotes-kugoo", "Положительных комментариев пока нет.");
+    renderQuotes(q.dns || [], "quotes-dns", "В комментариях к этим роликам пока нет положительных упоминаний DNS.");
+    renderAllVideos(blk.videos || []);
+    renderShorts(blk.shorts);
+  }
+
+  function buildChannelSwitcher(data) {
+    const order = data.channelOrder || [];
+    const channels = data.channels || {};
+    let stored = null;
+    try { stored = localStorage.getItem("channel"); } catch (e) {}
+    channelState.active = (stored && channels[stored]) ? stored : order[0];
+
+    const el = $("channel-switcher");
+    el.innerHTML = order.map(id => {
+      const cfg = channels[id] || { title: id };
+      const active = id === channelState.active ? " active" : "";
+      return `<button type="button" data-channel="${escapeHtml(id)}" class="${active}">${escapeHtml(cfg.title || id)}</button>`;
+    }).join("");
+
+    el.querySelectorAll("button").forEach(b => {
+      b.addEventListener("click", () => {
+        const id = b.getAttribute("data-channel");
+        if (!channels[id]) return;
+        channelState.active = id;
+        try { localStorage.setItem("channel", id); } catch (e) {}
+        el.querySelectorAll("button").forEach(x => x.classList.toggle("active", x === b));
+        renderActiveChannel(data);
+      });
+    });
+  }
+
   try {
     const res = await fetch("./data.json?ts=" + Date.now(), { cache: "no-store" });
     if (!res.ok) throw new Error("HTTP " + res.status);
-    const data = await res.json();
-    const t = data.totals || {};
-    renderKpis(t, data.deltas);
-    renderChart(data.history, data.videoDrops);
+    const data = normalize(await res.json());
     renderTelegram(data.telegram);
-    renderTop(data.top || [], "top", "views");
-    renderTop(data.topByEr || [], "top-er", "er");
-    const q = data.quotes || {};
-    const kugooQuotes = Array.isArray(q) ? q : (q.kugoo || []);
-    const dnsQuotes = Array.isArray(q) ? [] : (q.dns || []);
-    renderQuotes(kugooQuotes, "quotes-kugoo", "Положительных комментариев пока нет.");
-    renderQuotes(dnsQuotes, "quotes-dns", "В комментариях к этим роликам пока нет положительных упоминаний DNS.");
-    renderAllVideos(data.videos || []);
-    renderShorts(data.shorts);
+    buildChannelSwitcher(data);
+    renderActiveChannel(data);
     $("updated").textContent = "Последнее обновление: " + (data.updatedAtMsk || "—");
   } catch (e) {
     $("kpis").innerHTML = `<div class="empty">Ошибка: ${escapeHtml(e.message)}</div>`;
