@@ -304,7 +304,7 @@
   .chart .line { stroke: var(--text); stroke-width: 1.5; fill: none; }
   .chart .area { fill: var(--text); opacity: 0.06; }
   .chart .dot { fill: var(--text); }
-  .chart .drop { fill: var(--muted); opacity: 0.5; }
+  .chart .drop { fill: var(--accent); opacity: 0.9; }
   .chart .empty-msg { fill: var(--muted); font-size: 12px; font-family: inherit; }
   .tg-head {
     display: grid;
@@ -552,7 +552,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.31</span></h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.32</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -813,7 +813,7 @@
         if (isNaN(t) || t < tMin || t > tMax) continue;
         const x = xs(t);
         const y = MT + plotH;
-        dropsMarkup += `<polygon class="drop" points="${x - 3},${y + 4} ${x + 3},${y + 4} ${x},${y}"><title>${escapeHtml(d.title)}</title></polygon>`;
+        dropsMarkup += `<polygon class="drop" points="${x - 5},${y + 8} ${x + 5},${y + 8} ${x},${y}"><title>${escapeHtml(d.title)}</title></polygon>`;
       }
     }
     const lastX = xs(ts[ts.length - 1]);
