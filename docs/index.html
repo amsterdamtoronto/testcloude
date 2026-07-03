@@ -306,8 +306,8 @@
   .chart .dot { fill: var(--text); }
   .chart .drop { fill: var(--accent); opacity: 0.9; cursor: pointer; }
   .chart .drop-line { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.4; }
-  .chart .drop-date { fill: var(--accent); font-size: 10px; font-weight: 600; font-family: inherit; }
-  .chart .drop-views { fill: var(--muted); font-size: 9px; font-family: inherit; }
+  .chart .drop-title { fill: var(--accent); font-size: 10px; font-weight: 600; font-family: inherit; }
+  .chart .drop-meta  { fill: var(--muted); font-size: 9px;  font-family: inherit; }
   .chart .empty-msg { fill: var(--muted); font-size: 12px; font-family: inherit; }
   .tg-head {
     display: grid;
@@ -555,7 +555,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.33</span></h1>
+      <h1><span class="brand-kugoo">Kugoo</span> × FastMotion<span class="dashboard-word">dashboard</span><span class="version">v0.34</span></h1>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему" title="Переключить тему">
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -813,27 +813,29 @@
     if (Array.isArray(drops)) {
       const fmtDate = (ms) => new Date(ms).toLocaleDateString("ru-RU",
         { day: "2-digit", month: "2-digit", year: "numeric" });
+      const trunc = (s, n) => (s && s.length > n) ? s.slice(0, n - 1) + "…" : (s || "");
       for (const d of drops) {
         const t = new Date(d.ts).getTime();
         if (isNaN(t) || t < tMin || t > tMax) continue;
         const x = xs(t);
         const yTop = MT;
         const yBot = MT + plotH;
-        // Anchor labels: right-align near right edge so they don't clip.
-        const nearRight = (ML + plotW) - x < 60;
-        const anchor = nearRight ? "end" : "middle";
-        const dx = nearRight ? -6 : 0;
+        const nearRight = (ML + plotW) - x < 120;
+        const anchor = nearRight ? "end" : "start";
+        const dx = nearRight ? -6 : 6;
         const dateStr = fmtDate(t);
         const shortDate = new Date(t).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
-        const views = d.viewCountCompact ? `${d.viewCountCompact} просмотров` : "";
-        const titleAttr = `${d.title || ""}\n${dateStr}${views ? "\n" + views : ""}`;
+        const viewsStr = d.viewCountCompact || "";
+        const titleShort = trunc(d.title || "", 32);
+        const metaLine = `${shortDate}${viewsStr ? " · " + viewsStr + " просм." : ""}`;
+        const tooltip = `${d.title || ""}\n${dateStr}${viewsStr ? "\n" + viewsStr + " просмотров" : ""}`;
         dropsMarkup += `
           <g class="drop-group">
-            <title>${escapeHtml(titleAttr)}</title>
+            <title>${escapeHtml(tooltip)}</title>
             <line class="drop-line" x1="${x}" x2="${x}" y1="${yTop}" y2="${yBot}"/>
             <polygon class="drop" points="${x - 5},${yBot + 8} ${x + 5},${yBot + 8} ${x},${yBot}"/>
-            <text class="drop-date" x="${x + dx}" y="${yTop + 10}" text-anchor="${anchor}">${escapeHtml(shortDate)}</text>
-            ${d.viewCountCompact ? `<text class="drop-views" x="${x + dx}" y="${yTop + 22}" text-anchor="${anchor}">${escapeHtml(d.viewCountCompact)}</text>` : ""}
+            <text class="drop-title" x="${x + dx}" y="${yTop + 10}" text-anchor="${anchor}">${escapeHtml(titleShort)}</text>
+            <text class="drop-meta"  x="${x + dx}" y="${yTop + 22}" text-anchor="${anchor}">${escapeHtml(metaLine)}</text>
           </g>`;
       }
     }
