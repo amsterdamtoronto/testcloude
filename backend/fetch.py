@@ -971,7 +971,17 @@ def build_channel_block(
         }
 
     video_drops = sorted(
-        [{"ts": v["publishedAt"], "videoId": v["videoId"], "title": v["title"]} for v in videos],
+        [
+            {
+                "ts": v["publishedAt"],
+                "videoId": v["videoId"],
+                "title": v["title"],
+                "viewCount": v["viewCount"],
+                "viewCountCompact": fmt_compact(v["viewCount"]),
+                "url": v["url"],
+            }
+            for v in videos
+        ],
         key=lambda d: d["ts"],
     )
 
