@@ -1,6 +1,6 @@
 {
-  "updatedAtUtc": "2026-07-10T04:57:43.013710+00:00",
-  "updatedAtMsk": "10.07.2026 07:57 МСК",
+  "updatedAtUtc": "2026-07-10T08:27:15.532879+00:00",
+  "updatedAtMsk": "10.07.2026 11:27 МСК",
   "channelOrder": [
     "fastmotion",
     "kugooru"
@@ -16,49 +16,49 @@
       "shortsSince": "2025-02-01T00:00:00Z",
       "totals": {
         "videos": 30,
-        "views": 2707671,
+        "views": 2708495,
         "viewsCompact": "2.71M",
-        "likes": 49378,
+        "likes": 49401,
         "likesCompact": "49.4K",
-        "comments": 11701,
+        "comments": 11727,
         "commentsCompact": "11.7K",
-        "avgViews": 90255,
+        "avgViews": 90283,
         "avgViewsCompact": "90.3K",
         "engagementRate": 2.26
       },
       "deltas": {
         "h24": {
           "views": {
-            "abs": 13722,
-            "signed": "+13.7K",
-            "since": "2026-07-09T00:17:04.026127+00:00"
+            "abs": 13288,
+            "signed": "+13.3K",
+            "since": "2026-07-09T04:58:32.002017+00:00"
           },
           "likes": {
-            "abs": 193,
-            "signed": "+193",
-            "since": "2026-07-09T00:17:04.026127+00:00"
+            "abs": 198,
+            "signed": "+198",
+            "since": "2026-07-09T04:58:32.002017+00:00"
           },
           "comments": {
-            "abs": 30,
-            "signed": "+30",
-            "since": "2026-07-09T00:17:04.026127+00:00"
+            "abs": 53,
+            "signed": "+53",
+            "since": "2026-07-09T04:58:32.002017+00:00"
           }
         },
         "d7": {
           "views": {
-            "abs": 87793,
-            "signed": "+87.8K",
-            "since": "2026-07-03T04:47:46.584987+00:00"
+            "abs": 87973,
+            "signed": "+88.0K",
+            "since": "2026-07-03T08:13:49.047994+00:00"
           },
           "likes": {
-            "abs": 1543,
-            "signed": "+1.54K",
-            "since": "2026-07-03T04:47:46.584987+00:00"
+            "abs": 1550,
+            "signed": "+1.55K",
+            "since": "2026-07-03T08:13:49.047994+00:00"
           },
           "comments": {
-            "abs": 263,
-            "signed": "+263",
-            "since": "2026-07-03T04:47:46.584987+00:00"
+            "abs": 289,
+            "signed": "+289",
+            "since": "2026-07-03T08:13:49.047994+00:00"
           }
         }
       },
@@ -67,9 +67,9 @@
           "videoId": "9dUw2sDjZGk",
           "title": "Сходка СТАНТЕРОВ пошла не по плану. Отобрали самокаты 🥺",
           "publishedAt": "2025-09-04T09:00:13Z",
-          "viewCount": 366807,
-          "viewCountCompact": "366.8K",
-          "engagementRate": 1.7,
+          "viewCount": 366985,
+          "viewCountCompact": "367.0K",
+          "engagementRate": 1.71,
           "thumbnail": "https://i.ytimg.com/vi/9dUw2sDjZGk/mqdefault.jpg",
           "url": "https://www.youtube.com/watch?v=9dUw2sDjZGk"
         },
@@ -77,7 +77,7 @@
           "videoId": "6n-wJGHyIE0",
           "title": "Какой электросамокат купить в 2025 году?",
           "publishedAt": "2025-04-14T11:57:10Z",
-          "viewCount": 274569,
+          "viewCount": 274590,
           "viewCountCompact": "274.6K",
           "engagementRate": 1.75,
           "thumbnail": "https://i.ytimg.com/vi/6n-wJGHyIE0/mqdefault.jpg",
@@ -87,8 +87,8 @@
           "videoId": "gQYSS6eb7vQ",
           "title": "ДПС ПРОТИВ ЭЛЕКТРОМОПЕДОВ?! Kugoo r1 / Kugoo r2",
           "publishedAt": "2025-07-01T20:05:43Z",
-          "viewCount": 212529,
-          "viewCountCompact": "212.5K",
+          "viewCount": 212630,
+          "viewCountCompact": "212.6K",
           "engagementRate": 1.77,
           "thumbnail": "https://i.ytimg.com/vi/gQYSS6eb7vQ/mqdefault.jpg",
           "url": "https://www.youtube.com/watch?v=gQYSS6eb7vQ"
@@ -99,9 +99,9 @@
           "videoId": "qnv8okRhUek",
           "title": "SURRON ULTRA - лучший электромотоцикл в 2026?!",
           "publishedAt": "2026-07-03T07:56:32Z",
-          "viewCount": 13469,
-          "viewCountCompact": "13.5K",
-          "engagementRate": 5.71,
+          "viewCount": 13554,
+          "viewCountCompact": "13.6K",
+          "engagementRate": 5.88,
           "thumbnail": "https://i.ytimg.com/vi/qnv8okRhUek/mqdefault.jpg",
           "url": "https://www.youtube.com/watch?v=qnv8okRhUek"
         },
@@ -119,7 +119,7 @@
           "videoId": "nJlJ5B3wyS4",
           "title": "Я УСТРОИЛСЯ РАБОТАТЬ КУРЬЕРОМ В НОВЫЙ ГОД, где обман?",
           "publishedAt": "2025-12-31T08:50:31Z",
-          "viewCount": 9935,
+          "viewCount": 9936,
           "viewCountCompact": "9.94K",
           "engagementRate": 4.4,
           "thumbnail": "https://i.ytimg.com/vi/nJlJ5B3wyS4/mqdefault.jpg",
@@ -131,7 +131,7 @@
           "ts": "2025-04-14T11:57:10Z",
           "videoId": "6n-wJGHyIE0",
           "title": "Какой электросамокат купить в 2025 году?",
-          "viewCount": 274569,
+          "viewCount": 274590,
           "viewCountCompact": "274.6K",
           "url": "https://www.youtube.com/watch?v=6n-wJGHyIE0"
         },
@@ -139,7 +139,7 @@
           "ts": "2025-04-22T17:58:08Z",
           "videoId": "GpoBSaWM74g",
           "title": "ПОЧЕМУ ЭЛЕКТРОВЕЛОСИПЕДЫ ЗАХВАТЯТ МИР?",
-          "viewCount": 85129,
+          "viewCount": 85141,
           "viewCountCompact": "85.1K",
           "url": "https://www.youtube.com/watch?v=GpoBSaWM74g"
         },
@@ -147,7 +147,7 @@
           "ts": "2025-05-17T19:04:52Z",
           "videoId": "j0U67k7V028",
           "title": "Эндуро от KUGOO на 100V ПРОТИВ TALARIA и SUR RON",
-          "viewCount": 137610,
+          "viewCount": 137636,
           "viewCountCompact": "137.6K",
           "url": "https://www.youtube.com/watch?v=j0U67k7V028"
         },
@@ -155,7 +155,7 @@
           "ts": "2025-05-20T10:22:26Z",
           "videoId": "Pku_d5ZGGJo",
           "title": "МОНОКОЛЕСО ПРОТИВ МОТОЦИКЛА кто быстрее в доставке?",
-          "viewCount": 12872,
+          "viewCount": 12873,
           "viewCountCompact": "12.9K",
           "url": "https://www.youtube.com/watch?v=Pku_d5ZGGJo"
         },
@@ -163,7 +163,7 @@
           "ts": "2025-05-23T12:25:25Z",
           "videoId": "_-7zWmfEHzc",
           "title": "ЭЛЕКТРОВЕЛОСИПЕД ПО ЦЕНЕ ОБЫЧНОГО",
-          "viewCount": 143879,
+          "viewCount": 143924,
           "viewCountCompact": "143.9K",
           "url": "https://www.youtube.com/watch?v=_-7zWmfEHzc"
         },
@@ -171,7 +171,7 @@
           "ts": "2025-05-29T10:00:53Z",
           "videoId": "mr-JutZri04",
           "title": "НЕРЕАЛЬНАЯ НОВИНКА Kugoo G2 PRO MAX+ / F3 PRO MAX",
-          "viewCount": 137963,
+          "viewCount": 137983,
           "viewCountCompact": "138.0K",
           "url": "https://www.youtube.com/watch?v=mr-JutZri04"
         },
@@ -179,7 +179,7 @@
           "ts": "2025-06-15T12:51:21Z",
           "videoId": "-H64gqZAXfw",
           "title": "САМЫЙ МАЛЕНЬКИЙ ЭЛЕКТРОВЕЛОСИПЕД в реальных условиях",
-          "viewCount": 48344,
+          "viewCount": 48345,
           "viewCountCompact": "48.3K",
           "url": "https://www.youtube.com/watch?v=-H64gqZAXfw"
         },
@@ -195,15 +195,15 @@
           "ts": "2025-07-01T20:05:43Z",
           "videoId": "gQYSS6eb7vQ",
           "title": "ДПС ПРОТИВ ЭЛЕКТРОМОПЕДОВ?! Kugoo r1 / Kugoo r2",
-          "viewCount": 212529,
-          "viewCountCompact": "212.5K",
+          "viewCount": 212630,
+          "viewCountCompact": "212.6K",
           "url": "https://www.youtube.com/watch?v=gQYSS6eb7vQ"
         },
         {
           "ts": "2025-07-21T13:01:38Z",
           "videoId": "qucOp-TPfVs",
           "title": "Кто приедет первым получает 5000. Kugoo F2 против автомобиля",
-          "viewCount": 11273,
+          "viewCount": 11276,
           "viewCountCompact": "11.3K",
           "url": "https://www.youtube.com/watch?v=qucOp-TPfVs"
         },
@@ -211,7 +211,7 @@
           "ts": "2025-07-23T13:42:42Z",
           "videoId": "Bgu6J7cxOs8",
           "title": "Кикшеринг или Личный самокат, что лучше?",
-          "viewCount": 63293,
+          "viewCount": 63307,
           "viewCountCompact": "63.3K",
           "url": "https://www.youtube.com/watch?v=Bgu6J7cxOs8"
         },
@@ -219,7 +219,7 @@
           "ts": "2025-07-31T12:53:40Z",
           "videoId": "dp4zeKdHarg",
           "title": "Kugoo V4Max в реальной жизни (реально)",
-          "viewCount": 17343,
+          "viewCount": 17345,
           "viewCountCompact": "17.3K",
           "url": "https://www.youtube.com/watch?v=dp4zeKdHarg"
         },
@@ -227,15 +227,15 @@
           "ts": "2025-08-30T10:52:04Z",
           "videoId": "8FbdcWJycDw",
           "title": "Я попробовал ЭНДУРО и облажался....",
-          "viewCount": 10649,
-          "viewCountCompact": "10.6K",
+          "viewCount": 10653,
+          "viewCountCompact": "10.7K",
           "url": "https://www.youtube.com/watch?v=8FbdcWJycDw"
         },
         {
           "ts": "2025-09-01T17:36:11Z",
           "videoId": "qJR-fDS4qz8",
           "title": "Самый простой способ научиться СТАНТИТЬ на электросамокате!",
-          "viewCount": 176298,
+          "viewCount": 176300,
           "viewCountCompact": "176.3K",
           "url": "https://www.youtube.com/watch?v=qJR-fDS4qz8"
         },
@@ -243,15 +243,15 @@
           "ts": "2025-09-04T09:00:13Z",
           "videoId": "9dUw2sDjZGk",
           "title": "Сходка СТАНТЕРОВ пошла не по плану. Отобрали самокаты 🥺",
-          "viewCount": 366807,
-          "viewCountCompact": "366.8K",
+          "viewCount": 366985,
+          "viewCountCompact": "367.0K",
           "url": "https://www.youtube.com/watch?v=9dUw2sDjZGk"
         },
         {
           "ts": "2025-09-28T09:34:56Z",
           "videoId": "0qcHCqS6_88",
           "title": "В РОССИИ ЗАПРЕЩАЮТ ЭЛЕКТРОСАМОКАТЫ, ЧТО ДЕЛАТЬ?",
-          "viewCount": 116665,
+          "viewCount": 116688,
           "viewCountCompact": "116.7K",
           "url": "https://www.youtube.com/watch?v=0qcHCqS6_88"
         },
@@ -259,7 +259,7 @@
           "ts": "2025-10-21T17:53:33Z",
           "videoId": "9P_K_pDU-1U",
           "title": "ОН ЗАРЯЖАЕТСЯ ОТ ГОРОДСКИХ ЗАРЯДОК!!! Kugoo GBT",
-          "viewCount": 34189,
+          "viewCount": 34199,
           "viewCountCompact": "34.2K",
           "url": "https://www.youtube.com/watch?v=9P_K_pDU-1U"
         },
@@ -267,31 +267,31 @@
           "ts": "2025-11-15T10:08:57Z",
           "videoId": "emT_xWaW2rE",
           "title": "СТАНТЕРЫ офигели от того на чём я приехал на сходку",
-          "viewCount": 87930,
-          "viewCountCompact": "87.9K",
+          "viewCount": 87952,
+          "viewCountCompact": "88.0K",
           "url": "https://www.youtube.com/watch?v=emT_xWaW2rE"
         },
         {
           "ts": "2025-11-21T10:57:06Z",
           "videoId": "7Ec8J57zapw",
           "title": "Ты ПОТОРОПИЛСЯ с покупкой KUGOO WISH 02 PRO и вот почему",
-          "viewCount": 99535,
-          "viewCountCompact": "99.5K",
+          "viewCount": 99578,
+          "viewCountCompact": "99.6K",
           "url": "https://www.youtube.com/watch?v=7Ec8J57zapw"
         },
         {
           "ts": "2025-12-15T14:37:56Z",
           "videoId": "_DxyIizRBgQ",
           "title": "Можно ли собрать электросамокат из запчастей с OZON?",
-          "viewCount": 176314,
-          "viewCountCompact": "176.3K",
+          "viewCount": 176389,
+          "viewCountCompact": "176.4K",
           "url": "https://www.youtube.com/watch?v=_DxyIizRBgQ"
         },
         {
           "ts": "2025-12-22T15:36:09Z",
           "videoId": "YLoDti-I6vo",
           "title": "Какой электросамокат ЛУЧШИЙ в 2025 году?",
-          "viewCount": 53126,
+          "viewCount": 53132,
           "viewCountCompact": "53.1K",
           "url": "https://www.youtube.com/watch?v=YLoDti-I6vo"
         },
@@ -299,7 +299,7 @@
           "ts": "2025-12-31T08:50:31Z",
           "videoId": "nJlJ5B3wyS4",
           "title": "Я УСТРОИЛСЯ РАБОТАТЬ КУРЬЕРОМ В НОВЫЙ ГОД, где обман?",
-          "viewCount": 9935,
+          "viewCount": 9936,
           "viewCountCompact": "9.94K",
           "url": "https://www.youtube.com/watch?v=nJlJ5B3wyS4"
         },
@@ -315,7 +315,7 @@
           "ts": "2026-02-02T13:01:10Z",
           "videoId": "b7tXWPuoqC4",
           "title": "На каком электросамокате лучше всего СТАНТИТЬ? feat @Samokatstuntteam",
-          "viewCount": 62767,
+          "viewCount": 62792,
           "viewCountCompact": "62.8K",
           "url": "https://www.youtube.com/watch?v=b7tXWPuoqC4"
         },
@@ -331,7 +331,7 @@
           "ts": "2026-02-27T15:12:40Z",
           "videoId": "dCgtxun4KfA",
           "title": "МОЩНЫЕ ЭЛЕКТРОМОТОЦИКЛЫ в ЗИМНИЙ ЭНДУРО, КТО КРУЧЕ? #surron #kugoo #kayo",
-          "viewCount": 54970,
+          "viewCount": 54976,
           "viewCountCompact": "55.0K",
           "url": "https://www.youtube.com/watch?v=dCgtxun4KfA"
         },
@@ -339,7 +339,7 @@
           "ts": "2026-03-15T08:36:59Z",
           "videoId": "O06y445F7tU",
           "title": "Какие Электровелосипеды от Kugoo стоит ждать?",
-          "viewCount": 61462,
+          "viewCount": 61488,
           "viewCountCompact": "61.5K",
           "url": "https://www.youtube.com/watch?v=O06y445F7tU"
         },
@@ -347,7 +347,7 @@
           "ts": "2026-03-24T13:15:38Z",
           "videoId": "8e42MR2p9Rw",
           "title": "Что ждать от электросамокатов KUGOO в 2026?",
-          "viewCount": 93568,
+          "viewCount": 93607,
           "viewCountCompact": "93.6K",
           "url": "https://www.youtube.com/watch?v=8e42MR2p9Rw"
         },
@@ -355,7 +355,7 @@
           "ts": "2026-04-16T09:00:12Z",
           "videoId": "9Siz9fkskBE",
           "title": "Электромотоциклы KUGOO в 2026",
-          "viewCount": 46815,
+          "viewCount": 46848,
           "viewCountCompact": "46.8K",
           "url": "https://www.youtube.com/watch?v=9Siz9fkskBE"
         },
@@ -363,8 +363,8 @@
           "ts": "2026-07-03T07:56:32Z",
           "videoId": "qnv8okRhUek",
           "title": "SURRON ULTRA - лучший электромотоцикл в 2026?!",
-          "viewCount": 13469,
-          "viewCountCompact": "13.5K",
+          "viewCount": 13554,
+          "viewCountCompact": "13.6K",
           "url": "https://www.youtube.com/watch?v=qnv8okRhUek"
         }
       ],
@@ -504,9 +504,9 @@
             "comments": 11254
           },
           {
-            "ts": "2026-06-17T22:06:41.445952+00:00",
-            "views": 2470153,
-            "likes": 45879,
+            "ts": "2026-06-18T00:19:55.109932+00:00",
+            "views": 2471434,
+            "likes": 45889,
             "comments": 11256
           },
           {
@@ -534,10 +534,10 @@
             "comments": 11269
           },
           {
-            "ts": "2026-06-19T19:01:07.774334+00:00",
-            "views": 2487003,
-            "likes": 46119,
-            "comments": 11273
+            "ts": "2026-06-19T20:40:59.697765+00:00",
+            "views": 2487881,
+            "likes": 46135,
+            "comments": 11274
           },
           {
             "ts": "2026-06-20T00:15:14.418221+00:00",
@@ -564,9 +564,9 @@
             "comments": 11288
           },
           {
-            "ts": "2026-06-21T00:14:38.816808+00:00",
-            "views": 2498474,
-            "likes": 46277,
+            "ts": "2026-06-21T06:08:58.247572+00:00",
+            "views": 2499477,
+            "likes": 46289,
             "comments": 11293
           },
           {
@@ -594,10 +594,10 @@
             "comments": 11305
           },
           {
-            "ts": "2026-06-22T12:16:58.497727+00:00",
-            "views": 2512099,
-            "likes": 46475,
-            "comments": 11310
+            "ts": "2026-06-22T17:43:06.598082+00:00",
+            "views": 2514959,
+            "likes": 46515,
+            "comments": 11315
           },
           {
             "ts": "2026-06-22T22:50:33.923317+00:00",
@@ -624,10 +624,10 @@
             "comments": 11323
           },
           {
-            "ts": "2026-06-24T00:03:31.533613+00:00",
-            "views": 2529946,
-            "likes": 46719,
-            "comments": 11324
+            "ts": "2026-06-24T04:19:36.438928+00:00",
+            "views": 2531408,
+            "likes": 46723,
+            "comments": 11325
           },
           {
             "ts": "2026-06-24T11:49:57.740145+00:00",
@@ -636,9 +636,9 @@
             "comments": 11328
           },
           {
-            "ts": "2026-06-24T17:09:33.279872+00:00",
-            "views": 2536445,
-            "likes": 46785,
+            "ts": "2026-06-24T19:55:17.717804+00:00",
+            "views": 2537787,
+            "likes": 46806,
             "comments": 11330
           },
           {
@@ -654,10 +654,10 @@
             "comments": 11335
           },
           {
-            "ts": "2026-06-25T14:44:25.055325+00:00",
-            "views": 2545759,
-            "likes": 46896,
-            "comments": 11337
+            "ts": "2026-06-25T17:18:28.593815+00:00",
+            "views": 2547105,
+            "likes": 46915,
+            "comments": 11338
           },
           {
             "ts": "2026-06-25T22:24:47.049950+00:00",
@@ -666,9 +666,9 @@
             "comments": 11346
           },
           {
-            "ts": "2026-06-26T05:13:59.406528+00:00",
-            "views": 2552269,
-            "likes": 46964,
+            "ts": "2026-06-26T09:39:17.696296+00:00",
+            "views": 2553268,
+            "likes": 46981,
             "comments": 11346
           },
           {
@@ -684,9 +684,9 @@
             "comments": 11352
           },
           {
-            "ts": "2026-06-26T23:14:08.077641+00:00",
-            "views": 2560222,
-            "likes": 47055,
+            "ts": "2026-06-27T04:01:07.376467+00:00",
+            "views": 2561786,
+            "likes": 47070,
             "comments": 11352
           },
           {
@@ -696,9 +696,9 @@
             "comments": 11354
           },
           {
-            "ts": "2026-06-27T14:47:10.115104+00:00",
-            "views": 2565492,
-            "likes": 47131,
+            "ts": "2026-06-27T16:10:59.098764+00:00",
+            "views": 2566130,
+            "likes": 47141,
             "comments": 11362
           },
           {
@@ -714,10 +714,10 @@
             "comments": 11366
           },
           {
-            "ts": "2026-06-28T09:20:30.487611+00:00",
-            "views": 2572233,
-            "likes": 47234,
-            "comments": 11368
+            "ts": "2026-06-28T11:50:28.309645+00:00",
+            "views": 2573312,
+            "likes": 47243,
+            "comments": 11369
           },
           {
             "ts": "2026-06-28T15:23:14.965739+00:00",
@@ -726,9 +726,9 @@
             "comments": 11370
           },
           {
-            "ts": "2026-06-28T19:38:56.803604+00:00",
-            "views": 2577645,
-            "likes": 47311,
+            "ts": "2026-06-28T21:09:50.355951+00:00",
+            "views": 2578447,
+            "likes": 47332,
             "comments": 11370
           },
           {
@@ -738,16 +738,16 @@
             "comments": 11373
           },
           {
-            "ts": "2026-06-29T14:11:19.309430+00:00",
-            "views": 2584566,
-            "likes": 47403,
-            "comments": 11369
+            "ts": "2026-06-29T17:43:31.466057+00:00",
+            "views": 2586561,
+            "likes": 47438,
+            "comments": 11373
           },
           {
-            "ts": "2026-06-29T20:07:34.141531+00:00",
-            "views": 2587793,
-            "likes": 47458,
-            "comments": 11373
+            "ts": "2026-06-29T22:13:56.917131+00:00",
+            "views": 2589366,
+            "likes": 47471,
+            "comments": 11374
           },
           {
             "ts": "2026-06-30T05:10:06.795702+00:00",
@@ -756,10 +756,10 @@
             "comments": 11376
           },
           {
-            "ts": "2026-06-30T12:15:28.561493+00:00",
-            "views": 2593260,
-            "likes": 47519,
-            "comments": 11379
+            "ts": "2026-06-30T15:35:23.131453+00:00",
+            "views": 2595048,
+            "likes": 47542,
+            "comments": 11381
           },
           {
             "ts": "2026-06-30T20:11:25.276388+00:00",
@@ -768,15 +768,15 @@
             "comments": 11399
           },
           {
-            "ts": "2026-07-01T00:14:08.182221+00:00",
-            "views": 2599388,
-            "likes": 47592,
+            "ts": "2026-07-01T05:27:24.048613+00:00",
+            "views": 2600976,
+            "likes": 47600,
             "comments": 11400
           },
           {
-            "ts": "2026-07-01T10:01:03.467343+00:00",
-            "views": 2602057,
-            "likes": 47620,
+            "ts": "2026-07-01T12:39:50.349393+00:00",
+            "views": 2602870,
+            "likes": 47636,
             "comments": 11401
           },
           {
@@ -786,10 +786,10 @@
             "comments": 11406
           },
           {
-            "ts": "2026-07-01T22:22:19.694763+00:00",
-            "views": 2608254,
-            "likes": 47692,
-            "comments": 11410
+            "ts": "2026-07-02T00:15:19.205399+00:00",
+            "views": 2609299,
+            "likes": 47696,
+            "comments": 11412
           },
           {
             "ts": "2026-07-02T08:19:08.371648+00:00",
@@ -798,16 +798,16 @@
             "comments": 11415
           },
           {
-            "ts": "2026-07-02T14:17:47.929394+00:00",
-            "views": 2613451,
-            "likes": 47745,
-            "comments": 11433
+            "ts": "2026-07-02T16:54:40.112092+00:00",
+            "views": 2614752,
+            "likes": 47768,
+            "comments": 11434
           },
           {
-            "ts": "2026-07-02T18:39:30.263318+00:00",
-            "views": 2615691,
-            "likes": 47784,
-            "comments": 11435
+            "ts": "2026-07-02T20:23:04.625149+00:00",
+            "views": 2616514,
+            "likes": 47800,
+            "comments": 11436
           },
           {
             "ts": "2026-07-03T00:12:08.797344+00:00",
@@ -816,10 +816,10 @@
             "comments": 11437
           },
           {
-            "ts": "2026-07-03T08:13:49.047994+00:00",
-            "views": 2620522,
-            "likes": 47851,
-            "comments": 11438
+            "ts": "2026-07-03T11:36:50.842717+00:00",
+            "views": 2621693,
+            "likes": 47869,
+            "comments": 11440
           },
           {
             "ts": "2026-07-03T16:39:51.484192+00:00",
@@ -828,16 +828,16 @@
             "comments": 11442
           },
           {
-            "ts": "2026-07-03T17:53:56.015646+00:00",
-            "views": 2626746,
-            "likes": 48093,
-            "comments": 11523
+            "ts": "2026-07-03T20:18:27.447466+00:00",
+            "views": 2628625,
+            "likes": 48136,
+            "comments": 11527
           },
           {
-            "ts": "2026-07-03T22:09:18.310695+00:00",
-            "views": 2629878,
-            "likes": 48159,
-            "comments": 11529
+            "ts": "2026-07-04T00:11:14.454729+00:00",
+            "views": 2631718,
+            "likes": 48168,
+            "comments": 11533
           },
           {
             "ts": "2026-07-04T07:51:14.428712+00:00",
@@ -846,10 +846,10 @@
             "comments": 11544
           },
           {
-            "ts": "2026-07-04T12:10:14.273735+00:00",
-            "views": 2635910,
-            "likes": 48257,
-            "comments": 11568
+            "ts": "2026-07-04T14:41:06.559794+00:00",
+            "views": 2637223,
+            "likes": 48287,
+            "comments": 11572
           },
           {
             "ts": "2026-07-04T18:06:30.120537+00:00",
@@ -858,28 +858,28 @@
             "comments": 11586
           },
           {
-            "ts": "2026-07-04T22:03:12.037666+00:00",
-            "views": 2642322,
-            "likes": 48382,
-            "comments": 11592
+            "ts": "2026-07-04T23:07:11.171314+00:00",
+            "views": 2643061,
+            "likes": 48389,
+            "comments": 11593
           },
           {
-            "ts": "2026-07-05T04:02:27.187787+00:00",
-            "views": 2644785,
-            "likes": 48409,
-            "comments": 11600
+            "ts": "2026-07-05T07:34:26.734713+00:00",
+            "views": 2645397,
+            "likes": 48426,
+            "comments": 11601
           },
           {
-            "ts": "2026-07-05T12:21:03.658731+00:00",
-            "views": 2647780,
-            "likes": 48477,
+            "ts": "2026-07-05T14:48:28.570523+00:00",
+            "views": 2649259,
+            "likes": 48496,
             "comments": 11587
           },
           {
-            "ts": "2026-07-05T16:14:27.176808+00:00",
-            "views": 2650029,
-            "likes": 48507,
-            "comments": 11590
+            "ts": "2026-07-05T18:09:44.805290+00:00",
+            "views": 2651156,
+            "likes": 48527,
+            "comments": 11593
           },
           {
             "ts": "2026-07-05T22:07:02.656314+00:00",
@@ -888,28 +888,28 @@
             "comments": 11596
           },
           {
-            "ts": "2026-07-06T05:17:46.207072+00:00",
-            "views": 2656777,
-            "likes": 48602,
-            "comments": 11601
+            "ts": "2026-07-06T10:50:49.955971+00:00",
+            "views": 2658669,
+            "likes": 48652,
+            "comments": 11603
           },
           {
-            "ts": "2026-07-06T14:30:49.133370+00:00",
-            "views": 2660992,
-            "likes": 48690,
-            "comments": 11610
+            "ts": "2026-07-06T17:47:52.795854+00:00",
+            "views": 2662932,
+            "likes": 48740,
+            "comments": 11613
           },
           {
-            "ts": "2026-07-06T22:18:43.216613+00:00",
-            "views": 2666439,
-            "likes": 48795,
-            "comments": 11619
-          },
-          {
-            "ts": "2026-07-07T04:58:16.719749+00:00",
-            "views": 2669156,
-            "likes": 48813,
+            "ts": "2026-07-07T00:14:35.536202+00:00",
+            "views": 2667908,
+            "likes": 48802,
             "comments": 11620
+          },
+          {
+            "ts": "2026-07-07T08:27:46.636663+00:00",
+            "views": 2669970,
+            "likes": 48832,
+            "comments": 11624
           },
           {
             "ts": "2026-07-07T14:51:08.570509+00:00",
@@ -918,27 +918,27 @@
             "comments": 11632
           },
           {
-            "ts": "2026-07-07T20:04:51.318722+00:00",
-            "views": 2676995,
-            "likes": 48973,
-            "comments": 11636
+            "ts": "2026-07-07T21:37:46.913089+00:00",
+            "views": 2678503,
+            "likes": 48989,
+            "comments": 11639
           },
           {
-            "ts": "2026-07-07T23:07:00.031014+00:00",
-            "views": 2679522,
-            "likes": 48996,
-            "comments": 11641
+            "ts": "2026-07-08T03:25:46.107763+00:00",
+            "views": 2681394,
+            "likes": 49002,
+            "comments": 11645
           },
           {
-            "ts": "2026-07-08T09:29:14.091522+00:00",
-            "views": 2683101,
-            "likes": 49049,
-            "comments": 11649
+            "ts": "2026-07-08T11:50:15.226005+00:00",
+            "views": 2684225,
+            "likes": 49068,
+            "comments": 11656
           },
           {
-            "ts": "2026-07-08T14:28:57.527521+00:00",
-            "views": 2685729,
-            "likes": 49095,
+            "ts": "2026-07-08T16:44:04.866688+00:00",
+            "views": 2687533,
+            "likes": 49125,
             "comments": 11658
           },
           {
@@ -948,72 +948,72 @@
             "comments": 11664
           },
           {
-            "ts": "2026-07-09T00:17:04.026127+00:00",
-            "views": 2693949,
-            "likes": 49185,
-            "comments": 11671
+            "ts": "2026-07-09T04:58:32.002017+00:00",
+            "views": 2695207,
+            "likes": 49203,
+            "comments": 11674
           },
           {
-            "ts": "2026-07-09T08:32:46.386141+00:00",
-            "views": 2696126,
-            "likes": 49230,
-            "comments": 11678
+            "ts": "2026-07-09T12:11:01.685188+00:00",
+            "views": 2698256,
+            "likes": 49260,
+            "comments": 11682
           },
           {
-            "ts": "2026-07-09T18:05:55.947723+00:00",
-            "views": 2702012,
-            "likes": 49316,
-            "comments": 11687
+            "ts": "2026-07-09T20:50:58.639053+00:00",
+            "views": 2704045,
+            "likes": 49346,
+            "comments": 11692
           },
           {
-            "ts": "2026-07-09T22:35:44.511086+00:00",
-            "views": 2705521,
-            "likes": 49362,
+            "ts": "2026-07-10T00:11:22.402389+00:00",
+            "views": 2706313,
+            "likes": 49368,
             "comments": 11696
           },
           {
-            "ts": "2026-07-10T04:57:43.013710+00:00",
-            "views": 2707671,
-            "likes": 49378,
-            "comments": 11701
+            "ts": "2026-07-10T08:27:15.532879+00:00",
+            "views": 2708495,
+            "likes": 49401,
+            "comments": 11727
           }
         ],
-        "rawCount": 240
+        "rawCount": 241
       },
       "videos": [
         {
           "videoId": "qnv8okRhUek",
           "title": "SURRON ULTRA - лучший электромотоцикл в 2026?!",
           "publishedAt": "2026-07-03T07:56:32Z",
-          "viewCount": 13469,
-          "likeCount": 563,
-          "commentCount": 206,
+          "viewCount": 13554,
+          "likeCount": 568,
+          "commentCount": 229,
           "duration": "27:27",
           "durationSeconds": 1647,
           "kind": "long",
           "thumbnail": "https://i.ytimg.com/vi/qnv8okRhUek/mqdefault.jpg",
           "url": "https://www.youtube.com/watch?v=qnv8okRhUek",
-          "engagementRate": 5.71
+          "engagementRate": 5.88
         },
         {
           "videoId": "9Siz9fkskBE",
           "title": "Электромотоциклы KUGOO в 2026",
           "publishedAt": "2026-04-16T09:00:12Z",
-          "viewCount": 46815,
-          "likeCount": 1251,
+          "viewCount": 46848,
+          "likeCount": 1253,
           "commentCount": 277,
           "duration": "26:56",
           "durationSeconds": 1616,
           "kind": "long",
           "thumbnail": "https://i.ytimg.com/vi/9Siz9fkskBE/mqdefault.jpg",
           "url": "https://www.youtube.com/watch?v=9Siz9fkskBE",
-          "engagementRate": 3.26
+          "engagementRate": 3.27
         },
         {
           "videoId": "8e42MR2p9Rw",
           "title": "Что ждать от электросамокатов KUGOO в 2026?",
           "publishedAt": "2026-03-24T13:15:38Z",
-          "viewCount": 93568,
+          "viewCount": 93607,
           "likeCount": 1700,
           "commentCount": 400,
           "duration": "18:05",
@@ -1027,8 +1027,8 @@
           "videoId": "O06y445F7tU",
           "title": "Какие Электровелосипеды от Kugoo стоит ждать?",
           "publishedAt": "2026-03-15T08:36:59Z",
-          "viewCount": 61462,
-          "likeCount": 1398,
+          "viewCount": 61488,
+          "likeCount": 1399,
           "commentCount": 380,
           "duration": "32:07",
           "durationSeconds": 1927,
@@ -1041,7 +1041,7 @@
           "videoId": "dCgtxun4KfA",
           "title": "МОЩНЫЕ ЭЛЕКТРОМОТОЦИКЛЫ в ЗИМНИЙ ЭНДУРО, КТО КРУЧЕ? #surron #kugoo #kayo",
           "publishedAt": "2026-02-27T15:12:40Z",
-          "viewCount": 54970,
+          "viewCount": 54976,
           "likeCount": 1441,
           "commentCount": 155,
           "duration": "18:57",
@@ -1069,9 +1069,9 @@
           "videoId": "b7tXWPuoqC4",
           "title": "На каком электросамокате лучше всего СТАНТИТЬ? feat @Samokatstuntteam",
           "publishedAt": "2026-02-02T13:01:10Z",
-          "viewCount": 62767,
+          "viewCount": 62792,
           "likeCount": 1080,
-          "commentCount": 166,
+          "commentCount": 167,
           "duration": "12:02",
           "durationSeconds": 722,
           "kind": "long",
@@ -1097,7 +1097,7 @@
           "videoId": "nJlJ5B3wyS4",
           "title": "Я УСТРОИЛСЯ РАБОТАТЬ КУРЬЕРОМ В НОВЫЙ ГОД, где обман?",
           "publishedAt": "2025-12-31T08:50:31Z",
-          "viewCount": 9935,
+          "viewCount": 9936,
           "likeCount": 361,
           "commentCount": 76,
           "duration": "45:05",
@@ -1111,7 +1111,7 @@
           "videoId": "YLoDti-I6vo",
           "title": "Какой электросамокат ЛУЧШИЙ в 2025 году?",
           "publishedAt": "2025-12-22T15:36:09Z",
-          "viewCount": 53126,
+          "viewCount": 53132,
           "likeCount": 1066,
           "commentCount": 328,
           "duration": "13:46",
@@ -1125,8 +1125,8 @@
           "videoId": "_DxyIizRBgQ",
           "title": "Можно ли собрать электросамокат из запчастей с OZON?",
           "publishedAt": "2025-12-15T14:37:56Z",
-          "viewCount": 176314,
-          "likeCount": 3318,
+          "viewCount": 176389,
+          "likeCount": 3320,
           "commentCount": 277,
           "duration": "14:38",
           "durationSeconds": 878,
@@ -1139,7 +1139,7 @@
           "videoId": "7Ec8J57zapw",
           "title": "Ты ПОТОРОПИЛСЯ с покупкой KUGOO WISH 02 PRO и вот почему",
           "publishedAt": "2025-11-21T10:57:06Z",
-          "viewCount": 99535,
+          "viewCount": 99578,
           "likeCount": 2060,
           "commentCount": 463,
           "duration": "20:06",
@@ -1153,8 +1153,8 @@
           "videoId": "emT_xWaW2rE",
           "title": "СТАНТЕРЫ офигели от того на чём я приехал на сходку",
           "publishedAt": "2025-11-15T10:08:57Z",
-          "viewCount": 87930,
-          "likeCount": 1814,
+          "viewCount": 87952,
+          "likeCount": 1815,
           "commentCount": 157,
           "duration": "32:48",
           "durationSeconds": 1968,
@@ -1167,7 +1167,7 @@
           "videoId": "9P_K_pDU-1U",
           "title": "ОН ЗАРЯЖАЕТСЯ ОТ ГОРОДСКИХ ЗАРЯДОК!!! Kugoo GBT",
           "publishedAt": "2025-10-21T17:53:33Z",
-          "viewCount": 34189,
+          "viewCount": 34199,
           "likeCount": 856,
           "commentCount": 293,
           "duration": "27:34",
@@ -1181,8 +1181,8 @@
           "videoId": "0qcHCqS6_88",
           "title": "В РОССИИ ЗАПРЕЩАЮТ ЭЛЕКТРОСАМОКАТЫ, ЧТО ДЕЛАТЬ?",
           "publishedAt": "2025-09-28T09:34:56Z",
-          "viewCount": 116665,
-          "likeCount": 3108,
+          "viewCount": 116688,
+          "likeCount": 3109,
           "commentCount": 1587,
           "duration": "35:13",
           "durationSeconds": 2113,
@@ -1195,21 +1195,21 @@
           "videoId": "9dUw2sDjZGk",
           "title": "Сходка СТАНТЕРОВ пошла не по плану. Отобрали самокаты 🥺",
           "publishedAt": "2025-09-04T09:00:13Z",
-          "viewCount": 366807,
-          "likeCount": 5650,
+          "viewCount": 366985,
+          "likeCount": 5656,
           "commentCount": 604,
           "duration": "25:45",
           "durationSeconds": 1545,
           "kind": "long",
           "thumbnail": "https://i.ytimg.com/vi/9dUw2sDjZGk/mqdefault.jpg",
           "url": "https://www.youtube.com/watch?v=9dUw2sDjZGk",
-          "engagementRate": 1.7
+          "engagementRate": 1.71
         },
         {
           "videoId": "qJR-fDS4qz8",
           "title": "Самый простой способ научиться СТАНТИТЬ на электросамокате!",
           "publishedAt": "2025-09-01T17:36:11Z",
-          "viewCount": 176298,
+          "viewCount": 176300,
           "likeCount": 2724,
           "commentCount": 308,
           "duration": "18:57",
@@ -1223,7 +1223,7 @@
           "videoId": "8FbdcWJycDw",
           "title": "Я попробовал ЭНДУРО и облажался....",
           "publishedAt": "2025-08-30T10:52:04Z",
-          "viewCount": 10649,
+          "viewCount": 10653,
           "likeCount": 278,
           "commentCount": 66,
           "duration": "30:27",
@@ -1237,7 +1237,7 @@
           "videoId": "dp4zeKdHarg",
           "title": "Kugoo V4Max в реальной жизни (реально)",
           "publishedAt": "2025-07-31T12:53:40Z",
-          "viewCount": 17343,
+          "viewCount": 17345,
           "likeCount": 420,
           "commentCount": 107,
           "duration": "17:34",
@@ -1251,9 +1251,9 @@
           "videoId": "Bgu6J7cxOs8",
           "title": "Кикшеринг или Личный самокат, что лучше?",
           "publishedAt": "2025-07-23T13:42:42Z",
-          "viewCount": 63293,
+          "viewCount": 63307,
           "likeCount": 1279,
-          "commentCount": 313,
+          "commentCount": 314,
           "duration": "14:00",
           "durationSeconds": 840,
           "kind": "long",
@@ -1265,7 +1265,7 @@
           "videoId": "qucOp-TPfVs",
           "title": "Кто приедет первым получает 5000. Kugoo F2 против автомобиля",
           "publishedAt": "2025-07-21T13:01:38Z",
-          "viewCount": 11273,
+          "viewCount": 11276,
           "likeCount": 382,
           "commentCount": 102,
           "duration": "8:00",
@@ -1279,9 +1279,9 @@
           "videoId": "gQYSS6eb7vQ",
           "title": "ДПС ПРОТИВ ЭЛЕКТРОМОПЕДОВ?! Kugoo r1 / Kugoo r2",
           "publishedAt": "2025-07-01T20:05:43Z",
-          "viewCount": 212529,
-          "likeCount": 2957,
-          "commentCount": 815,
+          "viewCount": 212630,
+          "likeCount": 2958,
+          "commentCount": 816,
           "duration": "21:59",
           "durationSeconds": 1319,
           "kind": "long",
@@ -1307,7 +1307,7 @@
           "videoId": "-H64gqZAXfw",
           "title": "САМЫЙ МАЛЕНЬКИЙ ЭЛЕКТРОВЕЛОСИПЕД в реальных условиях",
           "publishedAt": "2025-06-15T12:51:21Z",
-          "viewCount": 48344,
+          "viewCount": 48345,
           "likeCount": 963,
           "commentCount": 446,
           "duration": "21:23",
@@ -1321,7 +1321,7 @@
           "videoId": "mr-JutZri04",
           "title": "НЕРЕАЛЬНАЯ НОВИНКА Kugoo G2 PRO MAX+ / F3 PRO MAX",
           "publishedAt": "2025-05-29T10:00:53Z",
-          "viewCount": 137963,
+          "viewCount": 137983,
           "likeCount": 1559,
           "commentCount": 444,
           "duration": "15:53",
@@ -1335,8 +1335,8 @@
           "videoId": "_-7zWmfEHzc",
           "title": "ЭЛЕКТРОВЕЛОСИПЕД ПО ЦЕНЕ ОБЫЧНОГО",
           "publishedAt": "2025-05-23T12:25:25Z",
-          "viewCount": 143879,
-          "likeCount": 1982,
+          "viewCount": 143924,
+          "likeCount": 1985,
           "commentCount": 564,
           "duration": "16:30",
           "durationSeconds": 990,
@@ -1349,7 +1349,7 @@
           "videoId": "Pku_d5ZGGJo",
           "title": "МОНОКОЛЕСО ПРОТИВ МОТОЦИКЛА кто быстрее в доставке?",
           "publishedAt": "2025-05-20T10:22:26Z",
-          "viewCount": 12872,
+          "viewCount": 12873,
           "likeCount": 422,
           "commentCount": 134,
           "duration": "19:42",
@@ -1363,7 +1363,7 @@
           "videoId": "j0U67k7V028",
           "title": "Эндуро от KUGOO на 100V ПРОТИВ TALARIA и SUR RON",
           "publishedAt": "2025-05-17T19:04:52Z",
-          "viewCount": 137610,
+          "viewCount": 137636,
           "likeCount": 2061,
           "commentCount": 318,
           "duration": "31:40",
@@ -1377,8 +1377,8 @@
           "videoId": "GpoBSaWM74g",
           "title": "ПОЧЕМУ ЭЛЕКТРОВЕЛОСИПЕДЫ ЗАХВАТЯТ МИР?",
           "publishedAt": "2025-04-22T17:58:08Z",
-          "viewCount": 85129,
-          "likeCount": 1992,
+          "viewCount": 85141,
+          "likeCount": 1993,
           "commentCount": 1043,
           "duration": "15:15",
           "durationSeconds": 915,
@@ -1391,7 +1391,7 @@
           "videoId": "6n-wJGHyIE0",
           "title": "Какой электросамокат купить в 2025 году?",
           "publishedAt": "2025-04-14T11:57:10Z",
-          "viewCount": 274569,
+          "viewCount": 274590,
           "likeCount": 3698,
           "commentCount": 1107,
           "duration": "21:06",
@@ -1416,7 +1416,7 @@
           {
             "text": "Я продал ультру 26 года и купил Ю-вольт , еще у меня есть куго es . Ультра точно в разы лучьше .👍 и это факт , он стоит своих денег",
             "author": "@ИванПечеркин-т5д",
-            "likeCount": 8,
+            "likeCount": 9,
             "publishedAt": "2026-07-03T10:21:45Z",
             "videoId": "qnv8okRhUek",
             "videoTitle": "SURRON ULTRA - лучший электромотоцикл в 2026?!",
@@ -1538,47 +1538,47 @@
         "since": "2025-02-01T00:00:00Z",
         "totals": {
           "count": 138,
-          "views": 17572781,
-          "viewsCompact": "17.57M",
-          "likes": 206850,
-          "likesCompact": "206.8K",
-          "comments": 8597,
+          "views": 17577254,
+          "viewsCompact": "17.58M",
+          "likes": 206929,
+          "likesCompact": "206.9K",
+          "comments": 8601,
           "commentsCompact": "8.60K",
           "engagementRate": 1.23
         },
         "deltas": {
           "h24": {
             "views": {
-              "abs": 87522,
-              "signed": "+87.5K",
-              "since": "2026-07-09T00:17:04.026127+00:00"
+              "abs": 85219,
+              "signed": "+85.2K",
+              "since": "2026-07-09T04:58:32.002017+00:00"
             },
             "likes": {
-              "abs": 712,
-              "signed": "+712",
-              "since": "2026-07-09T00:17:04.026127+00:00"
+              "abs": 773,
+              "signed": "+773",
+              "since": "2026-07-09T04:58:32.002017+00:00"
             },
             "comments": {
-              "abs": 32,
-              "signed": "+32",
-              "since": "2026-07-09T00:17:04.026127+00:00"
+              "abs": 34,
+              "signed": "+34",
+              "since": "2026-07-09T04:58:32.002017+00:00"
             }
           },
           "d7": {
             "views": {
-              "abs": 649441,
-              "signed": "+649.4K",
-              "since": "2026-07-03T04:47:46.584987+00:00"
+              "abs": 648916,
+              "signed": "+648.9K",
+              "since": "2026-07-03T08:13:49.047994+00:00"
             },
             "likes": {
-              "abs": 5301,
-              "signed": "+5.30K",
-              "since": "2026-07-03T04:47:46.584987+00:00"
+              "abs": 5321,
+              "signed": "+5.32K",
+              "since": "2026-07-03T08:13:49.047994+00:00"
             },
             "comments": {
-              "abs": 128,
-              "signed": "+128",
-              "since": "2026-07-03T04:47:46.584987+00:00"
+              "abs": 132,
+              "signed": "+132",
+              "since": "2026-07-03T08:13:49.047994+00:00"
             }
           }
         },
@@ -1587,7 +1587,7 @@
             "videoId": "Hne3uYhANRU",
             "title": "Сломается ли электровелосипед, если его утопить?",
             "publishedAt": "2025-11-04T08:24:33Z",
-            "viewCount": 3324706,
+            "viewCount": 3324719,
             "viewCountCompact": "3.32M",
             "engagementRate": 1.0,
             "thumbnail": "https://i.ytimg.com/vi/Hne3uYhANRU/mqdefault.jpg",
@@ -1597,7 +1597,7 @@
             "videoId": "Kd2pvxq8LUs",
             "title": "2 аккумулятора в одном электровелосипеде",
             "publishedAt": "2025-06-15T08:00:17Z",
-            "viewCount": 1052324,
+            "viewCount": 1052688,
             "viewCountCompact": "1.05M",
             "engagementRate": 1.22,
             "thumbnail": "https://i.ytimg.com/vi/Kd2pvxq8LUs/mqdefault.jpg",
@@ -1607,8 +1607,8 @@
             "videoId": "ggk2SJmLnio",
             "title": "Какая техника лучше всего ездить по снегу?",
             "publishedAt": "2026-02-27T16:01:43Z",
-            "viewCount": 944738,
-            "viewCountCompact": "944.7K",
+            "viewCount": 944871,
+            "viewCountCompact": "944.9K",
             "engagementRate": 1.1,
             "thumbnail": "https://i.ytimg.com/vi/ggk2SJmLnio/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/ggk2SJmLnio"
@@ -1619,7 +1619,7 @@
             "videoId": "fLa5e8fFb5U",
             "title": "Лучший мопед Kugoo wish 02 Pro",
             "publishedAt": "2026-05-04T08:00:42Z",
-            "viewCount": 14711,
+            "viewCount": 14713,
             "viewCountCompact": "14.7K",
             "engagementRate": 3.14,
             "thumbnail": "https://i.ytimg.com/vi/fLa5e8fFb5U/mqdefault.jpg",
@@ -1629,9 +1629,9 @@
             "videoId": "dB1HxLVFqWs",
             "title": "Электромотоциклы от Kugoo",
             "publishedAt": "2026-05-15T08:00:45Z",
-            "viewCount": 49500,
-            "viewCountCompact": "49.5K",
-            "engagementRate": 2.8,
+            "viewCount": 49628,
+            "viewCountCompact": "49.6K",
+            "engagementRate": 2.81,
             "thumbnail": "https://i.ytimg.com/vi/dB1HxLVFqWs/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/dB1HxLVFqWs"
           },
@@ -1639,7 +1639,7 @@
             "videoId": "OJltCdAqlqk",
             "title": "Правила при езде зимой",
             "publishedAt": "2026-02-26T08:00:24Z",
-            "viewCount": 17006,
+            "viewCount": 17008,
             "viewCountCompact": "17.0K",
             "engagementRate": 2.8,
             "thumbnail": "https://i.ytimg.com/vi/OJltCdAqlqk/mqdefault.jpg",
@@ -1756,9 +1756,9 @@
             "videoId": "FgM7EVvZb4E",
             "title": "Вся правда про электромотоциклы",
             "publishedAt": "2026-05-17T08:00:20Z",
-            "viewCount": 334596,
-            "viewCountCompact": "334.6K",
-            "likeCount": 3284,
+            "viewCount": 334288,
+            "viewCountCompact": "334.3K",
+            "likeCount": 3288,
             "commentCount": 223,
             "duration": "0:55",
             "durationSeconds": 55,
@@ -1770,9 +1770,9 @@
             "videoId": "1CBtxFkqwvs",
             "title": "Почему в эндуро бензин скоро умрёт?",
             "publishedAt": "2026-05-16T08:00:03Z",
-            "viewCount": 42514,
+            "viewCount": 42516,
             "viewCountCompact": "42.5K",
-            "likeCount": 656,
+            "likeCount": 657,
             "commentCount": 61,
             "duration": "1:04",
             "durationSeconds": 64,
@@ -1784,13 +1784,13 @@
             "videoId": "dB1HxLVFqWs",
             "title": "Электромотоциклы от Kugoo",
             "publishedAt": "2026-05-15T08:00:45Z",
-            "viewCount": 49500,
-            "viewCountCompact": "49.5K",
-            "likeCount": 1332,
+            "viewCount": 49628,
+            "viewCountCompact": "49.6K",
+            "likeCount": 1338,
             "commentCount": 56,
             "duration": "0:46",
             "durationSeconds": 46,
-            "engagementRate": 2.8,
+            "engagementRate": 2.81,
             "thumbnail": "https://i.ytimg.com/vi/dB1HxLVFqWs/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/dB1HxLVFqWs"
           },
@@ -1798,9 +1798,9 @@
             "videoId": "H41gDVxLQQI",
             "title": "6 лет я не мог научиться ездить на мотоцикле!",
             "publishedAt": "2026-05-13T08:00:25Z",
-            "viewCount": 226844,
-            "viewCountCompact": "226.8K",
-            "likeCount": 3135,
+            "viewCount": 227048,
+            "viewCountCompact": "227.0K",
+            "likeCount": 3138,
             "commentCount": 96,
             "duration": "1:00",
             "durationSeconds": 60,
@@ -1812,8 +1812,8 @@
             "videoId": "UYCTdzAO_U0",
             "title": "Когда будет Kugoo wish 02 pro?",
             "publishedAt": "2026-05-12T13:35:38Z",
-            "viewCount": 62419,
-            "viewCountCompact": "62.4K",
+            "viewCount": 62470,
+            "viewCountCompact": "62.5K",
             "likeCount": 571,
             "commentCount": 25,
             "duration": "0:26",
@@ -1826,7 +1826,7 @@
             "videoId": "whuuhwJ87Po",
             "title": "Самый дальноходный электровелосипед Kugoo",
             "publishedAt": "2026-05-08T08:01:04Z",
-            "viewCount": 36807,
+            "viewCount": 36831,
             "viewCountCompact": "36.8K",
             "likeCount": 710,
             "commentCount": 33,
@@ -1854,7 +1854,7 @@
             "videoId": "NOfzX2moGaM",
             "title": "Мотоцикл Kugoo на 13кВт!",
             "publishedAt": "2026-05-06T08:00:20Z",
-            "viewCount": 25583,
+            "viewCount": 25584,
             "viewCountCompact": "25.6K",
             "likeCount": 616,
             "commentCount": 16,
@@ -1868,7 +1868,7 @@
             "videoId": "w48-4deFCKE",
             "title": "Kugoo wish 04 конкурент sur ron",
             "publishedAt": "2026-05-05T08:01:02Z",
-            "viewCount": 22410,
+            "viewCount": 22413,
             "viewCountCompact": "22.4K",
             "likeCount": 598,
             "commentCount": 12,
@@ -1882,7 +1882,7 @@
             "videoId": "fLa5e8fFb5U",
             "title": "Лучший мопед Kugoo wish 02 Pro",
             "publishedAt": "2026-05-04T08:00:42Z",
-            "viewCount": 14711,
+            "viewCount": 14713,
             "viewCountCompact": "14.7K",
             "likeCount": 446,
             "commentCount": 16,
@@ -1896,7 +1896,7 @@
             "videoId": "4DiK8db9Lew",
             "title": "Kugoo Wish 01 Pro",
             "publishedAt": "2026-05-03T08:00:03Z",
-            "viewCount": 26544,
+            "viewCount": 26545,
             "viewCountCompact": "26.5K",
             "likeCount": 672,
             "commentCount": 11,
@@ -1910,7 +1910,7 @@
             "videoId": "1yMdm68Idag",
             "title": "Самый мощный Kugoo в 2026 году",
             "publishedAt": "2026-05-02T08:00:02Z",
-            "viewCount": 26737,
+            "viewCount": 26738,
             "viewCountCompact": "26.7K",
             "likeCount": 560,
             "commentCount": 37,
@@ -1924,7 +1924,7 @@
             "videoId": "TCWNGUJGYbg",
             "title": "Новинка Kugoo g2 pro max",
             "publishedAt": "2026-05-01T08:00:29Z",
-            "viewCount": 20241,
+            "viewCount": 20242,
             "viewCountCompact": "20.2K",
             "likeCount": 517,
             "commentCount": 28,
@@ -1938,7 +1938,7 @@
             "videoId": "jO4aEGbLvVI",
             "title": "Полноприводный Kugoo m4",
             "publishedAt": "2026-04-30T08:01:00Z",
-            "viewCount": 25485,
+            "viewCount": 25493,
             "viewCountCompact": "25.5K",
             "likeCount": 445,
             "commentCount": 60,
@@ -1966,9 +1966,9 @@
             "videoId": "VsWrd7tAc_E",
             "title": "Kugoo двигают Specialized",
             "publishedAt": "2026-04-28T12:53:38Z",
-            "viewCount": 157802,
-            "viewCountCompact": "157.8K",
-            "likeCount": 2377,
+            "viewCount": 157885,
+            "viewCountCompact": "157.9K",
+            "likeCount": 2379,
             "commentCount": 190,
             "duration": "0:52",
             "durationSeconds": 52,
@@ -1994,7 +1994,7 @@
             "videoId": "Skkum7bb2cE",
             "title": "Велосипед от Kugoo за 500 000",
             "publishedAt": "2026-04-27T13:44:26Z",
-            "viewCount": 40426,
+            "viewCount": 40432,
             "viewCountCompact": "40.4K",
             "likeCount": 503,
             "commentCount": 62,
@@ -2008,7 +2008,7 @@
             "videoId": "lrW-2U78_q4",
             "title": "Kugoo ZX DUAL X2",
             "publishedAt": "2026-03-31T08:00:28Z",
-            "viewCount": 23813,
+            "viewCount": 23815,
             "viewCountCompact": "23.8K",
             "likeCount": 284,
             "commentCount": 9,
@@ -2022,13 +2022,13 @@
             "videoId": "ap7fR2_ksK0",
             "title": "Kugoo V5 Pro X2",
             "publishedAt": "2026-03-30T08:00:02Z",
-            "viewCount": 26868,
+            "viewCount": 26871,
             "viewCountCompact": "26.9K",
             "likeCount": 374,
-            "commentCount": 30,
+            "commentCount": 32,
             "duration": "0:36",
             "durationSeconds": 36,
-            "engagementRate": 1.5,
+            "engagementRate": 1.51,
             "thumbnail": "https://i.ytimg.com/vi/ap7fR2_ksK0/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/ap7fR2_ksK0"
           },
@@ -2036,7 +2036,7 @@
             "videoId": "b85H_xOvxWg",
             "title": "Kugoo F1 X2",
             "publishedAt": "2026-03-29T08:00:31Z",
-            "viewCount": 14498,
+            "viewCount": 14501,
             "viewCountCompact": "14.5K",
             "likeCount": 188,
             "commentCount": 6,
@@ -2050,7 +2050,7 @@
             "videoId": "OYa0S_HIPc8",
             "title": "Kugoo MM29",
             "publishedAt": "2026-03-28T08:00:16Z",
-            "viewCount": 13983,
+            "viewCount": 13984,
             "viewCountCompact": "14.0K",
             "likeCount": 290,
             "commentCount": 21,
@@ -2064,7 +2064,7 @@
             "videoId": "IfsQnLroWTY",
             "title": "Kugoo Cargo 20",
             "publishedAt": "2026-03-27T08:00:24Z",
-            "viewCount": 23908,
+            "viewCount": 23909,
             "viewCountCompact": "23.9K",
             "likeCount": 215,
             "commentCount": 11,
@@ -2078,8 +2078,8 @@
             "videoId": "CdWCurD9a6Q",
             "title": "Kugoo LR2",
             "publishedAt": "2026-03-26T08:00:07Z",
-            "viewCount": 16040,
-            "viewCountCompact": "16.0K",
+            "viewCount": 16055,
+            "viewCountCompact": "16.1K",
             "likeCount": 193,
             "commentCount": 13,
             "duration": "0:40",
@@ -2092,7 +2092,7 @@
             "videoId": "GAwerBI95Gg",
             "title": "Kugoo U-14",
             "publishedAt": "2026-03-25T08:00:21Z",
-            "viewCount": 24233,
+            "viewCount": 24239,
             "viewCountCompact": "24.2K",
             "likeCount": 181,
             "commentCount": 12,
@@ -2106,7 +2106,7 @@
             "videoId": "IIM3Un-CItU",
             "title": "Kugoo V1S",
             "publishedAt": "2026-03-24T08:00:29Z",
-            "viewCount": 28679,
+            "viewCount": 28683,
             "viewCountCompact": "28.7K",
             "likeCount": 378,
             "commentCount": 20,
@@ -2120,7 +2120,7 @@
             "videoId": "l2YQioU3tXE",
             "title": "Kugoo First Bike",
             "publishedAt": "2026-03-23T15:37:38Z",
-            "viewCount": 21426,
+            "viewCount": 21441,
             "viewCountCompact": "21.4K",
             "likeCount": 314,
             "commentCount": 14,
@@ -2134,9 +2134,9 @@
             "videoId": "XKS6d2FgXdo",
             "title": "По снегу на самом мощном электросамокате Kugoo G5",
             "publishedAt": "2026-03-09T08:00:36Z",
-            "viewCount": 376035,
-            "viewCountCompact": "376.0K",
-            "likeCount": 6101,
+            "viewCount": 376208,
+            "viewCountCompact": "376.2K",
+            "likeCount": 6106,
             "commentCount": 45,
             "duration": "0:49",
             "durationSeconds": 49,
@@ -2148,9 +2148,9 @@
             "videoId": "nFOa9sWok34",
             "title": "Мал да удал! Kugoo R2 объехал Sur ron ultra",
             "publishedAt": "2026-03-06T17:03:03Z",
-            "viewCount": 39403,
+            "viewCount": 39442,
             "viewCountCompact": "39.4K",
-            "likeCount": 588,
+            "likeCount": 589,
             "commentCount": 11,
             "duration": "0:48",
             "durationSeconds": 48,
@@ -2162,7 +2162,7 @@
             "videoId": "zjkQE7la_QE",
             "title": "Что влияет на езду по снегу?",
             "publishedAt": "2026-03-01T09:01:18Z",
-            "viewCount": 29555,
+            "viewCount": 29556,
             "viewCountCompact": "29.6K",
             "likeCount": 723,
             "commentCount": 10,
@@ -2176,9 +2176,9 @@
             "videoId": "-BZTCkpowQc",
             "title": "Kugoo ES объехала сурон",
             "publishedAt": "2026-02-28T08:30:17Z",
-            "viewCount": 131540,
-            "viewCountCompact": "131.5K",
-            "likeCount": 1549,
+            "viewCount": 131713,
+            "viewCountCompact": "131.7K",
+            "likeCount": 1551,
             "commentCount": 15,
             "duration": "0:41",
             "durationSeconds": 41,
@@ -2190,9 +2190,9 @@
             "videoId": "ggk2SJmLnio",
             "title": "Какая техника лучше всего ездить по снегу?",
             "publishedAt": "2026-02-27T16:01:43Z",
-            "viewCount": 944738,
-            "viewCountCompact": "944.7K",
-            "likeCount": 10324,
+            "viewCount": 944871,
+            "viewCountCompact": "944.9K",
+            "likeCount": 10326,
             "commentCount": 84,
             "duration": "0:35",
             "durationSeconds": 35,
@@ -2204,7 +2204,7 @@
             "videoId": "OJltCdAqlqk",
             "title": "Правила при езде зимой",
             "publishedAt": "2026-02-26T08:00:24Z",
-            "viewCount": 17006,
+            "viewCount": 17008,
             "viewCountCompact": "17.0K",
             "likeCount": 467,
             "commentCount": 9,
@@ -2232,9 +2232,9 @@
             "videoId": "RagWVxtx7W0",
             "title": "ЗАЧЕМ? зимой на электросамокате!",
             "publishedAt": "2026-02-23T18:16:32Z",
-            "viewCount": 88489,
+            "viewCount": 88497,
             "viewCountCompact": "88.5K",
-            "likeCount": 1347,
+            "likeCount": 1348,
             "commentCount": 51,
             "duration": "0:35",
             "durationSeconds": 35,
@@ -2260,7 +2260,7 @@
             "videoId": "3-zogV766Zw",
             "title": "Лучший электросамокат Kugoo S3 Max",
             "publishedAt": "2025-12-30T06:00:04Z",
-            "viewCount": 160411,
+            "viewCount": 160440,
             "viewCountCompact": "160.4K",
             "likeCount": 1162,
             "commentCount": 46,
@@ -2274,7 +2274,7 @@
             "videoId": "o9hOHJ_9msc",
             "title": "Kugoo Max Speed/m4 Pro",
             "publishedAt": "2025-12-29T15:01:29Z",
-            "viewCount": 21940,
+            "viewCount": 21941,
             "viewCountCompact": "21.9K",
             "likeCount": 456,
             "commentCount": 37,
@@ -2330,9 +2330,9 @@
             "videoId": "UFvPg996I4c",
             "title": "Как сделать стантерский электросамокат за 3000?",
             "publishedAt": "2025-12-27T09:00:53Z",
-            "viewCount": 528190,
-            "viewCountCompact": "528.2K",
-            "likeCount": 7370,
+            "viewCount": 528485,
+            "viewCountCompact": "528.5K",
+            "likeCount": 7379,
             "commentCount": 75,
             "duration": "0:45",
             "durationSeconds": 45,
@@ -2358,7 +2358,7 @@
             "videoId": "DYeD882bYGg",
             "title": "Kugoo EC 02 лучший велосипед",
             "publishedAt": "2025-12-26T15:00:21Z",
-            "viewCount": 14613,
+            "viewCount": 14615,
             "viewCountCompact": "14.6K",
             "likeCount": 179,
             "commentCount": 15,
@@ -2386,8 +2386,8 @@
             "videoId": "b4suhcCeWQ8",
             "title": "Kugoo M5 Pro",
             "publishedAt": "2025-12-25T06:00:37Z",
-            "viewCount": 29340,
-            "viewCountCompact": "29.3K",
+            "viewCount": 29374,
+            "viewCountCompact": "29.4K",
             "likeCount": 481,
             "commentCount": 23,
             "duration": "0:28",
@@ -2400,8 +2400,8 @@
             "videoId": "e8-owHfpykw",
             "title": "Мой маленький любимчик Kugoo X1 Pro",
             "publishedAt": "2025-12-24T15:01:31Z",
-            "viewCount": 7684,
-            "viewCountCompact": "7.68K",
+            "viewCount": 7686,
+            "viewCountCompact": "7.69K",
             "likeCount": 89,
             "commentCount": 6,
             "duration": "0:42",
@@ -2414,7 +2414,7 @@
             "videoId": "Ci-Ul7tDoaA",
             "title": "Зачем нужен Kugoo C1+",
             "publishedAt": "2025-12-23T15:00:32Z",
-            "viewCount": 35123,
+            "viewCount": 35124,
             "viewCountCompact": "35.1K",
             "likeCount": 345,
             "commentCount": 12,
@@ -2428,13 +2428,13 @@
             "videoId": "zzghLz63geM",
             "title": "Kugoo m2+ Быстрый обзор",
             "publishedAt": "2025-12-23T06:00:56Z",
-            "viewCount": 54477,
+            "viewCount": 54493,
             "viewCountCompact": "54.5K",
-            "likeCount": 572,
+            "likeCount": 574,
             "commentCount": 34,
             "duration": "0:21",
             "durationSeconds": 21,
-            "engagementRate": 1.11,
+            "engagementRate": 1.12,
             "thumbnail": "https://i.ytimg.com/vi/zzghLz63geM/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/zzghLz63geM"
           },
@@ -2442,9 +2442,9 @@
             "videoId": "GGK_4eJfd8M",
             "title": "Тест гидравлических тормозов с 50 км/ч",
             "publishedAt": "2025-12-10T08:00:18Z",
-            "viewCount": 523838,
-            "viewCountCompact": "523.8K",
-            "likeCount": 6259,
+            "viewCount": 524485,
+            "viewCountCompact": "524.5K",
+            "likeCount": 6266,
             "commentCount": 132,
             "duration": "0:33",
             "durationSeconds": 33,
@@ -2498,7 +2498,7 @@
             "videoId": "yJBey_0DDfQ",
             "title": "Почему Kugoo wish 02 pro такой популярный?",
             "publishedAt": "2025-12-06T08:01:30Z",
-            "viewCount": 48201,
+            "viewCount": 48232,
             "viewCountCompact": "48.2K",
             "likeCount": 469,
             "commentCount": 21,
@@ -2540,7 +2540,7 @@
             "videoId": "Hne3uYhANRU",
             "title": "Сломается ли электровелосипед, если его утопить?",
             "publishedAt": "2025-11-04T08:24:33Z",
-            "viewCount": 3324706,
+            "viewCount": 3324719,
             "viewCountCompact": "3.32M",
             "likeCount": 32950,
             "commentCount": 343,
@@ -2554,9 +2554,9 @@
             "videoId": "pg2nmATp5qg",
             "title": "Фишки электромотоцикла KUGOO",
             "publishedAt": "2025-11-02T08:00:55Z",
-            "viewCount": 550993,
-            "viewCountCompact": "551.0K",
-            "likeCount": 4294,
+            "viewCount": 551896,
+            "viewCountCompact": "551.9K",
+            "likeCount": 4300,
             "commentCount": 204,
             "duration": "0:34",
             "durationSeconds": 34,
@@ -2582,7 +2582,7 @@
             "videoId": "et20Cz2UCw8",
             "title": "Главная фишка электромотоцикла!",
             "publishedAt": "2025-10-31T08:00:49Z",
-            "viewCount": 42705,
+            "viewCount": 42703,
             "viewCountCompact": "42.7K",
             "likeCount": 443,
             "commentCount": 42,
@@ -2596,7 +2596,7 @@
             "videoId": "w-ZlZ03smsM",
             "title": "В чём электромотоцикл лучше бензинового?",
             "publishedAt": "2025-10-30T08:01:12Z",
-            "viewCount": 26098,
+            "viewCount": 26099,
             "viewCountCompact": "26.1K",
             "likeCount": 353,
             "commentCount": 26,
@@ -2694,7 +2694,7 @@
             "videoId": "SFZfnPH7xEs",
             "title": "Что будет, если остановят на мощном электросамокате?",
             "publishedAt": "2025-10-07T07:50:30Z",
-            "viewCount": 138795,
+            "viewCount": 138797,
             "viewCountCompact": "138.8K",
             "likeCount": 1179,
             "commentCount": 63,
@@ -2722,8 +2722,8 @@
             "videoId": "GLeDPe9jUmk",
             "title": "Отберут ли самокат сотрудники ГИБДД",
             "publishedAt": "2025-09-18T09:00:32Z",
-            "viewCount": 164844,
-            "viewCountCompact": "164.8K",
+            "viewCount": 164855,
+            "viewCountCompact": "164.9K",
             "likeCount": 2327,
             "commentCount": 209,
             "duration": "0:39",
@@ -2764,9 +2764,9 @@
             "videoId": "lpZcLQOXxj4",
             "title": "KugooF2 на что же он похож?",
             "publishedAt": "2025-08-17T08:00:47Z",
-            "viewCount": 320906,
+            "viewCount": 320948,
             "viewCountCompact": "320.9K",
-            "likeCount": 2948,
+            "likeCount": 2950,
             "commentCount": 196,
             "duration": "0:34",
             "durationSeconds": 34,
@@ -2792,7 +2792,7 @@
             "videoId": "KnFlHFHpxtI",
             "title": "Kugoo v3 / kugoo v3 fat",
             "publishedAt": "2025-08-06T08:00:28Z",
-            "viewCount": 36169,
+            "viewCount": 36189,
             "viewCountCompact": "36.2K",
             "likeCount": 435,
             "commentCount": 93,
@@ -2820,13 +2820,13 @@
             "videoId": "kcat_HIYB5A",
             "title": "Лучший электросамокат для города!",
             "publishedAt": "2025-07-30T08:00:51Z",
-            "viewCount": 210698,
-            "viewCountCompact": "210.7K",
-            "likeCount": 2659,
+            "viewCount": 210872,
+            "viewCountCompact": "210.9K",
+            "likeCount": 2661,
             "commentCount": 196,
             "duration": "0:28",
             "durationSeconds": 28,
-            "engagementRate": 1.36,
+            "engagementRate": 1.35,
             "thumbnail": "https://i.ytimg.com/vi/kcat_HIYB5A/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/kcat_HIYB5A"
           },
@@ -2834,8 +2834,8 @@
             "videoId": "OdwL8vzuOTc",
             "title": "Самая необычная фишка электросамоката!",
             "publishedAt": "2025-07-29T08:00:23Z",
-            "viewCount": 522935,
-            "viewCountCompact": "522.9K",
+            "viewCount": 523048,
+            "viewCountCompact": "523.0K",
             "likeCount": 4732,
             "commentCount": 115,
             "duration": "0:29",
@@ -2848,7 +2848,7 @@
             "videoId": "pYO2YxrT31E",
             "title": "Максимальная скорость самого простого электровелосипеда!",
             "publishedAt": "2025-07-27T08:00:53Z",
-            "viewCount": 66933,
+            "viewCount": 66934,
             "viewCountCompact": "66.9K",
             "likeCount": 666,
             "commentCount": 50,
@@ -2862,8 +2862,8 @@
             "videoId": "4ihb8_FdW8s",
             "title": "Показатель стабильности электросамоката kugoo g2 pro max +",
             "publishedAt": "2025-07-23T08:00:06Z",
-            "viewCount": 58034,
-            "viewCountCompact": "58.0K",
+            "viewCount": 58090,
+            "viewCountCompact": "58.1K",
             "likeCount": 641,
             "commentCount": 28,
             "duration": "0:39",
@@ -2890,10 +2890,10 @@
             "videoId": "bT-3Ok2onIM",
             "title": "Электросамокат для гонщиков",
             "publishedAt": "2025-07-21T08:00:39Z",
-            "viewCount": 307948,
-            "viewCountCompact": "307.9K",
-            "likeCount": 3773,
-            "commentCount": 243,
+            "viewCount": 308143,
+            "viewCountCompact": "308.1K",
+            "likeCount": 3776,
+            "commentCount": 245,
             "duration": "0:32",
             "durationSeconds": 32,
             "engagementRate": 1.3,
@@ -2932,9 +2932,9 @@
             "videoId": "HMKAQLzpik0",
             "title": "Электро-эндуро Kugoo ES",
             "publishedAt": "2025-07-07T08:00:26Z",
-            "viewCount": 83772,
+            "viewCount": 83779,
             "viewCountCompact": "83.8K",
-            "likeCount": 1121,
+            "likeCount": 1120,
             "commentCount": 72,
             "duration": "0:47",
             "durationSeconds": 47,
@@ -2946,8 +2946,8 @@
             "videoId": "1GFbbO2FFbE",
             "title": "Сколько стоит эндуро электромотоцикл?",
             "publishedAt": "2025-07-06T08:00:02Z",
-            "viewCount": 31039,
-            "viewCountCompact": "31.0K",
+            "viewCount": 31059,
+            "viewCountCompact": "31.1K",
             "likeCount": 405,
             "commentCount": 27,
             "duration": "0:34",
@@ -2974,7 +2974,7 @@
             "videoId": "WpLflVvWn08",
             "title": "Битва эндуро! Электро против бензина, кто кого?",
             "publishedAt": "2025-07-04T08:00:44Z",
-            "viewCount": 202151,
+            "viewCount": 202161,
             "viewCountCompact": "202.2K",
             "likeCount": 2562,
             "commentCount": 144,
@@ -3030,7 +3030,7 @@
             "videoId": "55dVUWQ1s1U",
             "title": "Электро эндуро от KUGOO",
             "publishedAt": "2025-06-30T08:00:09Z",
-            "viewCount": 25224,
+            "viewCount": 25228,
             "viewCountCompact": "25.2K",
             "likeCount": 282,
             "commentCount": 12,
@@ -3072,7 +3072,7 @@
             "videoId": "QuIjlqs15rg",
             "title": "Краткий обзор Kugoo Zero 9",
             "publishedAt": "2025-06-27T10:29:40Z",
-            "viewCount": 29575,
+            "viewCount": 29576,
             "viewCountCompact": "29.6K",
             "likeCount": 341,
             "commentCount": 50,
@@ -3086,13 +3086,13 @@
             "videoId": "zdRaP6Q9XTA",
             "title": "Еще более абсолютный монстр Kugoo R2",
             "publishedAt": "2025-06-25T12:15:21Z",
-            "viewCount": 154033,
+            "viewCount": 154044,
             "viewCountCompact": "154.0K",
-            "likeCount": 2822,
+            "likeCount": 2823,
             "commentCount": 266,
             "duration": "1:03",
             "durationSeconds": 63,
-            "engagementRate": 2.0,
+            "engagementRate": 2.01,
             "thumbnail": "https://i.ytimg.com/vi/zdRaP6Q9XTA/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/zdRaP6Q9XTA"
           },
@@ -3100,9 +3100,9 @@
             "videoId": "BjLIEzOd_lc",
             "title": "Абсолютный монстр Kugoo R1",
             "publishedAt": "2025-06-24T18:08:35Z",
-            "viewCount": 536197,
-            "viewCountCompact": "536.2K",
-            "likeCount": 8973,
+            "viewCount": 536330,
+            "viewCountCompact": "536.3K",
+            "likeCount": 8977,
             "commentCount": 319,
             "duration": "0:56",
             "durationSeconds": 56,
@@ -3156,9 +3156,9 @@
             "videoId": "rmDQeuCOL2c",
             "title": "Kugoo G2 PRO MAX+ лучший электросамокат?",
             "publishedAt": "2025-06-17T08:01:01Z",
-            "viewCount": 253714,
-            "viewCountCompact": "253.7K",
-            "likeCount": 4138,
+            "viewCount": 253775,
+            "viewCountCompact": "253.8K",
+            "likeCount": 4140,
             "commentCount": 446,
             "duration": "1:06",
             "durationSeconds": 66,
@@ -3170,7 +3170,7 @@
             "videoId": "01S8Km3V8Y4",
             "title": "Kugoo G2 Max+",
             "publishedAt": "2025-06-16T08:00:01Z",
-            "viewCount": 42174,
+            "viewCount": 42177,
             "viewCountCompact": "42.2K",
             "likeCount": 398,
             "commentCount": 37,
@@ -3184,9 +3184,9 @@
             "videoId": "Kd2pvxq8LUs",
             "title": "2 аккумулятора в одном электровелосипеде",
             "publishedAt": "2025-06-15T08:00:17Z",
-            "viewCount": 1052324,
+            "viewCount": 1052688,
             "viewCountCompact": "1.05M",
-            "likeCount": 12341,
+            "likeCount": 12350,
             "commentCount": 456,
             "duration": "1:04",
             "durationSeconds": 64,
@@ -3212,7 +3212,7 @@
             "videoId": "3DvbUe233E0",
             "title": "Зачем нужны крутилки на амортизаторе электровелосипеда?",
             "publishedAt": "2025-06-13T08:00:03Z",
-            "viewCount": 33142,
+            "viewCount": 33144,
             "viewCountCompact": "33.1K",
             "likeCount": 297,
             "commentCount": 17,
@@ -3226,8 +3226,8 @@
             "videoId": "BWN5m3nvPJM",
             "title": "Электровелосипед с бесконечным запасам хода Kugoo zero 20",
             "publishedAt": "2025-06-12T08:00:10Z",
-            "viewCount": 317447,
-            "viewCountCompact": "317.4K",
+            "viewCount": 317534,
+            "viewCountCompact": "317.5K",
             "likeCount": 3227,
             "commentCount": 296,
             "duration": "0:47",
@@ -3240,9 +3240,9 @@
             "videoId": "m8GWdOvTsd4",
             "title": "Зачем нужно накачивать вилку электровелосипеда?",
             "publishedAt": "2025-06-11T08:00:52Z",
-            "viewCount": 942802,
-            "viewCountCompact": "942.8K",
-            "likeCount": 8425,
+            "viewCount": 943077,
+            "viewCountCompact": "943.1K",
+            "likeCount": 8430,
             "commentCount": 267,
             "duration": "0:33",
             "durationSeconds": 33,
@@ -3296,7 +3296,7 @@
             "videoId": "CJiVc6bJeyU",
             "title": "Какой электросамокат купить в 2025 гуду?",
             "publishedAt": "2025-06-06T08:00:24Z",
-            "viewCount": 110267,
+            "viewCount": 110290,
             "viewCountCompact": "110.3K",
             "likeCount": 889,
             "commentCount": 45,
@@ -3338,7 +3338,7 @@
             "videoId": "YF5_oykvkKY",
             "title": "МОНОКОЛЕСО ПРОТИВ МОТОЦИКЛА кто быстрее в доставке?",
             "publishedAt": "2025-06-03T09:15:33Z",
-            "viewCount": 678203,
+            "viewCount": 678204,
             "viewCountCompact": "678.2K",
             "likeCount": 10530,
             "commentCount": 479,
@@ -3352,7 +3352,7 @@
             "videoId": "5Tb6yS0CmkE",
             "title": "Kugoo для толстых",
             "publishedAt": "2025-06-02T08:00:12Z",
-            "viewCount": 11966,
+            "viewCount": 11967,
             "viewCountCompact": "12.0K",
             "likeCount": 171,
             "commentCount": 17,
@@ -3366,7 +3366,7 @@
             "videoId": "zCbLDyUq_14",
             "title": "Тестим складной велик Kugoo V1+",
             "publishedAt": "2025-05-31T16:12:49Z",
-            "viewCount": 44765,
+            "viewCount": 44769,
             "viewCountCompact": "44.8K",
             "likeCount": 342,
             "commentCount": 24,
@@ -3380,7 +3380,7 @@
             "videoId": "fuZDKRfhAbk",
             "title": "Электросамокаты для толстых",
             "publishedAt": "2025-05-31T08:00:59Z",
-            "viewCount": 17119,
+            "viewCount": 17120,
             "viewCountCompact": "17.1K",
             "likeCount": 196,
             "commentCount": 22,
@@ -3394,13 +3394,13 @@
             "videoId": "LFpNpW4MU5Q",
             "title": "Почему стоит купить kugoo m4pro",
             "publishedAt": "2025-05-27T08:00:33Z",
-            "viewCount": 33615,
+            "viewCount": 33635,
             "viewCountCompact": "33.6K",
             "likeCount": 483,
             "commentCount": 60,
             "duration": "1:01",
             "durationSeconds": 61,
-            "engagementRate": 1.62,
+            "engagementRate": 1.61,
             "thumbnail": "https://i.ytimg.com/vi/LFpNpW4MU5Q/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/LFpNpW4MU5Q"
           },
@@ -3576,7 +3576,7 @@
             "videoId": "h8tUB4Xigdc",
             "title": "Как электровелосипед разряжается?",
             "publishedAt": "2025-05-15T08:00:46Z",
-            "viewCount": 10616,
+            "viewCount": 10618,
             "viewCountCompact": "10.6K",
             "likeCount": 141,
             "commentCount": 0,
@@ -3632,9 +3632,9 @@
             "videoId": "NGAhXXShD1U",
             "title": "Настраиваемая подвеска и съёмный акб Kugoo Zero 9",
             "publishedAt": "2025-05-10T09:00:27Z",
-            "viewCount": 184839,
-            "viewCountCompact": "184.8K",
-            "likeCount": 1891,
+            "viewCount": 184890,
+            "viewCountCompact": "184.9K",
+            "likeCount": 1892,
             "commentCount": 102,
             "duration": "0:52",
             "durationSeconds": 52,
@@ -3646,7 +3646,7 @@
             "videoId": "Gv0VKTbuLJ0",
             "title": "Электровелосипед ГОРОДСКОЙ ВНЕДОРОЖНИК Kugoo Zero 24",
             "publishedAt": "2025-05-09T09:00:21Z",
-            "viewCount": 34714,
+            "viewCount": 34718,
             "viewCountCompact": "34.7K",
             "likeCount": 477,
             "commentCount": 40,
@@ -3660,7 +3660,7 @@
             "videoId": "80LeiguOFcI",
             "title": "Электровелосипед как мотоцикл Kugoo Zero 20",
             "publishedAt": "2025-05-08T09:00:19Z",
-            "viewCount": 381255,
+            "viewCount": 381259,
             "viewCountCompact": "381.3K",
             "likeCount": 3679,
             "commentCount": 359,
@@ -3674,7 +3674,7 @@
             "videoId": "VnYr39C10B4",
             "title": "Электровелосипед с двумя батареями Kugo zx dual",
             "publishedAt": "2025-05-07T12:16:43Z",
-            "viewCount": 122961,
+            "viewCount": 122972,
             "viewCountCompact": "123.0K",
             "likeCount": 1555,
             "commentCount": 54,
@@ -3697,49 +3697,49 @@
       "shortsSince": "2026-05-01T00:00:00Z",
       "totals": {
         "videos": 6,
-        "views": 74768,
-        "viewsCompact": "74.8K",
+        "views": 74858,
+        "viewsCompact": "74.9K",
         "likes": 1556,
         "likesCompact": "1.56K",
         "comments": 592,
         "commentsCompact": "592",
-        "avgViews": 12461,
+        "avgViews": 12476,
         "avgViewsCompact": "12.5K",
         "engagementRate": 2.87
       },
       "deltas": {
         "h24": {
           "views": {
-            "abs": 1750,
-            "signed": "+1.75K",
-            "since": "2026-07-09T00:17:04.026127+00:00"
+            "abs": 1681,
+            "signed": "+1.68K",
+            "since": "2026-07-09T04:58:32.002017+00:00"
           },
           "likes": {
-            "abs": 29,
-            "signed": "+29",
-            "since": "2026-07-09T00:17:04.026127+00:00"
+            "abs": 25,
+            "signed": "+25",
+            "since": "2026-07-09T04:58:32.002017+00:00"
           },
           "comments": {
-            "abs": 9,
-            "signed": "+9",
-            "since": "2026-07-09T00:17:04.026127+00:00"
+            "abs": 8,
+            "signed": "+8",
+            "since": "2026-07-09T04:58:32.002017+00:00"
           }
         },
         "d7": {
           "views": {
-            "abs": 15179,
-            "signed": "+15.2K",
-            "since": "2026-07-03T04:47:46.584987+00:00"
+            "abs": 14998,
+            "signed": "+15.0K",
+            "since": "2026-07-03T08:13:49.047994+00:00"
           },
           "likes": {
-            "abs": 219,
-            "signed": "+219",
-            "since": "2026-07-03T04:47:46.584987+00:00"
+            "abs": 218,
+            "signed": "+218",
+            "since": "2026-07-03T08:13:49.047994+00:00"
           },
           "comments": {
-            "abs": 62,
-            "signed": "+62",
-            "since": "2026-07-03T04:47:46.584987+00:00"
+            "abs": 59,
+            "signed": "+59",
+            "since": "2026-07-03T08:13:49.047994+00:00"
           }
         }
       },
@@ -3748,7 +3748,7 @@
           "videoId": "Vx-9gPJ6UTo",
           "title": "Поедет ли Kugoo G4 MAX 100км/ч?",
           "publishedAt": "2026-06-24T08:00:38Z",
-          "viewCount": 25583,
+          "viewCount": 25625,
           "viewCountCompact": "25.6K",
           "engagementRate": 2.81,
           "thumbnail": "https://i.ytimg.com/vi/Vx-9gPJ6UTo/mqdefault.jpg",
@@ -3758,7 +3758,7 @@
           "videoId": "4udGjdIBWtw",
           "title": "Kugoo Max Speed pro 2026 это прорыв!",
           "publishedAt": "2026-06-16T17:18:12Z",
-          "viewCount": 20879,
+          "viewCount": 20899,
           "viewCountCompact": "20.9K",
           "engagementRate": 2.18,
           "thumbnail": "https://i.ytimg.com/vi/4udGjdIBWtw/mqdefault.jpg",
@@ -3768,7 +3768,7 @@
           "videoId": "0YAZ-2zxqII",
           "title": "Самый самый Kugoo G5",
           "publishedAt": "2026-06-30T14:36:04Z",
-          "viewCount": 11700,
+          "viewCount": 11713,
           "viewCountCompact": "11.7K",
           "engagementRate": 3.4,
           "thumbnail": "https://i.ytimg.com/vi/0YAZ-2zxqII/mqdefault.jpg",
@@ -3780,7 +3780,7 @@
           "videoId": "hg481CX2BMw",
           "title": "Kugoo EC16 FAT Он вас удивит!",
           "publishedAt": "2026-06-19T08:00:21Z",
-          "viewCount": 8059,
+          "viewCount": 8065,
           "viewCountCompact": "8.06K",
           "engagementRate": 3.66,
           "thumbnail": "https://i.ytimg.com/vi/hg481CX2BMw/mqdefault.jpg",
@@ -3790,8 +3790,8 @@
           "videoId": "-O-VzVNXY5Q",
           "title": "Kugoo E2 возрождение легенды!",
           "publishedAt": "2026-05-21T17:08:08Z",
-          "viewCount": 4252,
-          "viewCountCompact": "4.25K",
+          "viewCount": 4257,
+          "viewCountCompact": "4.26K",
           "engagementRate": 3.55,
           "thumbnail": "https://i.ytimg.com/vi/-O-VzVNXY5Q/mqdefault.jpg",
           "url": "https://www.youtube.com/watch?v=-O-VzVNXY5Q"
@@ -3800,7 +3800,7 @@
           "videoId": "0YAZ-2zxqII",
           "title": "Самый самый Kugoo G5",
           "publishedAt": "2026-06-30T14:36:04Z",
-          "viewCount": 11700,
+          "viewCount": 11713,
           "viewCountCompact": "11.7K",
           "engagementRate": 3.4,
           "thumbnail": "https://i.ytimg.com/vi/0YAZ-2zxqII/mqdefault.jpg",
@@ -3812,23 +3812,23 @@
           "ts": "2026-05-21T17:08:08Z",
           "videoId": "-O-VzVNXY5Q",
           "title": "Kugoo E2 возрождение легенды!",
-          "viewCount": 4252,
-          "viewCountCompact": "4.25K",
+          "viewCount": 4257,
+          "viewCountCompact": "4.26K",
           "url": "https://www.youtube.com/watch?v=-O-VzVNXY5Q"
         },
         {
           "ts": "2026-05-26T14:46:42Z",
           "videoId": "KhEHDCdvbQM",
           "title": "Kugoo F2+ новый взгляд на классику",
-          "viewCount": 4295,
-          "viewCountCompact": "4.29K",
+          "viewCount": 4299,
+          "viewCountCompact": "4.30K",
           "url": "https://www.youtube.com/watch?v=KhEHDCdvbQM"
         },
         {
           "ts": "2026-06-16T17:18:12Z",
           "videoId": "4udGjdIBWtw",
           "title": "Kugoo Max Speed pro 2026 это прорыв!",
-          "viewCount": 20879,
+          "viewCount": 20899,
           "viewCountCompact": "20.9K",
           "url": "https://www.youtube.com/watch?v=4udGjdIBWtw"
         },
@@ -3836,7 +3836,7 @@
           "ts": "2026-06-19T08:00:21Z",
           "videoId": "hg481CX2BMw",
           "title": "Kugoo EC16 FAT Он вас удивит!",
-          "viewCount": 8059,
+          "viewCount": 8065,
           "viewCountCompact": "8.06K",
           "url": "https://www.youtube.com/watch?v=hg481CX2BMw"
         },
@@ -3844,7 +3844,7 @@
           "ts": "2026-06-24T08:00:38Z",
           "videoId": "Vx-9gPJ6UTo",
           "title": "Поедет ли Kugoo G4 MAX 100км/ч?",
-          "viewCount": 25583,
+          "viewCount": 25625,
           "viewCountCompact": "25.6K",
           "url": "https://www.youtube.com/watch?v=Vx-9gPJ6UTo"
         },
@@ -3852,7 +3852,7 @@
           "ts": "2026-06-30T14:36:04Z",
           "videoId": "0YAZ-2zxqII",
           "title": "Самый самый Kugoo G5",
-          "viewCount": 11700,
+          "viewCount": 11713,
           "viewCountCompact": "11.7K",
           "url": "https://www.youtube.com/watch?v=0YAZ-2zxqII"
         }
@@ -3903,10 +3903,10 @@
             "comments": 182
           },
           {
-            "ts": "2026-06-23T05:08:11.909099+00:00",
-            "views": 19766,
-            "likes": 506,
-            "comments": 183
+            "ts": "2026-06-23T09:54:57.203635+00:00",
+            "views": 20072,
+            "likes": 515,
+            "comments": 184
           },
           {
             "ts": "2026-06-23T12:39:13.846345+00:00",
@@ -3945,10 +3945,10 @@
             "comments": 220
           },
           {
-            "ts": "2026-06-24T14:45:01.203269+00:00",
-            "views": 23963,
-            "likes": 652,
-            "comments": 248
+            "ts": "2026-06-24T17:09:33.279872+00:00",
+            "views": 24917,
+            "likes": 673,
+            "comments": 254
           },
           {
             "ts": "2026-06-24T19:55:17.717804+00:00",
@@ -3975,10 +3975,10 @@
             "comments": 300
           },
           {
-            "ts": "2026-06-25T14:44:25.055325+00:00",
-            "views": 30321,
-            "likes": 770,
-            "comments": 315
+            "ts": "2026-06-25T17:18:28.593815+00:00",
+            "views": 30988,
+            "likes": 782,
+            "comments": 322
           },
           {
             "ts": "2026-06-25T20:10:28.698963+00:00",
@@ -3987,9 +3987,9 @@
             "comments": 328
           },
           {
-            "ts": "2026-06-25T22:24:47.049950+00:00",
-            "views": 32483,
-            "likes": 815,
+            "ts": "2026-06-26T00:16:04.296776+00:00",
+            "views": 32880,
+            "likes": 817,
             "comments": 337
           },
           {
@@ -4017,10 +4017,10 @@
             "comments": 364
           },
           {
-            "ts": "2026-06-26T21:23:40.601409+00:00",
-            "views": 35595,
-            "likes": 866,
-            "comments": 365
+            "ts": "2026-06-26T23:14:08.077641+00:00",
+            "views": 35987,
+            "likes": 876,
+            "comments": 367
           },
           {
             "ts": "2026-06-27T04:01:07.376467+00:00",
@@ -4029,10 +4029,10 @@
             "comments": 372
           },
           {
-            "ts": "2026-06-27T07:22:42.771073+00:00",
-            "views": 36789,
-            "likes": 895,
-            "comments": 375
+            "ts": "2026-06-27T10:15:30.581102+00:00",
+            "views": 37399,
+            "likes": 904,
+            "comments": 378
           },
           {
             "ts": "2026-06-27T12:11:30.106455+00:00",
@@ -4059,9 +4059,9 @@
             "comments": 388
           },
           {
-            "ts": "2026-06-28T00:08:28.250137+00:00",
-            "views": 39692,
-            "likes": 930,
+            "ts": "2026-06-28T05:21:38.075187+00:00",
+            "views": 39923,
+            "likes": 931,
             "comments": 391
           },
           {
@@ -4071,10 +4071,10 @@
             "comments": 398
           },
           {
-            "ts": "2026-06-28T11:50:28.309645+00:00",
-            "views": 40531,
-            "likes": 938,
-            "comments": 403
+            "ts": "2026-06-28T14:02:29.101315+00:00",
+            "views": 40824,
+            "likes": 940,
+            "comments": 405
           },
           {
             "ts": "2026-06-28T15:23:14.965739+00:00",
@@ -4089,9 +4089,9 @@
             "comments": 412
           },
           {
-            "ts": "2026-06-28T21:09:50.355951+00:00",
-            "views": 41883,
-            "likes": 956,
+            "ts": "2026-06-28T23:11:25.505031+00:00",
+            "views": 42280,
+            "likes": 958,
             "comments": 413
           },
           {
@@ -4101,10 +4101,10 @@
             "comments": 415
           },
           {
-            "ts": "2026-06-29T09:53:32.969078+00:00",
-            "views": 42935,
-            "likes": 965,
-            "comments": 419
+            "ts": "2026-06-29T14:11:19.309430+00:00",
+            "views": 43448,
+            "likes": 967,
+            "comments": 421
           },
           {
             "ts": "2026-06-29T17:43:31.466057+00:00",
@@ -4113,10 +4113,10 @@
             "comments": 426
           },
           {
-            "ts": "2026-06-29T20:07:34.141531+00:00",
-            "views": 44217,
+            "ts": "2026-06-29T22:13:56.917131+00:00",
+            "views": 44592,
             "likes": 979,
-            "comments": 428
+            "comments": 429
           },
           {
             "ts": "2026-06-30T00:11:50.490141+00:00",
@@ -4131,10 +4131,10 @@
             "comments": 437
           },
           {
-            "ts": "2026-06-30T12:15:28.561493+00:00",
-            "views": 45590,
-            "likes": 992,
-            "comments": 437
+            "ts": "2026-06-30T15:35:23.131453+00:00",
+            "views": 46185,
+            "likes": 1019,
+            "comments": 443
           },
           {
             "ts": "2026-06-30T18:03:26.982781+00:00",
@@ -4143,10 +4143,10 @@
             "comments": 455
           },
           {
-            "ts": "2026-06-30T20:11:25.276388+00:00",
-            "views": 47914,
-            "likes": 1099,
-            "comments": 465
+            "ts": "2026-06-30T22:18:33.279177+00:00",
+            "views": 48977,
+            "likes": 1121,
+            "comments": 477
           },
           {
             "ts": "2026-07-01T00:14:08.182221+00:00",
@@ -4155,16 +4155,16 @@
             "comments": 483
           },
           {
-            "ts": "2026-07-01T05:27:24.048613+00:00",
-            "views": 50499,
-            "likes": 1147,
-            "comments": 488
+            "ts": "2026-07-01T10:01:03.467343+00:00",
+            "views": 51369,
+            "likes": 1170,
+            "comments": 492
           },
           {
-            "ts": "2026-07-01T12:39:50.349393+00:00",
-            "views": 52148,
-            "likes": 1188,
-            "comments": 493
+            "ts": "2026-07-01T15:47:00.980186+00:00",
+            "views": 52879,
+            "likes": 1206,
+            "comments": 499
           },
           {
             "ts": "2026-07-01T18:03:40.832424+00:00",
@@ -4173,10 +4173,10 @@
             "comments": 504
           },
           {
-            "ts": "2026-07-01T20:07:14.979669+00:00",
-            "views": 54117,
-            "likes": 1243,
-            "comments": 507
+            "ts": "2026-07-01T22:22:19.694763+00:00",
+            "views": 54823,
+            "likes": 1258,
+            "comments": 509
           },
           {
             "ts": "2026-07-02T00:15:19.205399+00:00",
@@ -4185,10 +4185,10 @@
             "comments": 511
           },
           {
-            "ts": "2026-07-02T05:03:05.717415+00:00",
-            "views": 55582,
-            "likes": 1269,
-            "comments": 515
+            "ts": "2026-07-02T08:19:08.371648+00:00",
+            "views": 56007,
+            "likes": 1277,
+            "comments": 516
           },
           {
             "ts": "2026-07-02T11:38:19.028162+00:00",
@@ -4197,15 +4197,15 @@
             "comments": 518
           },
           {
-            "ts": "2026-07-02T14:17:47.929394+00:00",
-            "views": 57115,
-            "likes": 1305,
-            "comments": 521
+            "ts": "2026-07-02T16:54:40.112092+00:00",
+            "views": 57712,
+            "likes": 1321,
+            "comments": 524
           },
           {
-            "ts": "2026-07-02T18:39:30.263318+00:00",
-            "views": 58016,
-            "likes": 1326,
+            "ts": "2026-07-02T20:23:04.625149+00:00",
+            "views": 58373,
+            "likes": 1330,
             "comments": 526
           },
           {
@@ -4215,9 +4215,9 @@
             "comments": 527
           },
           {
-            "ts": "2026-07-03T00:12:08.797344+00:00",
-            "views": 59243,
-            "likes": 1335,
+            "ts": "2026-07-03T04:47:46.584987+00:00",
+            "views": 59589,
+            "likes": 1337,
             "comments": 530
           },
           {
@@ -4227,10 +4227,10 @@
             "comments": 533
           },
           {
-            "ts": "2026-07-03T11:36:50.842717+00:00",
-            "views": 60498,
-            "likes": 1351,
-            "comments": 535
+            "ts": "2026-07-03T14:22:31.752829+00:00",
+            "views": 61015,
+            "likes": 1362,
+            "comments": 537
           },
           {
             "ts": "2026-07-03T16:39:51.484192+00:00",
@@ -4239,16 +4239,16 @@
             "comments": 540
           },
           {
-            "ts": "2026-07-03T17:36:12.663682+00:00",
-            "views": 61536,
+            "ts": "2026-07-03T17:53:56.015646+00:00",
+            "views": 61568,
             "likes": 1371,
             "comments": 543
           },
           {
-            "ts": "2026-07-03T20:18:27.447466+00:00",
-            "views": 61912,
-            "likes": 1376,
-            "comments": 548
+            "ts": "2026-07-03T22:09:18.310695+00:00",
+            "views": 62187,
+            "likes": 1377,
+            "comments": 549
           },
           {
             "ts": "2026-07-04T00:11:14.454729+00:00",
@@ -4257,9 +4257,9 @@
             "comments": 550
           },
           {
-            "ts": "2026-07-04T04:39:31.078339+00:00",
-            "views": 62798,
-            "likes": 1380,
+            "ts": "2026-07-04T07:51:14.428712+00:00",
+            "views": 63021,
+            "likes": 1387,
             "comments": 550
           },
           {
@@ -4269,15 +4269,9 @@
             "comments": 550
           },
           {
-            "ts": "2026-07-04T12:10:14.273735+00:00",
-            "views": 63627,
-            "likes": 1398,
-            "comments": 551
-          },
-          {
-            "ts": "2026-07-04T16:08:20.081089+00:00",
-            "views": 64148,
-            "likes": 1409,
+            "ts": "2026-07-04T14:41:06.559794+00:00",
+            "views": 63962,
+            "likes": 1406,
             "comments": 555
           },
           {
@@ -4287,8 +4281,14 @@
             "comments": 556
           },
           {
-            "ts": "2026-07-04T22:03:12.037666+00:00",
-            "views": 65044,
+            "ts": "2026-07-04T20:12:14.189595+00:00",
+            "views": 64746,
+            "likes": 1419,
+            "comments": 557
+          },
+          {
+            "ts": "2026-07-04T23:07:11.171314+00:00",
+            "views": 65191,
             "likes": 1424,
             "comments": 557
           },
@@ -4299,9 +4299,9 @@
             "comments": 558
           },
           {
-            "ts": "2026-07-05T07:34:26.734713+00:00",
-            "views": 65589,
-            "likes": 1435,
+            "ts": "2026-07-05T10:22:52.258741+00:00",
+            "views": 65805,
+            "likes": 1439,
             "comments": 559
           },
           {
@@ -4311,15 +4311,9 @@
             "comments": 551
           },
           {
-            "ts": "2026-07-05T14:48:28.570523+00:00",
-            "views": 66201,
+            "ts": "2026-07-05T16:14:27.176808+00:00",
+            "views": 66372,
             "likes": 1444,
-            "comments": 551
-          },
-          {
-            "ts": "2026-07-05T18:09:44.805290+00:00",
-            "views": 66596,
-            "likes": 1447,
             "comments": 553
           },
           {
@@ -4329,9 +4323,15 @@
             "comments": 554
           },
           {
-            "ts": "2026-07-06T00:13:06.233637+00:00",
-            "views": 67378,
-            "likes": 1463,
+            "ts": "2026-07-05T22:07:02.656314+00:00",
+            "views": 67120,
+            "likes": 1460,
+            "comments": 555
+          },
+          {
+            "ts": "2026-07-06T05:17:46.207072+00:00",
+            "views": 67519,
+            "likes": 1465,
             "comments": 555
           },
           {
@@ -4341,9 +4341,9 @@
             "comments": 560
           },
           {
-            "ts": "2026-07-06T14:30:49.133370+00:00",
-            "views": 68296,
-            "likes": 1476,
+            "ts": "2026-07-06T17:47:52.795854+00:00",
+            "views": 68617,
+            "likes": 1482,
             "comments": 562
           },
           {
@@ -4353,15 +4353,9 @@
             "comments": 564
           },
           {
-            "ts": "2026-07-06T22:18:43.216613+00:00",
-            "views": 69227,
-            "likes": 1490,
-            "comments": 564
-          },
-          {
-            "ts": "2026-07-07T04:58:16.719749+00:00",
-            "views": 69714,
-            "likes": 1493,
+            "ts": "2026-07-07T00:14:35.536202+00:00",
+            "views": 69557,
+            "likes": 1491,
             "comments": 565
           },
           {
@@ -4371,10 +4365,16 @@
             "comments": 566
           },
           {
-            "ts": "2026-07-07T14:51:08.570509+00:00",
-            "views": 70291,
-            "likes": 1500,
+            "ts": "2026-07-07T11:57:13.094854+00:00",
+            "views": 70151,
+            "likes": 1497,
             "comments": 568
+          },
+          {
+            "ts": "2026-07-07T17:22:31.964130+00:00",
+            "views": 70520,
+            "likes": 1503,
+            "comments": 570
           },
           {
             "ts": "2026-07-07T20:04:51.318722+00:00",
@@ -4383,16 +4383,10 @@
             "comments": 573
           },
           {
-            "ts": "2026-07-07T21:37:46.913089+00:00",
-            "views": 70971,
-            "likes": 1512,
+            "ts": "2026-07-07T23:07:00.031014+00:00",
+            "views": 71126,
+            "likes": 1513,
             "comments": 573
-          },
-          {
-            "ts": "2026-07-08T03:25:46.107763+00:00",
-            "views": 71396,
-            "likes": 1514,
-            "comments": 574
           },
           {
             "ts": "2026-07-08T06:33:37.344677+00:00",
@@ -4401,10 +4395,10 @@
             "comments": 574
           },
           {
-            "ts": "2026-07-08T11:50:15.226005+00:00",
-            "views": 71764,
+            "ts": "2026-07-08T09:29:14.091522+00:00",
+            "views": 71592,
             "likes": 1511,
-            "comments": 575
+            "comments": 574
           },
           {
             "ts": "2026-07-08T14:28:57.527521+00:00",
@@ -4413,10 +4407,16 @@
             "comments": 576
           },
           {
-            "ts": "2026-07-08T18:22:06.890957+00:00",
-            "views": 72317,
-            "likes": 1518,
+            "ts": "2026-07-08T16:44:04.866688+00:00",
+            "views": 72118,
+            "likes": 1514,
             "comments": 576
+          },
+          {
+            "ts": "2026-07-08T20:24:30.920073+00:00",
+            "views": 72557,
+            "likes": 1523,
+            "comments": 582
           },
           {
             "ts": "2026-07-08T22:12:21.482965+00:00",
@@ -4425,16 +4425,10 @@
             "comments": 582
           },
           {
-            "ts": "2026-07-09T00:17:04.026127+00:00",
-            "views": 73018,
-            "likes": 1527,
-            "comments": 583
-          },
-          {
-            "ts": "2026-07-09T08:32:46.386141+00:00",
-            "views": 73301,
-            "likes": 1533,
-            "comments": 587
+            "ts": "2026-07-09T04:58:32.002017+00:00",
+            "views": 73177,
+            "likes": 1531,
+            "comments": 584
           },
           {
             "ts": "2026-07-09T12:11:01.685188+00:00",
@@ -4443,9 +4437,9 @@
             "comments": 588
           },
           {
-            "ts": "2026-07-09T18:05:55.947723+00:00",
-            "views": 74058,
-            "likes": 1548,
+            "ts": "2026-07-09T16:04:25.271283+00:00",
+            "views": 73842,
+            "likes": 1540,
             "comments": 588
           },
           {
@@ -4455,8 +4449,8 @@
             "comments": 590
           },
           {
-            "ts": "2026-07-10T00:11:22.402389+00:00",
-            "views": 74586,
+            "ts": "2026-07-09T22:35:44.511086+00:00",
+            "views": 74513,
             "likes": 1555,
             "comments": 591
           },
@@ -4465,16 +4459,22 @@
             "views": 74768,
             "likes": 1556,
             "comments": 592
+          },
+          {
+            "ts": "2026-07-10T08:27:15.532879+00:00",
+            "views": 74858,
+            "likes": 1556,
+            "comments": 592
           }
         ],
-        "rawCount": 157
+        "rawCount": 158
       },
       "videos": [
         {
           "videoId": "0YAZ-2zxqII",
           "title": "Самый самый Kugoo G5",
           "publishedAt": "2026-06-30T14:36:04Z",
-          "viewCount": 11700,
+          "viewCount": 11713,
           "likeCount": 311,
           "commentCount": 87,
           "duration": "14:22",
@@ -4488,7 +4488,7 @@
           "videoId": "Vx-9gPJ6UTo",
           "title": "Поедет ли Kugoo G4 MAX 100км/ч?",
           "publishedAt": "2026-06-24T08:00:38Z",
-          "viewCount": 25583,
+          "viewCount": 25625,
           "likeCount": 481,
           "commentCount": 239,
           "duration": "12:08",
@@ -4502,7 +4502,7 @@
           "videoId": "hg481CX2BMw",
           "title": "Kugoo EC16 FAT Он вас удивит!",
           "publishedAt": "2026-06-19T08:00:21Z",
-          "viewCount": 8059,
+          "viewCount": 8065,
           "likeCount": 211,
           "commentCount": 84,
           "duration": "12:35",
@@ -4516,7 +4516,7 @@
           "videoId": "4udGjdIBWtw",
           "title": "Kugoo Max Speed pro 2026 это прорыв!",
           "publishedAt": "2026-06-16T17:18:12Z",
-          "viewCount": 20879,
+          "viewCount": 20899,
           "likeCount": 352,
           "commentCount": 104,
           "duration": "18:45",
@@ -4530,7 +4530,7 @@
           "videoId": "KhEHDCdvbQM",
           "title": "Kugoo F2+ новый взгляд на классику",
           "publishedAt": "2026-05-26T14:46:42Z",
-          "viewCount": 4295,
+          "viewCount": 4299,
           "likeCount": 94,
           "commentCount": 34,
           "duration": "17:12",
@@ -4544,7 +4544,7 @@
           "videoId": "-O-VzVNXY5Q",
           "title": "Kugoo E2 возрождение легенды!",
           "publishedAt": "2026-05-21T17:08:08Z",
-          "viewCount": 4252,
+          "viewCount": 4257,
           "likeCount": 107,
           "commentCount": 44,
           "duration": "22:24",
@@ -4582,10 +4582,10 @@
         "since": "2026-05-01T00:00:00Z",
         "totals": {
           "count": 10,
-          "views": 744370,
-          "viewsCompact": "744.4K",
-          "likes": 9443,
-          "likesCompact": "9.44K",
+          "views": 745744,
+          "viewsCompact": "745.7K",
+          "likes": 9459,
+          "likesCompact": "9.46K",
           "comments": 656,
           "commentsCompact": "656",
           "engagementRate": 1.36
@@ -4593,36 +4593,36 @@
         "deltas": {
           "h24": {
             "views": {
-              "abs": 19782,
-              "signed": "+19.8K",
-              "since": "2026-07-09T00:17:04.026127+00:00"
+              "abs": 19161,
+              "signed": "+19.2K",
+              "since": "2026-07-09T04:58:32.002017+00:00"
             },
             "likes": {
-              "abs": 195,
-              "signed": "+195",
-              "since": "2026-07-09T00:17:04.026127+00:00"
+              "abs": 191,
+              "signed": "+191",
+              "since": "2026-07-09T04:58:32.002017+00:00"
             },
             "comments": {
-              "abs": 14,
-              "signed": "+14",
-              "since": "2026-07-09T00:17:04.026127+00:00"
+              "abs": 13,
+              "signed": "+13",
+              "since": "2026-07-09T04:58:32.002017+00:00"
             }
           },
           "d7": {
             "views": {
-              "abs": 289915,
-              "signed": "+289.9K",
-              "since": "2026-07-03T04:47:46.584987+00:00"
+              "abs": 287968,
+              "signed": "+288.0K",
+              "since": "2026-07-03T08:13:49.047994+00:00"
             },
             "likes": {
-              "abs": 3382,
-              "signed": "+3.38K",
-              "since": "2026-07-03T04:47:46.584987+00:00"
+              "abs": 3355,
+              "signed": "+3.35K",
+              "since": "2026-07-03T08:13:49.047994+00:00"
             },
             "comments": {
-              "abs": 273,
-              "signed": "+273",
-              "since": "2026-07-03T04:47:46.584987+00:00"
+              "abs": 265,
+              "signed": "+265",
+              "since": "2026-07-03T08:13:49.047994+00:00"
             }
           }
         },
@@ -4631,8 +4631,8 @@
             "videoId": "bnwIMIeVhU8",
             "title": "Kugoo g5 фишки",
             "publishedAt": "2026-06-27T08:00:01Z",
-            "viewCount": 315898,
-            "viewCountCompact": "315.9K",
+            "viewCount": 316348,
+            "viewCountCompact": "316.3K",
             "engagementRate": 1.02,
             "thumbnail": "https://i.ytimg.com/vi/bnwIMIeVhU8/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/bnwIMIeVhU8"
@@ -4641,8 +4641,8 @@
             "videoId": "yIeK_YApmaw",
             "title": "Сколько банок поместится в Kugoo EC16 Fat",
             "publishedAt": "2026-06-25T08:00:16Z",
-            "viewCount": 127876,
-            "viewCountCompact": "127.9K",
+            "viewCount": 127967,
+            "viewCountCompact": "128.0K",
             "engagementRate": 1.65,
             "thumbnail": "https://i.ytimg.com/vi/yIeK_YApmaw/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/yIeK_YApmaw"
@@ -4651,8 +4651,8 @@
             "videoId": "QxxM90KU_Vc",
             "title": "Kugoo F2 plus",
             "publishedAt": "2026-06-30T08:00:05Z",
-            "viewCount": 84005,
-            "viewCountCompact": "84.0K",
+            "viewCount": 84249,
+            "viewCountCompact": "84.2K",
             "engagementRate": 1.25,
             "thumbnail": "https://i.ytimg.com/vi/QxxM90KU_Vc/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/QxxM90KU_Vc"
@@ -4663,8 +4663,8 @@
             "videoId": "oZFc6tEHd1M",
             "title": "Фишки Kugoo G4 Max",
             "publishedAt": "2026-06-26T08:00:33Z",
-            "viewCount": 2905,
-            "viewCountCompact": "2.90K",
+            "viewCount": 2906,
+            "viewCountCompact": "2.91K",
             "engagementRate": 2.17,
             "thumbnail": "https://i.ytimg.com/vi/oZFc6tEHd1M/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/oZFc6tEHd1M"
@@ -4673,7 +4673,7 @@
             "videoId": "kp0zJFymkx4",
             "title": "Фишки Kugoo EC16 fat",
             "publishedAt": "2026-07-02T08:00:12Z",
-            "viewCount": 17953,
+            "viewCount": 17960,
             "viewCountCompact": "18.0K",
             "engagementRate": 2.16,
             "thumbnail": "https://i.ytimg.com/vi/kp0zJFymkx4/mqdefault.jpg",
@@ -4683,8 +4683,8 @@
             "videoId": "OVLJgOxt2s8",
             "title": "Kugoo Max Speed PRO",
             "publishedAt": "2026-07-03T08:00:25Z",
-            "viewCount": 34345,
-            "viewCountCompact": "34.3K",
+            "viewCount": 34442,
+            "viewCountCompact": "34.4K",
             "engagementRate": 1.98,
             "thumbnail": "https://i.ytimg.com/vi/OVLJgOxt2s8/mqdefault.jpg",
             "url": "https://www.youtube.com/shorts/OVLJgOxt2s8"
@@ -4709,9 +4709,9 @@
             "videoId": "0gXdeSUuLzQ",
             "title": "Kugoo E2",
             "publishedAt": "2026-07-04T08:00:26Z",
-            "viewCount": 37451,
+            "viewCount": 37514,
             "viewCountCompact": "37.5K",
-            "likeCount": 454,
+            "likeCount": 455,
             "commentCount": 30,
             "duration": "0:30",
             "durationSeconds": 30,
@@ -4723,9 +4723,9 @@
             "videoId": "OVLJgOxt2s8",
             "title": "Kugoo Max Speed PRO",
             "publishedAt": "2026-07-03T08:00:25Z",
-            "viewCount": 34345,
-            "viewCountCompact": "34.3K",
-            "likeCount": 624,
+            "viewCount": 34442,
+            "viewCountCompact": "34.4K",
+            "likeCount": 626,
             "commentCount": 56,
             "duration": "0:50",
             "durationSeconds": 50,
@@ -4737,7 +4737,7 @@
             "videoId": "kp0zJFymkx4",
             "title": "Фишки Kugoo EC16 fat",
             "publishedAt": "2026-07-02T08:00:12Z",
-            "viewCount": 17953,
+            "viewCount": 17960,
             "viewCountCompact": "18.0K",
             "likeCount": 372,
             "commentCount": 16,
@@ -4751,7 +4751,7 @@
             "videoId": "aTDjQA-FG5E",
             "title": "Kugoo EC16 Fat",
             "publishedAt": "2026-07-01T08:00:10Z",
-            "viewCount": 28356,
+            "viewCount": 28368,
             "viewCountCompact": "28.4K",
             "likeCount": 323,
             "commentCount": 35,
@@ -4765,9 +4765,9 @@
             "videoId": "QxxM90KU_Vc",
             "title": "Kugoo F2 plus",
             "publishedAt": "2026-06-30T08:00:05Z",
-            "viewCount": 84005,
-            "viewCountCompact": "84.0K",
-            "likeCount": 969,
+            "viewCount": 84249,
+            "viewCountCompact": "84.2K",
+            "likeCount": 970,
             "commentCount": 85,
             "duration": "0:35",
             "durationSeconds": 35,
@@ -4779,9 +4779,9 @@
             "videoId": "qcgjkDJ0FkE",
             "title": "16 лошадиных сил в электросамокате! Kugoo G5",
             "publishedAt": "2026-06-29T08:00:06Z",
-            "viewCount": 63985,
-            "viewCountCompact": "64.0K",
-            "likeCount": 1052,
+            "viewCount": 64313,
+            "viewCountCompact": "64.3K",
+            "likeCount": 1058,
             "commentCount": 98,
             "duration": "0:44",
             "durationSeconds": 44,
@@ -4793,8 +4793,8 @@
             "videoId": "jXh-izn-wg4",
             "title": "Kugoo G4 Max",
             "publishedAt": "2026-06-28T08:00:12Z",
-            "viewCount": 31596,
-            "viewCountCompact": "31.6K",
+            "viewCount": 31677,
+            "viewCountCompact": "31.7K",
             "likeCount": 541,
             "commentCount": 51,
             "duration": "0:40",
@@ -4807,9 +4807,9 @@
             "videoId": "bnwIMIeVhU8",
             "title": "Kugoo g5 фишки",
             "publishedAt": "2026-06-27T08:00:01Z",
-            "viewCount": 315898,
-            "viewCountCompact": "315.9K",
-            "likeCount": 3042,
+            "viewCount": 316348,
+            "viewCountCompact": "316.3K",
+            "likeCount": 3047,
             "commentCount": 173,
             "duration": "0:49",
             "durationSeconds": 49,
@@ -4821,8 +4821,8 @@
             "videoId": "oZFc6tEHd1M",
             "title": "Фишки Kugoo G4 Max",
             "publishedAt": "2026-06-26T08:00:33Z",
-            "viewCount": 2905,
-            "viewCountCompact": "2.90K",
+            "viewCount": 2906,
+            "viewCountCompact": "2.91K",
             "likeCount": 57,
             "commentCount": 6,
             "duration": "0:33",
@@ -4835,9 +4835,9 @@
             "videoId": "yIeK_YApmaw",
             "title": "Сколько банок поместится в Kugoo EC16 Fat",
             "publishedAt": "2026-06-25T08:00:16Z",
-            "viewCount": 127876,
-            "viewCountCompact": "127.9K",
-            "likeCount": 2009,
+            "viewCount": 127967,
+            "viewCountCompact": "128.0K",
+            "likeCount": 2010,
             "commentCount": 106,
             "duration": "1:12",
             "durationSeconds": 72,
@@ -4863,6 +4863,6 @@
       "points": [],
       "rawCount": 0
     },
-    "debug": "parse fail | title='Telegram: View @Jilong_Rus' | bytes=10922 | has_subscriber_word=False | has_join_btn=True"
+    "debug": "parse fail | title='Telegram: View @Jilong_Rus' | bytes=10924 | has_subscriber_word=False | has_join_btn=True"
   }
 }
