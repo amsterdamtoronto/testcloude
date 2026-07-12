@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kugoo × FastMotion — Отчёт для презентации</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f7f8;
+    --border: #e4e4e7;
+    --text: #0a0a0a;
+    --muted: #6b7280;
+    --accent: #ff6b00;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 40px 32px 80px; }
+  .toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .toolbar .hint { color: var(--muted); }
+  .toolbar button, .toolbar a {
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .toolbar a.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+  h1 .brand { color: var(--accent); }
+  h1 .thin { font-weight: 400; color: var(--muted); font-size: 20px; margin-left: 8px; }
+  .cover .sub { color: var(--muted); font-size: 14px; }
+  section {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  section.channel-header {
+    page-break-before: always;
+    break-before: page;
+  }
+  section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+  section h2 .tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  section h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .kpi-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .kpi-value {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-delta { margin-top: 6px; font-size: 11px; color: var(--muted); }
+  .kpi-delta b { color: var(--text); }
+  .top-video-list { display: grid; gap: 12px; }
+  .top-video {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    align-items: center;
+  }
+  .top-video img {
+    width: 320px; height: 180px; object-fit: cover;
+    border-radius: 6px; display: block; background: var(--border);
+  }
+  .top-video .meta { min-width: 0; }
+  .top-video .rank {
+    display: inline-block;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .top-video .title {
+    font-size: 17px; font-weight: 600; margin: 0 0 12px;
+    line-height: 1.3; color: var(--text);
+  }
+  .top-video .title a { color: inherit; text-decoration: none; }
+  .top-video .title a:hover { text-decoration: underline; }
+  .stat-row {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 13px; color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-row b { color: var(--text); font-size: 15px; font-weight: 700; }
+  .quotes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .quote {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .quote-text { font-size: 14px; line-height: 1.45; color: var(--text); }
+  .quote-meta {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--muted); margin-top: auto;
+  }
+  .quote-meta b { color: var(--text); font-weight: 500; }
+  .quote-video {
+    font-size: 11px; color: var(--muted); text-decoration: none;
+    border-top: 1px solid var(--border); padding-top: 8px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .videos-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .videos-table th, .videos-table td {
+    padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .videos-table th {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--muted); font-weight: 500; background: var(--surface);
+  }
+  .videos-table td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .videos-table td.idx { text-align: right; color: var(--muted); width: 32px; }
+  .videos-table a { color: var(--text); text-decoration: none; }
+  .videos-table a:hover { text-decoration: underline; }
+  .chart-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .chart-box svg { display: block; width: 100%; height: auto; }
+  .chart-box .grid line { stroke: var(--border); stroke-width: 1; }
+  .chart-box .axis text { fill: var(--muted); font-size: 10px; font-family: inherit; }
+  .chart-box .line { stroke: var(--text); stroke-width: 1.5; fill: none; }
+  .chart-box .area { fill: var(--text); opacity: 0.06; }
+  .chart-box .dot { fill: var(--text); }
+  .chart-box .drop { fill: var(--accent); }
+  .empty { color: var(--muted); font-style: italic; padding: 16px 0; }
+
+  /* Print — clean, page-break aware */
+  @media print {
+    @page { size: A4; margin: 18mm; }
+    body { font-size: 12px; }
+    .toolbar { display: none; }
+    .wrap { max-width: none; padding: 0; }
+    section { page-break-inside: avoid; }
+    section.channel-header { page-break-before: always; }
+    .top-video img { width: 240px; height: 135px; }
+    .top-video { grid-template-columns: 240px 1fr; }
+    h1 { font-size: 22px; }
+    section h2 { font-size: 16px; }
+  }
+  @media (max-width: 720px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .top-video { grid-template-columns: 1fr; }
+    .top-video img { width: 100%; height: auto; aspect-ratio: 16 / 9; }
+    .quotes-grid { grid-template-columns: 1fr; }
+    .wrap { padding: 24px 16px 48px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toolbar">
+    <span class="hint">Отчёт готов для копирования в слайды. Нажмите «Печать» → «Сохранить как PDF» для полной версии.</span>
+    <span>
+      <button onclick="window.print()">Печать / PDF</button>
+      <a href="./" class="ghost">← Дашборд</a>
+    </span>
+  </div>
+
+  <section class="cover" id="cover"></section>
+  <div id="channels"></div>
+</div>
+
+<script>
+(async function () {
+  const $ = (id) => document.getElementById(id);
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+  function fmtDate(iso) {
+    if (!iso) return "—";
+    const d = new Date(iso); if (isNaN(d)) return "—";
+    return d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+  }
+  function num(n) { return (n || 0).toLocaleString("ru-RU"); }
+  function deltaText(d) { return (!d || d.signed == null) ? "—" : d.signed; }
+
+  function renderCover(data) {
+    const chIds = data.channelOrder || Object.keys(data.channels || {});
+    const parts = chIds.map(id => {
+      const c = data.channels[id];
+      const t = c.totals || {}; const s = (c.shorts && c.shorts.totals) || {};
+      return `<div><b>${escapeHtml(c.title || id)}</b> — ${t.videos || 0} long, ${s.count || 0} shorts, ${escapeHtml(t.viewsCompact || "0")} просмотров</div>`;
+    }).join("");
+    $("cover").innerHTML = `
+      <h1><span class="brand">Kugoo</span> × FastMotion<span class="thin">brand report</span></h1>
+      <div class="sub">Обновлено: ${escapeHtml(data.updatedAtMsk || "—")}</div>
+      <div style="margin-top:16px;color:var(--muted);font-size:13px;">${parts}</div>
+    `;
+  }
+
+  function drawChart(elId, history, drops) {
+    const el = $(elId);
+    const points = (history && history.points) || [];
+    if (points.length < 2) {
+      el.innerHTML = `<svg viewBox="0 0 800 200"><text x="400" y="100" text-anchor="middle" fill="var(--muted)" font-size="12">Накапливаем данные…</text></svg>`;
+      return;
+    }
+    const W = 800, H = 200, ML = 60, MR = 16, MT = 40, MB = 28;
+    const plotW = W - ML - MR, plotH = H - MT - MB;
+    const ts = points.map(p => new Date(p.ts).getTime());
+    const vs = points.map(p => p.views || 0);
+    const tMin = ts[0], tMax = ts[ts.length - 1];
+    const vMin = Math.min(...vs), vMax = Math.max(...vs);
+    const vRange = Math.max(1, vMax - vMin);
+    const xs = (t) => ML + ((t - tMin) / Math.max(1, tMax - tMin)) * plotW;
+    const ys = (v) => MT + (1 - (v - vMin) / vRange) * plotH;
+    let path = "M " + xs(ts[0]) + " " + ys(vs[0]);
+    for (let i = 1; i < points.length; i++) path += " L " + xs(ts[i]) + " " + ys(vs[i]);
+    const area = path + ` L ${xs(tMax)} ${MT + plotH} L ${xs(tMin)} ${MT + plotH} Z`;
+    const compact = (v) => v >= 1e6 ? (v / 1e6).toFixed(2) + "M" : v >= 1e3 ? (v / 1e3).toFixed(0) + "K" : String(Math.round(v));
+    const yTicks = [vMin, vMin + vRange / 2, vMax].map(v => ({ y: ys(v), label: compact(v) }));
+    const grid = yTicks.map(t => `<line x1="${ML}" x2="${ML + plotW}" y1="${t.y}" y2="${t.y}"/>`).join("");
+    const yLabels = yTicks.map(t => `<text x="${ML - 8}" y="${t.y + 3}" text-anchor="end">${t.label}</text>`).join("");
+    const day = (ms) => new Date(ms).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
+    const xLabels = [tMin, (tMin + tMax) / 2, tMax].map(t =>
+      `<text x="${xs(t)}" y="${H - 10}" text-anchor="middle">${day(t)}</text>`).join("");
+    let dropsMk = "";
+    if (Array.isArray(drops)) {
+      for (const d of drops) {
+        const t = new Date(d.ts).getTime();
+        if (isNaN(t) || t < tMin || t > tMax) continue;
+        const x = xs(t), yBot = MT + plotH;
+        dropsMk += `<polygon class="drop" points="${x - 5},${yBot + 8} ${x + 5},${yBot + 8} ${x},${yBot}"><title>${escapeHtml(d.title)}</title></polygon>`;
+      }
+    }
+    const lastX = xs(ts[ts.length - 1]), lastY = ys(vs[vs.length - 1]);
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <g class="grid">${grid}</g>
+      <path class="area" d="${area}"/>
+      <path class="line" d="${path}"/>
+      <circle class="dot" cx="${lastX}" cy="${lastY}" r="3"/>
+      <g class="axis">${yLabels}${xLabels}</g>
+      <g class="drops">${dropsMk}</g>
+    </svg>`;
+  }
+
+  function kpiHTML(label, value, d24, d7) {
+    let delta = "";
+    if (d24 != null || d7 != null) {
+      delta = `<div class="kpi-delta"><b>${escapeHtml(d24 || "—")}</b> за 24ч · <b>${escapeHtml(d7 || "—")}</b> за 7д</div>`;
+    }
+    return `<div class="kpi"><div class="kpi-label">${escapeHtml(label)}</div>
+      <div class="kpi-value">${escapeHtml(String(value))}</div>${delta}</div>`;
+  }
+
+  function summaryKpis(t, deltas) {
+    const d24 = (deltas && deltas.h24) || {};
+    const d7  = (deltas && deltas.d7)  || {};
+    return `
+      <div class="kpi-grid">
+        ${kpiHTML("Роликов", t.videos ?? 0)}
+        ${kpiHTML("Просмотров", t.viewsCompact ?? "0", deltaText(d24.views), deltaText(d7.views))}
+        ${kpiHTML("Средние просмотры", t.avgViewsCompact ?? "0")}
+        ${kpiHTML("Engagement Rate", (t.engagementRate ?? 0).toFixed(2) + "%")}
+        ${kpiHTML("Лайков", t.likesCompact ?? "0", deltaText(d24.likes), deltaText(d7.likes))}
+        ${kpiHTML("Комментариев", t.commentsCompact ?? "0", deltaText(d24.comments), deltaText(d7.comments))}
+      </div>
+    `;
+  }
+
+  function shortsKpis(sh) {
+    const t = sh.totals || {};
+    const d24 = (sh.deltas && sh.deltas.h24) || {};
+    const d7  = (sh.deltas && sh.deltas.d7)  || {};
+    return `
+      <div class="kpi-grid">
+        ${kpiHTML("Shorts", t.count ?? 0)}
+        ${kpiHTML("Просмотров", t.viewsCompact ?? "0", deltaText(d24.views), deltaText(d7.views))}
+        ${kpiHTML("Engagement Rate", (t.engagementRate ?? 0).toFixed(2) + "%")}
+        ${kpiHTML("Лайков", t.likesCompact ?? "0", deltaText(d24.likes), deltaText(d7.likes))}
+        ${kpiHTML("Комментариев", t.commentsCompact ?? "0", deltaText(d24.comments), deltaText(d7.comments))}
+        ${kpiHTML("Средний ER на ролик", (t.count ? (t.engagementRate ?? 0) : 0).toFixed(2) + "%")}
+      </div>
+    `;
+  }
+
+  function topVideoCard(v, i, opts) {
+    const showEr = opts && opts.showEr;
+    const showViews = !(opts && opts.hideViews);
+    const er = (v.engagementRate ?? 0).toFixed(2);
+    // High-res thumbnail (i.ytimg.com supports hqdefault/maxresdefault/mqdefault).
+    const hqThumb = v.thumbnail
+      ? v.thumbnail.replace(/\/(default|mqdefault|hqdefault|sddefault)\.jpg/, "/hqdefault.jpg")
+      : "";
+    return `
+      <div class="top-video">
+        <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener">
+          <img src="${escapeHtml(hqThumb)}" alt="" loading="lazy">
+        </a>
+        <div class="meta">
+          <div class="rank">${(opts && opts.label) || "Топ"} #${i + 1}</div>
+          <div class="title"><a href="${escapeHtml(v.url)}" target="_blank" rel="noopener">${escapeHtml(v.title)}</a></div>
+          <div class="stat-row">
+            ${showViews ? `<span><b>${escapeHtml(v.viewCountCompact || "0")}</b> просмотров</span>` : ""}
+            <span><b>${er}%</b> ER</span>
+            <span>${escapeHtml(fmtDate(v.publishedAt))}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function quoteCard(q) {
+    return `
+      <div class="quote">
+        <div class="quote-text">${escapeHtml(q.text)}</div>
+        <div class="quote-meta">
+          <span><b>${escapeHtml(q.author || "")}</b></span>
+          <span>${q.likeCount || 0} ♥</span>
+        </div>
+        <a class="quote-video" href="${escapeHtml(q.url || "#")}" target="_blank" rel="noopener">${escapeHtml(q.videoTitle || "")}</a>
+      </div>
+    `;
+  }
+
+  function quotesBlock(quotes, emptyText) {
+    if (!quotes || !quotes.length) return `<div class="empty">${escapeHtml(emptyText)}</div>`;
+    return `<div class="quotes-grid">${quotes.map(quoteCard).join("")}</div>`;
+  }
+
+  function fullVideosTable(videos, isShorts) {
+    if (!videos || !videos.length) return `<div class="empty">Нет данных.</div>`;
+    const rows = videos.map((v, i) => {
+      const er = (v.engagementRate ?? 0).toFixed(2);
+      return `<tr>
+        <td class="idx">${i + 1}</td>
+        <td>${escapeHtml(fmtDate(v.publishedAt))}</td>
+        <td><a href="${escapeHtml(v.url)}" target="_blank" rel="noopener">${escapeHtml(v.title || "")}</a></td>
+        <td class="num">${num(v.viewCount)}</td>
+        <td class="num">${num(v.likeCount)}</td>
+        <td class="num">${num(v.commentCount)}</td>
+        <td class="num">${er}%</td>
+      </tr>`;
+    }).join("");
+    return `<div style="overflow-x:auto">
+      <table class="videos-table">
+        <thead><tr>
+          <th>#</th><th>Дата</th><th>Название</th>
+          <th class="num">Просмотры</th><th class="num">Лайки</th>
+          <th class="num">Комменты</th><th class="num">ER</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }
+
+  function renderChannel(id, blk, idx) {
+    const wrap = document.createElement("div");
+    const chartId = `chart-${id}`;
+    const t = blk.totals || {};
+    const shorts = blk.shorts || { totals: {}, top: [], topByEr: [], videos: [], quotes: {} };
+    const kQuotes = (blk.quotes && blk.quotes.kugoo) || [];
+    const dQuotes = (blk.quotes && blk.quotes.dns) || [];
+    const shortsKugoo = (shorts.quotes && shorts.quotes.kugoo) || [];
+    const shortsDns   = (shorts.quotes && shorts.quotes.dns) || [];
+    wrap.innerHTML = `
+      <section class="channel-header">
+        <h2>${escapeHtml(blk.title || id)}<span class="tag">${escapeHtml(blk.channelHandle || "")}</span></h2>
+        ${summaryKpis(t, blk.deltas)}
+      </section>
+
+      <section>
+        <h3>Динамика просмотров (30 дней)</h3>
+        <div class="chart-box"><div id="${chartId}"></div></div>
+      </section>
+
+      <section>
+        <h3>Топ-3 по просмотрам</h3>
+        <div class="top-video-list">
+          ${(blk.top || []).map((v, i) => topVideoCard(v, i, { label: "Просмотры" })).join("") || '<div class="empty">Нет данных.</div>'}
+        </div>
+      </section>
+
+      <section>
+        <h3>Топ-3 по вовлечённости (ER)</h3>
+        <div class="top-video-list">
+          ${(blk.topByEr || []).map((v, i) => topVideoCard(v, i, { label: "ER" })).join("") || '<div class="empty">Нет данных.</div>'}
+        </div>
+      </section>
+
+      <section>
+        <h3>Зрители говорят про Kugoo</h3>
+        ${quotesBlock(kQuotes, "Положительных упоминаний пока нет.")}
+      </section>
+
+      <section>
+        <h3>Зрители говорят про DNS</h3>
+        ${quotesBlock(dQuotes, "Положительных упоминаний DNS пока нет.")}
+      </section>
+
+      <section class="channel-header">
+        <h2>${escapeHtml(blk.title || id)} · Shorts<span class="tag">${escapeHtml(blk.channelHandle || "")}</span></h2>
+        ${shortsKpis(shorts)}
+      </section>
+
+      <section>
+        <h3>Топ-3 Shorts по просмотрам</h3>
+        <div class="top-video-list">
+          ${(shorts.top || []).map((v, i) => topVideoCard(v, i, { label: "Просмотры" })).join("") || '<div class="empty">Нет данных.</div>'}
+        </div>
+      </section>
+
+      <section>
+        <h3>Топ-3 Shorts по вовлечённости (ER)</h3>
+        <div class="top-video-list">
+          ${(shorts.topByEr || []).map((v, i) => topVideoCard(v, i, { label: "ER" })).join("") || '<div class="empty">Нет данных.</div>'}
+        </div>
+      </section>
+
+      <section>
+        <h3>Комментарии под Shorts · Kugoo</h3>
+        ${quotesBlock(shortsKugoo, "Положительных упоминаний под Shorts пока нет.")}
+      </section>
+
+      <section>
+        <h3>Комментарии под Shorts · DNS</h3>
+        ${quotesBlock(shortsDns, "Положительных упоминаний DNS под Shorts пока нет.")}
+      </section>
+
+      <section>
+        <h3>Все long-form ролики (${(blk.videos || []).length})</h3>
+        ${fullVideosTable(blk.videos, false)}
+      </section>
+
+      <section>
+        <h3>Все Shorts (${(shorts.videos || []).length})</h3>
+        ${fullVideosTable(shorts.videos, true)}
+      </section>
+    `;
+    $("channels").appendChild(wrap);
+    drawChart(chartId, blk.history, blk.videoDrops);
+  }
+
+  try {
+    const res = await fetch("./data.json?ts=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    renderCover(data);
+    const order = data.channelOrder || Object.keys(data.channels || {});
+    order.forEach((id, i) => {
+      const blk = (data.channels || {})[id];
+      if (blk) renderChannel(id, blk, i);
+    });
+  } catch (e) {
+    $("cover").innerHTML = `<h1>Не удалось загрузить</h1><div class="empty">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+})();
+</script>
+</body>
+</html>
